@@ -1,0 +1,79 @@
+let Business = require('../models/Business');
+
+module.exports.readAll = function(req, res) {
+  Business.find({}, function(error, business) {
+    if (error) {
+      res.status(500);
+      return res.send(error);
+    }
+
+    res.json(business);
+  });
+}
+
+module.exports.create = function(req, res) {
+  let business = new Business(req.body);
+
+  business.save(function(error, business) {
+    if (error) {
+      res.status(500);
+      return res.send(error);
+    }
+
+    res.json(business._id);
+  });
+}
+
+module.exports.update = function(req, res) {
+  Business.findOne({
+    _id: req.params.id
+  }, function(err, business) {
+    if (err) {
+      res.status(500);
+      return res.send(err);
+    }
+
+    for (prop in req.body) {
+      business[prop] = req.body[prop];
+    }
+
+    business.save(function(err) {
+      if (err) {
+        res.status(500);
+        return res.send(err);
+      }
+
+      res.json({
+        message: 'Business updated!'
+      });
+    });
+  });
+}
+
+module.exports.delete = function(req, res) {
+  Business.remove({
+    _id: req.params.id
+  }, function(error, business) {
+    if (error) {
+      res.status(500);
+      return res.send(error);
+    }
+
+    res.json({
+      message: 'Successfully deleted'
+    });
+  });
+}
+
+module.exports.find = function(req, res) {
+  Business.findOne({
+    _id: req.params.id
+  }, function(error, business) {
+    if (error) {
+      res.status(500);
+      return res.send(error);
+    }
+
+    res.json(business);
+  });
+}

@@ -84,7 +84,7 @@ angular
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
-              files: ['js/controllers/survey-builder.js', 'js/survey.jquery.min.js']
+              files: ['js/controllers/survey-builder.js']
             });
           }]
         }
@@ -191,17 +191,43 @@ angular
         abstract: true,
         template: '<ui-view></ui-view>',
         ncyBreadcrumb: {
-          label: 'Admin'
-        }
+          label: 'Encuesta'
+        },
+
       })
       .state('app.surveys.main', {
         url: '/home',
-        templateUrl: 'views/components/survey-builder/surveyForm.html',
+        templateUrl: 'views/components/survey/index.html',
         //page title goes here
         ncyBreadcrumb: {
-          label: 'Formulario',
+          label: 'Lista',
         },
-        controller: 'surveyBuilderController'
+        controller: 'surveyController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/survey.js']
+            });
+          }]
+        }
+      })
+      .state('app.surveys.handler', {
+        url: '/:id/client/:client/',
+        templateUrl: 'views/components/survey/survey.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Aplicacion',
+        },
+        controller: 'surveyHandlerController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/survey-handler.js', 'js/survey.jquery.min.js']
+            });
+          }]
+        }
       })
       //SIMPLE PAGES
       .state('appSimple', {

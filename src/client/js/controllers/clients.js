@@ -1,6 +1,6 @@
-angular.module('app').controller('clientsController', ['$scope', '$http', 'commonFactory', function($scope, $http, commonFactory) {
-
-  init();
+function ClientController($scope, $http, commonFactory) {
+  
+  initializeController();
 
   $scope.selectedClient = {};
 
@@ -61,7 +61,7 @@ angular.module('app').controller('clientsController', ['$scope', '$http', 'commo
       );
   }
 
-  function init() {
+  function initializeController() {
     retrieveClients();
     retrieveRoles();
   }
@@ -89,4 +89,7 @@ angular.module('app').controller('clientsController', ['$scope', '$http', 'commo
         }
       );
   }
-}]);
+}
+
+ClientController.$inject = ['$scope', '$http', 'commonFactory'];
+angular.module('app').controller('clientsController', ClientController);

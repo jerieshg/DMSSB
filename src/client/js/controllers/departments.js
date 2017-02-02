@@ -1,6 +1,6 @@
-angular.module('app').controller('departmentsController', ['$scope', '$http', 'commonFactory', function($scope, $http, commonFactory) {
-
-  init();
+function DepartmentController($scope, $http, commonFactory) {
+  
+  initializeController();
 
   $scope.selectedDept = {};
 
@@ -61,7 +61,7 @@ angular.module('app').controller('departmentsController', ['$scope', '$http', 'c
       );
   }
 
-  function init() {
+  function initializeController() {
     retrieveDepartments();
   }
 
@@ -76,4 +76,7 @@ angular.module('app').controller('departmentsController', ['$scope', '$http', 'c
         }
       );
   }
-}]);
+}
+
+DepartmentController.$inject = ['$scope', '$http', 'commonFactory'];
+angular.module('app').controller('departmentsController', DepartmentController);

@@ -1,9 +1,8 @@
-angular.module('app').controller('surveyController', ['$scope', '$http', 'commonFactory', function($scope, $http, commonFactory) {
+function SurveyController($scope, $http, commonFactory) {
 
-  init();
+  initializeController();
 
-
-  function init() {
+  function initializeController() {
     retrieveSurveys();
   }
 
@@ -18,4 +17,7 @@ angular.module('app').controller('surveyController', ['$scope', '$http', 'common
         }
       );
   }
-}]);
+}
+
+SurveyController.$inject = ['$scope', '$http', 'commonFactory'];
+angular.module('app').controller('surveyController', SurveyController);

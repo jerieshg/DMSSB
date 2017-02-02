@@ -1,6 +1,6 @@
-angular.module('app').controller('mainController', ['$scope', '$http', 'commonFactory', function($scope, $http, commonFactory) {
-
-  init();
+function MainController($scope, $http, commonFactory) {
+  
+  initializeController();
 
   $scope.deleteSurvey = function(id) {
     $http.delete("/api/surveys/" + id)
@@ -18,7 +18,7 @@ angular.module('app').controller('mainController', ['$scope', '$http', 'commonFa
 
   }
 
-  function init() {
+  function initializeController() {
     retrieveSurveys();
   }
 
@@ -33,5 +33,7 @@ angular.module('app').controller('mainController', ['$scope', '$http', 'commonFa
         }
       );
   }
+}
 
-}]);
+MainController.$inject = ['$scope', '$http', 'commonFactory'];
+angular.module('app').controller('mainController', MainController);

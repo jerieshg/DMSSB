@@ -1,6 +1,6 @@
-angular.module('app').controller('businessController', ['$scope', '$http', 'commonFactory', function($scope, $http, commonFactory) {
+function BusinessController($scope, $http, commonFactory) {
 
-  init();
+  initializeController();
 
   $scope.selectedBusiness = {};
 
@@ -61,7 +61,7 @@ angular.module('app').controller('businessController', ['$scope', '$http', 'comm
       );
   }
 
-  function init() {
+  function initializeController() {
     retrieveBusiness();
   }
 
@@ -76,4 +76,7 @@ angular.module('app').controller('businessController', ['$scope', '$http', 'comm
         }
       );
   }
-}]);
+}
+
+BusinessController.$inject = ['$scope', '$http', 'commonFactory'];
+angular.module('app').controller('businessController', BusinessController);

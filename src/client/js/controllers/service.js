@@ -1,6 +1,6 @@
-angular.module('app').controller('serviceController', ['$scope', '$http', 'commonFactory', function($scope, $http, commonFactory) {
-
-  init();
+function ServiceController($scope, $http, commonFactory) {
+  
+  initializeController();
 
   $scope.selectedService = {};
 
@@ -61,7 +61,7 @@ angular.module('app').controller('serviceController', ['$scope', '$http', 'commo
       );
   }
 
-  function init() {
+  function initializeController() {
     retrieveService();
     retrieveDepartments();
   }
@@ -89,4 +89,7 @@ angular.module('app').controller('serviceController', ['$scope', '$http', 'commo
         }
       );
   }
-}]);
+}
+
+ServiceController.$inject = ['$scope', '$http', 'commonFactory'];
+angular.module('app').controller('serviceController', ServiceController);
