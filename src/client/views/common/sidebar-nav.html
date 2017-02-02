@@ -1,0 +1,32 @@
+<div class="sidebar">
+    <nav class="sidebar-nav">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" ui-sref-active="active" ui-sref="app.main"><i class="icon-speedometer"></i> Dashboard </a>
+            </li>
+            <li class="divider"></li>
+            <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.admin')}">
+                <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.admin')}" href="#"><i class="fa fa-cogs"></i> Administrador</a>
+                <ul class="nav-dropdown-items">
+                    <li class="nav-item">
+                        <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.clients"><i class="fa fa-users"></i> Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.business"><i class="fa fa-industry"></i> Empresas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.departments"><i class="fa fa-university"></i> Departamentos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.services"><i class="fa fa-tasks"></i> Servicios</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+            <a class="nav-link" ui-sref-active="active" ui-sref="app.surveys.main"><i class="fa fa-newspaper-o"></i> Encuestas</a>
+            </li>
+        </ul>
+
+    </nav>
+</div>

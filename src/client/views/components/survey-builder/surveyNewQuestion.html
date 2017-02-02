@@ -1,0 +1,66 @@
+<form name="questionsForm" ng-submit="$parent.addQuestionToList()" class="col-sm-12">
+
+  <!-- Informacion basica de una pregunta -->
+  <div class="row row-separator">
+    <div class="col-sm-7">
+      <input ng-model="$parent.newQuestion.title" name="questionTitle" class="form-control" type="text" placeholder="Titulo de pregunta" required/>
+    </div>
+    <div class="col-sm-4">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" value="true" ng-model="$parent.newQuestion.isRequired">Requerido</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-separator">
+      <select ng-model="$parent.newQuestion.formType" ng-change="$parent.onQuestionTypeChange()" class="form-control" name="questionFormType" required>
+        <option value="">Seleccione un tipo de pregunta</option>
+        <option value="text">Texto</option>
+        <option value="checkbox">Checkbox</option>
+        <option value="dropdown">Dropdown</option>
+        <option value="radiogroup">Eleccion Multiple</option>
+        <option value="comment">Comentario</option>
+        <option value="rating">Escala Lineal</option>
+      </select>
+    </div>
+
+    <!-- Informacion de las opciones -->
+    <div class="row row-separator " ng-show="$parent.newQuestion.showChoices">
+      <div class="col-sm-4">
+        <select id="choicesSelect" class="form-control" ng-model="$parent.choices.number" ng-options="item for item in choiceOptions" name="questionChoiceOpts" ng-required="$parent.newQuestion.showChoices">
+          <option value=""># de opciones {{optional ? '(optional)' : ''}}</option>
+        </select>
+      </div>
+      <div class="col-sm-8">
+        <div ng-repeat="n in [] | range:$parent.choices.number" class="row row-separator">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Opcion" ng-model="$parent.selectedChoices[$index].text" name="option-$index" ng-required="$parent.newQuestion.showChoices">
+            <span class="input-group-addon">-</span>
+            <input type="number" class="form-control" placeholder="Valor" ng-model="$parent.selectedChoices[$index].value" name="value-$index" ng-required="$parent.newQuestion.showChoices">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Question Options -->
+
+    <!-- Escala lineal -->
+    <div class="col-sm-12" ng-show="$parent.newQuestion.formType === 'rating'">
+      <div class="row row-separator">
+        <div class="input-group row-separator">
+          <select class="form-control" ng-model="linearScale.selectedStart" ng-options="item.label for item in linearScaleStart"></select>
+          <span class="input-group-addon">hasta</span>
+          <select class="form-control" ng-model="linearScale.selectedEnd" ng-options="item.label for item in linearScaleEnd"></select>
+        </div>
+
+        <div class="input-group">
+         <span class="input-group-addon">{{linearScale.selectedStart.label}}</span><input type="text" class="form-control" placeholder="Label (No requerido)" ng-model="linearScale.minRateDescr">
+         <span class="input-group-addon"></span>
+         <input type="text" class="form-control" placeholder="Label (No requerido)" ng-model="linearScale.maxRateDescr">
+         <span class="input-group-addon">{{linearScale.selectedEnd.label}}</span>
+       </div>
+     </div>
+    </div>
+
+     <input type="submit" class="btn btn-success" value="Agregar pregunta" />
+   </form>

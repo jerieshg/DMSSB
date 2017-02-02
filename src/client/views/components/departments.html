@@ -1,0 +1,32 @@
+<div class="animated fadeIn">
+ <div id="alertArea"></div>
+
+ <div class="row" ng-controller="departmentsController" ng-submit="saveDepartment()">
+  <form name="deptForm" class="form-group">
+   <label for="department">Departamento:</label>
+   <input type="text" id="department" class="form-control" ng-model="selectedDept.department" required>
+   <br/>
+   <input type="submit" class="btn btn-success"/>
+ </form>
+
+ <table class="table table-hover table-striped">
+  <tbody>
+    <tr>
+     <td><strong>#</strong></td>
+     <td><strong>Departamento</strong></td>
+     <td><strong>Fecha Creada</strong></td>
+     <td></td>
+     <td></td>
+   </tr>
+   <tr ng:repeat="e in departments">
+     <td>{{$index + 1}}</td>
+     <td>{{e.department}}</td>
+     <td>{{e.created | date: yyyy-mm-dd}}</td>
+     <td><button class="btn btn-danger" ng-click="deleteDepartment(e._id)">Borrar </button></td>
+     <td><button class="btn btn-primary" ng-click="updateDepartment(e._id)">Editar </button></td>
+   </tr>
+ </tbody>
+</table>
+</div>
+<!-- /.row -->
+</div>

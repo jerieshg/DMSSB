@@ -1,0 +1,40 @@
+<div class="animated fadeIn">
+ <div id="alertArea"></div>
+
+ <div class="row" ng-controller="clientsController" ng-submit="saveClient()">
+  <form name="clientForm" class="form-group" novalidate>
+   <label for="username">Usuario:</label>
+   <input type="text" id="username" class="form-control" ng-model="selectedClient.username" required><br>
+   <label for="password">Contraseña:</label>
+   <input type="password" id="password" class="form-control" ng-model="selectedClient.password" required><br/>
+   <label for="role">Role:</label>
+   <select class="form-control" ng-model="selectedClient.role" ng-options="item.role for item in roles track by item.role">
+      <option value="">Seleccione un rol {{optional ? '(optional)' : ''}}</option>
+    </select>
+    <br/>
+   <input type="submit" class="btn btn-success"/>
+ </form>
+
+ <table class="table table-hover table-striped">
+  <tbody>
+    <tr>
+      <td><strong>#</strong></td>
+      <td><strong>Usuario</strong></td>
+      <td><strong>Rol</strong></td>
+      <td><strong>Fecha Creada</strong></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr ng:repeat="e in clients">
+     <td>{{$index + 1}}</td>
+     <td>{{e.username}}</td>
+     <td>{{e.role.role}}</td>
+     <td>{{e.created | date: yyyy-mm-dd}}</td>
+     <td><button class="btn btn-danger" ng-click="deleteClient(e._id)">Borrar </button></td>
+     <td><button class="btn btn-primary" ng-click="updateClient(e._id)">Editar </button></td>
+   </tr>
+ </tbody>
+</table>
+</div>
+<!-- /.row -->
+</div>

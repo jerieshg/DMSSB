@@ -1,0 +1,34 @@
+<div class="animated fadeIn">
+
+  <div id="alertArea"></div>
+
+  <div class="row" ng-controller="businessController">
+    <form name="businessForm" class="form-group" ng-submit="saveBusiness()">
+     <label for="business">Empresa:</label>
+     <input type="text" id="business" class="form-control" ng-model="selectedBusiness.business" required>
+     <br/>
+     <input type="submit" class="btn btn-success"/>
+   </form>
+
+
+   <table class="table table-hover table-striped">
+    <tbody>
+      <tr>
+       <td><strong>#</strong></td>
+       <td><strong>Empresa</strong></td>
+       <td><strong>Fecha Creada</strong></td>
+       <td></td>
+       <td></td>
+     </tr>
+     <tr ng:repeat="e in business">
+       <td>{{$index + 1}}</td>
+       <td>{{e.business}}</td>
+       <td>{{e.created | date: yyyy-mm-dd}}</td>
+       <td><button class="btn btn-danger" ng-click="deleteBusiness(e._id)">Borrar </button></td>
+       <td><button class="btn btn-primary" ng-click="updateBusiness(e._id)">Editar </button></td>
+     </tr>
+   </tbody>
+ </table>
+</div>
+<!-- /.row -->
+</div>
