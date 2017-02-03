@@ -16,13 +16,13 @@ passport.use(new LocalStrategy({
       // Return if client not found in database
       if (!client) {
         return done(null, false, {
-          message: 'Client not found'
+          message: 'Cuenta no encontrada!'
         });
       }
       // Return if password is wrong
       if (!client.validPassword(password)) {
         return done(null, false, {
-          message: 'Password is wrong'
+          message: 'Contraseña invalida!'
         });
       }
       // If credentials are correct, return the client object

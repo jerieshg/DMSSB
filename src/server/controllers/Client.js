@@ -11,19 +11,6 @@ module.exports.readAll = function(req, res) {
   });
 }
 
-module.exports.create = function(req, res) {
-  let client = new Client(req.body);
-
-  client.save(function(error, client) {
-    if (error) {
-      res.status(500);
-      return res.send(error);
-    }
-
-    res.json(client._id);
-  });
-}
-
 module.exports.update = function(req, res) {
   Client.findOne({
     _id: req.params.id
@@ -36,6 +23,8 @@ module.exports.update = function(req, res) {
     for (prop in req.body) {
       client[prop] = req.body[prop];
     }
+
+    client.setPassword(req.body.password);
 
     client.save(function(err) {
       if (err) {

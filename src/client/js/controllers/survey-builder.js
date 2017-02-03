@@ -112,7 +112,6 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
 
   //HELPER FUNCTIONS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
    function initalizeController() {
-    Survey.Survey.cssType = "bootstrap";
     $scope.choices = {};
     $scope.business = {};
     $scope.clients = {};

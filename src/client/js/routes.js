@@ -2,7 +2,7 @@ angular
   .module('app')
   .config(['$stateProvider', '$urlRouterProvider', '$ocLazyLoadProvider', '$breadcrumbProvider', function($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, $breadcrumbProvider) {
 
-    $urlRouterProvider.otherwise('/dashboard');
+    $urlRouterProvider.otherwise('/login');
 
     $ocLazyLoadProvider.config({
       // Set to true if you want to see what and when is dynamically loaded
@@ -41,7 +41,8 @@ angular
             // you can lazy load files for an existing module
             return $ocLazyLoad.load([{
               files: [
-                'js/factories/common.js'
+                'js/factories/common.js',
+                'js/controllers/logout.js'
               ]
             }]);
           }]
@@ -61,6 +62,9 @@ angular
               files: ['js/controllers/main.js']
             });
           }]
+        },
+        data: {
+          isAdminRequired: true
         }
       })
       // SURVEY BUILDER RELATED
@@ -96,7 +100,10 @@ angular
         ncyBreadcrumb: {
           label: 'Formulario',
         },
-        controller: 'surveyBuilderController'
+        controller: 'surveyBuilderController',
+        data: {
+          isAdminRequired: true
+        }
       })
       .state('app.survey-builder.edit', {
         url: '/form/:id',
@@ -105,7 +112,10 @@ angular
         ncyBreadcrumb: {
           label: 'Formulario',
         },
-        controller: 'surveyBuilderController'
+        controller: 'surveyBuilderController',
+        data: {
+          isAdminRequired: true
+        }
       })
       .state('app.survey-builder.relations', {
         url: '/relations',
@@ -114,7 +124,10 @@ angular
         ncyBreadcrumb: {
           label: 'Relacione',
         },
-        controller: 'surveyBuilderController'
+        controller: 'surveyBuilderController',
+        data: {
+          isAdminRequired: true
+        }
       })
       //ADMINISTRATOR
       .state('app.admin', {
@@ -138,6 +151,9 @@ angular
               files: ['js/controllers/clients.js']
             });
           }]
+        },
+        data: {
+          isAdminRequired: true
         }
       })
       .state('app.admin.departments', {
@@ -153,6 +169,9 @@ angular
               files: ['js/controllers/departments.js']
             });
           }]
+        },
+        data: {
+          isAdminRequired: true
         }
       })
       .state('app.admin.business', {
@@ -168,6 +187,9 @@ angular
               files: ['js/controllers/business.js']
             });
           }]
+        },
+        data: {
+          isAdminRequired: true
         }
       })
       .state('app.admin.services', {
@@ -183,6 +205,9 @@ angular
               files: ['js/controllers/service.js']
             });
           }]
+        },
+        data: {
+          isAdminRequired: true
         }
       })
       //USER RELATED
@@ -193,7 +218,9 @@ angular
         ncyBreadcrumb: {
           label: 'Encuesta'
         },
-
+        data: {
+          isAdminRequired: false
+        }
       })
       .state('app.surveys.main', {
         url: '/home',
@@ -210,6 +237,9 @@ angular
               files: ['js/controllers/survey.js']
             });
           }]
+        },
+        data: {
+          isAdminRequired: false
         }
       })
       .state('app.surveys.handler', {
@@ -227,6 +257,9 @@ angular
               files: ['js/controllers/survey-handler.js', 'js/survey.jquery.min.js']
             });
           }]
+        },
+        data: {
+          isAdminRequired: false
         }
       })
       //SIMPLE PAGES
@@ -252,18 +285,64 @@ angular
     // Additional Pages
     .state('appSimple.login', {
         url: '/login',
-        templateUrl: 'views/pages/login.html'
-      })
-      .state('appSimple.register', {
-        url: '/register',
-        templateUrl: 'views/pages/register.html'
+        templateUrl: 'views/pages/login.html',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/login.js', 'js/factories/common.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false
+        }
       })
       .state('appSimple.404', {
         url: '/404',
-        templateUrl: 'views/pages/404.html'
+        templateUrl: 'views/pages/404.html',
+        data: {
+          isAdminRequired: false
+        }
       })
       .state('appSimple.500', {
         url: '/500',
-        templateUrl: 'views/pages/500.html'
+        templateUrl: 'views/pages/500.html',
+        data: {
+          isAdminRequired: false
+        }
       })
-  }]);
+  }])
+  .run(function($rootScope, $transitions, $state, authentication) {
+
+    $rootScope.logout = authentication.logout;
+    $rootScope.client = authentication.currentClient();
+
+    $transitions.onStart({
+      to: 'appSimple.login'
+    }, function(trans) {
+
+      if (authentication.isLoggedIn()) {
+        // User is authenticated. Redirect to a new Target State
+        return trans.router.stateService.target('app.main');
+      }
+    });
+
+    $transitions.onStart({
+      to: 'app.**'
+    }, function(trans) {
+
+      if (!authentication.isLoggedIn()) {
+        // User isn't authenticated. Redirect to a new Target State
+        return trans.router.stateService.target('appSimple.login');
+      }
+
+      // let to = trans.$to();
+      // if (to.data.isAdminRequired && $rootScope.client.role.role === 'Admin'){
+
+      // }else{
+      //   return trans.router.stateService.target('app.surveys.main');
+      // }
+
+    });
+  });

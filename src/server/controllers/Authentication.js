@@ -3,17 +3,16 @@ let mongoose = require('mongoose');
 let Client = mongoose.model('Client');
 
 module.exports.register = function(req, res) {
-  var client = new Client();
-
-  client.name = req.body.name;
-  client.email = req.body.email;
-
+  let client = new Client(req.body);
   client.setPassword(req.body.password);
 
-  client.save(function(err) {
-    var token;
-    token = client.generateJwt();
-    res.status(200);
+  client.save(function(error, client) {
+    if (error) {
+      res.status(500);
+      return res.send(error);
+    }
+
+    let token = client.generateJwt();
     res.json({
       "token": token
     });
@@ -21,7 +20,6 @@ module.exports.register = function(req, res) {
 };
 
 module.exports.login = function(req, res) {
-
   passport.authenticate('local', function(err, user, info) {
     var token;
 

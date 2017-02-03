@@ -44,7 +44,7 @@ paths.src.fonts = src + 'fonts/';
 paths.src.html = src;
 
 const dist = 'src/client/';
-paths.build.scripts = dist + 'js/';
+paths.build.scripts = dist + 'js/build';
 paths.build.sass = dist + 'css/';
 paths.build.images = dist + 'images/';
 paths.build.fonts = dist + 'fonts/';
@@ -128,13 +128,11 @@ gulp.task('build:dist', function(callback) {
 
 //Development
 gulp.task('scripts', () => {
-  console.log('Src Scripts : ' + paths.src.scripts);
-  console.log('Dist Scripts : ' + paths.build.scripts);
-
-
   return browserify({
       debug: true,
-      entries: [paths.src.scripts + '/app.js']
+      entries: [paths.src.scripts + '/app.js',
+        paths.src.scripts + 'services/authentication.js'
+      ]
     })
     .transform("babelify", {
       presets: ["es2015", "react"]

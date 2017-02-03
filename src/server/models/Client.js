@@ -9,23 +9,22 @@ let clientSchema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  password: String,
   role: {
     role: String,
     created: Date
   },
   hash: String,
-  salt: String,
+  salt: Buffer,
   created: Date
 })
 
 clientSchema.methods.setPassword = function(password) {
   this.salt = crypto.randomBytes(16).toString('hex');
-  this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+  this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha1').toString('hex');
 };
 
 clientSchema.methods.validPassword = function(password) {
-  let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+  let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha1').toString('hex');
   return this.hash === hash;
 };
 

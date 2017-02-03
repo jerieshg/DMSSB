@@ -8,10 +8,7 @@ module.exports = function(router) {
     userProperty: 'payload'
   });
 
-  //Authentication API calls
-  let Authentication = require('../controllers/Authentication');
-  //Authentication API calls
-  let Profile = require('../controllers/Profile');
+
   // Survey API calls
   let Survey = require('../controllers/Survey');
   //Business API calls
@@ -24,15 +21,12 @@ module.exports = function(router) {
   let Role = require('../controllers/Role');
   //Services API calls
   let Service = require('../controllers/Service');
+  //Authentication API calls
+  let Authentication = require('../controllers/Authentication');
+  //Authentication API calls
+  let Profile = require('../controllers/Profile');
 
-  //AUTHENTICATION ROUTES
-  router.route('/api/auth/login')
-    .get(Authentication.login);
-  router.route('/api/auth/register')
-    .get(Authentication.register);
-  //AUTHENTICATION ROUTES
-  router.route('/api/profile')
-    .get(auth, Profile.readProfile);
+
   //SURVEY ROUTES
   router.route('/api/surveys/')
     .get(Survey.readAll)
@@ -69,8 +63,7 @@ module.exports = function(router) {
 
   //CLIENT ROUTES
   router.route('/api/clients/')
-    .get(Client.readAll)
-    .post(Client.create);
+    .get(Client.readAll);
   router.route('/api/clients/:id')
     .put(Client.update)
     .delete(Client.delete);
@@ -98,6 +91,15 @@ module.exports = function(router) {
     .get(Service.find);
   router.route('/api/services/:dept/department/')
     .get(Service.findByDepartment);
+
+  //AUTHENTICATION ROUTES
+  router.route('/api/auth/login/')
+    .post(Authentication.login);
+  router.route('/api/auth/register/')
+    .post(Authentication.register);
+  //AUTHENTICATION ROUTES
+  router.route('/api/profile/')
+    .get(auth, Profile.readProfile);
 
   // router to handle all angular requests
   router.get('*', function(req, res) {
