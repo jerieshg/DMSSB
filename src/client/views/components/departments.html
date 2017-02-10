@@ -9,7 +9,12 @@
    <input type="submit" class="btn btn-success"/>
  </form>
 
- <table class="table table-hover table-striped">
+ <div class="input-group row-separator">
+  <div class="input-group-addon"><i class="fa fa-search"></i></div>
+  <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
+</div>   
+
+<table class="table table-hover table-striped">
   <tbody>
     <tr>
      <td><strong>#</strong></td>
@@ -18,7 +23,7 @@
      <td></td>
      <td></td>
    </tr>
-   <tr ng:repeat="e in departments">
+   <tr ng:repeat="e in departments | filter:search">
      <td>{{$index + 1}}</td>
      <td>{{e.department}}</td>
      <td>{{e.created | date: yyyy-mm-dd}}</td>

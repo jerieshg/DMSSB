@@ -1,8 +1,9 @@
-<div class="animated fadeIn" ng-init="retrieveServices()">
+<div class="animated fadeIn" ng-init="retrieveServices()" ng-controller="surveyRelationsController">
 
  <div id="alertArea"></div>
 <form name="relationForms" ng-submit="saveSurvey()">
   <div class="row-separator">
+  <button class="btn btn-info" ng-click="goToBuilder()">Volver</button>
     <input type="submit" class="btn btn-success" value="Guardar"/>
   </div>
 

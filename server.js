@@ -25,14 +25,11 @@
 	require('./src/server/config/passport');
 	app.use(passport.initialize());
 
-	// app.use(function(err, req, res, next) {
-	// 	if (err.name === 'UnauthorizedError') {
-	// 		res.status(401);
-	// 		res.json({
-	// 			"message": err.name + ": " + err.message
-	// 		});
-	// 	}
-	// });
+	//Log errors
+	app.use(function(err, req, res, next) {
+		console.error(err.stack)
+		next(err)
+	})
 
 	//SERVER START
 	app.set('port', (process.env.PORT || 3000));

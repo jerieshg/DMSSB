@@ -1,5 +1,5 @@
 function MainController($scope, $http, commonFactory) {
-  
+
   initializeController();
 
   $scope.deleteSurvey = function(id) {
@@ -7,8 +7,8 @@ function MainController($scope, $http, commonFactory) {
       .then(
         function(response) {
           // success callback
-          commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
-          retrieveSurveys(s);
+          commonFactory.activateAlert('Encuesta fue borrada exitosamente!', 'info');
+          retrieveSurveys();
         },
         function(response) {
           // failure callback

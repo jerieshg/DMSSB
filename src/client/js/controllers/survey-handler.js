@@ -1,13 +1,21 @@
-function SurveyHandlerController($scope, $http, $stateParams, commonFactory) {
+function SurveyHandlerController($rootScope, $scope, $http, $stateParams, commonFactory) {
 
   initializeController();
 
   function initializeController() {
+
     generateSurvey();
   }
 
   function generateSurvey() {
-    $http.get('/api/surveys/' + $stateParams.id + '/client/' + $stateParams.client + '/')
+    let client = $rootScope.client;
+    let url = '/api/surveys/' + $stateParams.id + '/client/' + $stateParams.client + '/';
+
+    if (client.role.role === 'Admin') {
+      url = '/api/surveys/' + $stateParams.id;
+    }
+
+    $http.get(url)
       .then(
         function(response) {
           if (response.data) {
@@ -21,24 +29,45 @@ function SurveyHandlerController($scope, $http, $stateParams, commonFactory) {
   }
 
   function buildSurvey(data) {
-
-    const survey = {};
-    
-    data.questions = data.questions.map(question => {
+    const survey = data;
+    console.log(survey);
+    survey.questions = survey.questions.map(question => {
       question.type = question.formType;
       return question;
     });
 
+    Survey.Survey.cssType = "bootstrap";
+    var myCss = {
+      root: "survey-container",
+      row: "row-separator",
+      question: {
+        root: "sv_q",
+        title: "sv_q_title"
+      },
+      checkbox: {
+        root: 'sv_q_checkbox'
+      },
+      radiogroup: {
+        root: 'sv_q_radiogroup'
+      },
+      rating: {
+        root: 'sv_q_rating',
+        item: 'sv_q_rating_item'
+      },
+      navigationButton: "btn btn-block btn-success row-separator"
+    };
+
     var surveyModel = new Survey.Model({
-      questions: data.questions
+      questions: survey.questions
     });
 
-    // $(".survey").Survey({
-    //   model: surveyModel
-    // });
+    $(".survey").Survey({
+      model: surveyModel,
+      css: myCss
+    });
   }
 
 }
 
-SurveyHandlerController.$inject = ['$scope', '$http', '$stateParams', 'commonFactory'];
+SurveyHandlerController.$inject = ['$rootScope', '$scope', '$http', '$stateParams', 'commonFactory'];
 angular.module('app').controller('surveyHandlerController', SurveyHandlerController);

@@ -1,4 +1,4 @@
-function LoginController($scope, $location, commonFactory, authentication) {
+function LoginController($scope, $state, commonFactory, authentication) {
 
   $scope.credentials = {};
 
@@ -10,12 +10,12 @@ function LoginController($scope, $location, commonFactory, authentication) {
             commonFactory.activateAlert(response.data.message, 'danger');
             break;
           case 200:
-            $location.path("/dashboard");
+            location.reload();
             break;
         }
       });
   }
 }
 
-LoginController.$inject = ['$scope', '$location', 'commonFactory', 'authentication'];
+LoginController.$inject = ['$scope', '$state', 'commonFactory', 'authentication'];
 angular.module('app').controller('loginController', LoginController);

@@ -95,7 +95,10 @@ angular
       })
       .state('app.survey-builder.create', {
         url: '/form',
-        templateUrl: 'views/components/survey-builder/surveyForm.html',
+        params: {
+          survey: null
+        },
+        templateUrl: 'views/components/survey-builder/index.html',
         //page title goes here
         ncyBreadcrumb: {
           label: 'Formulario',
@@ -107,7 +110,10 @@ angular
       })
       .state('app.survey-builder.edit', {
         url: '/form/:id',
-        templateUrl: 'views/components/survey-builder/surveyForm.html',
+        params: {
+          survey: null
+        },
+        templateUrl: 'views/components/survey-builder/index.html',
         //page title goes here
         ncyBreadcrumb: {
           label: 'Formulario',
@@ -119,14 +125,25 @@ angular
       })
       .state('app.survey-builder.relations', {
         url: '/relations',
+        params: {
+          survey: null
+        },
         templateUrl: 'views/components/survey-builder/surveyRelations.html',
         //page title goes here
         ncyBreadcrumb: {
           label: 'Relacione',
         },
-        controller: 'surveyBuilderController',
+        controller: 'surveyRelationsController',
         data: {
           isAdminRequired: true
+        },
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/survey-relations.js']
+            });
+          }]
         }
       })
       //ADMINISTRATOR
@@ -251,10 +268,16 @@ angular
         },
         controller: 'surveyHandlerController',
         resolve: {
+          // loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
+          //   // you can lazy load CSS files
+          //   return $ocLazyLoad.load([{
+          //     files: ['css/font-awesome.min.css']
+          //   }]);
+          // }],
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
-              files: ['js/controllers/survey-handler.js', 'js/survey.jquery.min.js']
+              files: ['js/controllers/survey-handler.js']
             });
           }]
         },
@@ -316,12 +339,10 @@ angular
   .run(function($rootScope, $transitions, $state, authentication) {
 
     $rootScope.logout = authentication.logout;
-    $rootScope.client = authentication.currentClient();
 
     $transitions.onStart({
       to: 'appSimple.login'
     }, function(trans) {
-
       if (authentication.isLoggedIn()) {
         // User is authenticated. Redirect to a new Target State
         return trans.router.stateService.target('app.main');
@@ -331,18 +352,18 @@ angular
     $transitions.onStart({
       to: 'app.**'
     }, function(trans) {
-
       if (!authentication.isLoggedIn()) {
         // User isn't authenticated. Redirect to a new Target State
         return trans.router.stateService.target('appSimple.login');
       }
 
-      // let to = trans.$to();
-      // if (to.data.isAdminRequired && $rootScope.client.role.role === 'Admin'){
+      $rootScope.client = authentication.currentClient();
 
-      // }else{
-      //   return trans.router.stateService.target('app.surveys.main');
-      // }
-
+      let to = trans.$to();
+      if ($rootScope.client.role.role != 'Admin') {
+        if (to.data.isAdminRequired) {
+          return trans.router.stateService.target('app.surveys.main');
+        }
+      }
     });
   });

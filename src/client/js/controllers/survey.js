@@ -1,4 +1,4 @@
-function SurveyController($scope, $http, commonFactory) {
+function SurveyController($rootScope, $scope, $http, commonFactory) {
 
   initializeController();
 
@@ -7,7 +7,14 @@ function SurveyController($scope, $http, commonFactory) {
   }
 
   function retrieveSurveys() {
-    $http.get('/api/surveys/')
+    let client = $rootScope.client;
+    let url = '/api/surveys/' + client.username + '/client';
+
+    if (client.role.role === 'Admin') {
+      url = '/api/surveys/';
+    }
+
+    $http.get(url)
       .then(
         function(response) {
           $scope.surveys = response.data;
@@ -19,5 +26,5 @@ function SurveyController($scope, $http, commonFactory) {
   }
 }
 
-SurveyController.$inject = ['$scope', '$http', 'commonFactory'];
+SurveyController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory'];
 angular.module('app').controller('surveyController', SurveyController);

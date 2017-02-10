@@ -10,8 +10,12 @@
      <input type="submit" class="btn btn-success"/>
    </form>
 
+    <div class="input-group row-separator">
+      <div class="input-group-addon"><i class="fa fa-search"></i></div>
+      <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
+    </div>      
 
-   <table class="table table-hover table-striped">
+  <table class="table table-hover table-striped">
     <tbody>
       <tr>
        <td><strong>#</strong></td>
@@ -20,7 +24,7 @@
        <td></td>
        <td></td>
      </tr>
-     <tr ng:repeat="e in business">
+     <tr ng:repeat="e in business | filter:search">
        <td>{{$index + 1}}</td>
        <td>{{e.business}}</td>
        <td>{{e.created | date: yyyy-mm-dd}}</td>

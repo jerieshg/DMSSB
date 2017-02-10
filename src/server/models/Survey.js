@@ -20,6 +20,8 @@ module.exports = mongoose.model('Survey', {
     choices: [String],
     clients: [String],
     service: String,
+    mininumRateDescription: String,
+    maximumRateDescription: String,
     choicesValue: [{
       name: String,
       value: Number

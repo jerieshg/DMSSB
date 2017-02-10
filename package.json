@@ -17,7 +17,8 @@
     "mongoose": "^4.6.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "survey-jquery": "^0.11.0"
   },
   "devDependencies": {
     "babelify": "^7.3.0",

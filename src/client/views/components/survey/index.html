@@ -4,26 +4,31 @@
 
  <div class="row">
 
-     <table class="table table-hover table-striped" style="margin-top:10px;">
-      <tbody>
-        <tr>
-         <td><strong>#</strong></td>
-         <td><strong>Nombre de la encuesta</strong></td>
-         <td><strong>Departamento</strong></td>
-         <td><strong>Responsable</strong></td>
-         <td><strong>Fecha Creada</strong></td>
-         <td></td>
-       </tr>
-       <tr ng:repeat="e in surveys track by e._id">
-         <td>{{$index + 1}}</td>
-         <td>{{e.surveyName}}</td>
-         <td>{{e.department}}</td>
-         <td>{{e.responsible}}</td>
-         <td>{{e.created | date: yyyy-mm-dd}}</td>
-         <td><a class="btn btn-success" ui-sref-active="active" ui-sref="app.surveys.handler({id: e._id, client: 'IT'})">Realizar </a></td>
-       </tr>
-     </tbody>
-   </table>
+  <div class="input-group row-separator">
+    <div class="input-group-addon"><i class="fa fa-search"></i></div>
+    <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
+  </div>  
+
+  <table class="table table-hover table-striped" style="margin-top:10px;">
+    <tbody>
+      <tr>
+       <td><strong>#</strong></td>
+       <td><strong>Nombre de la encuesta</strong></td>
+       <td><strong>Departamento</strong></td>
+       <td><strong>Responsable</strong></td>
+       <td><strong>Fecha Creada</strong></td>
+       <td></td>
+     </tr>
+     <tr ng:repeat="e in surveys | filter:search">
+       <td>{{$index + 1}}</td>
+       <td>{{e.surveyName}}</td>
+       <td>{{e.department}}</td>
+       <td>{{e.responsible}}</td>
+       <td>{{e.created | date: yyyy-mm-dd}}</td>
+       <td><a class="btn btn-success" ui-sref-active="active" ui-sref="app.surveys.handler({id: e._id, client: 'admin'})">Realizar </a></td>
+     </tr>
+   </tbody>
+ </table>
 
 </div>
 <!-- End .row -->
