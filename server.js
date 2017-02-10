@@ -27,9 +27,9 @@
 
 	//Log errors
 	app.use(function(err, req, res, next) {
-		console.error(err.stack)
-		next(err)
-	})
+		console.error(err.stack);
+		next(err);
+	});
 
 	//SERVER START
 	app.set('port', (process.env.PORT || 3000));
