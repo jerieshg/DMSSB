@@ -8675,6 +8675,9 @@ base-chart.chart {
   background-color: #263238;
   color: white; }
 
+.table tbody {
+  background-color: #ffffff; }
+
 .table-striped tbody tr:nth-of-type(odd) {
   background-color: #ffffff; }
 

@@ -11,20 +11,18 @@
   <div class="col-lg-12">
     <div>
       <h5 style="display:inline;">Preguntas</h5>
-      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#surveyQuestionModal">
+      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#surveyQuestionModal">
        <i class="fa fa-plus" aria-hidden="true"/> Nueva Pregunta
      </button>
    </div>
-   <table class="table table-hover table-striped " style="margin-top:10px;">
+   <table class="table table-hover" style="margin-top:10px;">
      <thead >
        <tr>
        <td><strong>#</strong></td>
        <td><strong>Pregunta</strong></td>
        <td><strong>Tipo</strong></td>
        <td><strong>Requerido</strong></td>
-       <td>
-        <strong>Acciones</strong>
-      </td>
+       <td><strong>Acciones</strong></td>
     </thead>
     <tbody>
     <tr ng:repeat="e in survey.questions">

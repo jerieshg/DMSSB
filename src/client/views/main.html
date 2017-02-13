@@ -16,8 +16,7 @@
        <td><strong>Departamento</strong></td>
        <td><strong>Responsable</strong></td>
        <td><strong>Fecha Creada</strong></td>
-       <td></td>
-       <td></td>
+       <td><strong>Acciones</strong></td>
      </tr>
      </thead>
      <tbody>
@@ -27,8 +26,10 @@
        <td>{{e.department}}</td>
        <td>{{e.responsible}}</td>
        <td>{{e.created | date: yyyy-mm-dd}}</td>
-       <td><button class="btn btn-danger" ng-click="deleteSurvey(e._id)">Borrar </button></td>
-       <td><a class="btn btn-primary" ui-sref-active="active" ui-sref="app.survey-builder.edit({id: e._id})">Editar </a></td>
+              <td>
+         <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteSurvey(e._id)"></i>
+         <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.edit({id: e._id})"></i>
+       </td>
      </tr>
    </tbody>
  </table>

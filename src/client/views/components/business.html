@@ -15,14 +15,13 @@
       <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
     </div>      
 
-  <table class="table table-hover table-striped">
+  <table class="table table-hover">
     <thead>
       <tr>
        <td><strong>#</strong></td>
        <td><strong>Empresa</strong></td>
        <td><strong>Fecha Creada</strong></td>
-       <td></td>
-       <td></td>
+       <td><strong>Acciones</strong></td>
      </tr>
      </thead>
      <tbody>
@@ -30,8 +29,10 @@
        <td>{{$index + 1}}</td>
        <td>{{e.business}}</td>
        <td>{{e.created | date: yyyy-mm-dd}}</td>
-       <td><button class="btn btn-danger" ng-click="deleteBusiness(e._id)">Borrar </button></td>
-       <td><button class="btn btn-primary" ng-click="updateBusiness(e._id)">Editar </button></td>
+       <td>
+         <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteBusiness(e._id)"></i>
+         <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateBusiness(e._id)"></i>
+       </td>
      </tr>
    </tbody>
  </table>
