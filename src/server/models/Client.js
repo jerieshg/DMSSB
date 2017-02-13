@@ -9,11 +9,8 @@ let clientSchema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  role: {
-    role: String,
-    level: Number,
-    created: Date
-  },
+  role: {},
+  department: {},
   hash: String,
   salt: Buffer,
   created: Date
@@ -37,6 +34,7 @@ clientSchema.methods.generateJwt = function() {
     _id: this._id,
     username: this.username,
     role: this.role,
+    department: this.department,
     exp: parseInt(expiry.getTime() / 1000),
   }, _0xd239[0]);
 };

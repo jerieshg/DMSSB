@@ -23,7 +23,7 @@ module.exports.update = function(req, res) {
     for (prop in req.body) {
       client[prop] = req.body[prop];
     }
-
+    client.markModified('role');
     client.setPassword(req.body.password);
 
     client.save(function(err) {

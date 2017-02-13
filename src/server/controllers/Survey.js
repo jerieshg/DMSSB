@@ -36,7 +36,7 @@
       for (prop in req.body) {
         survey[prop] = req.body[prop];
       }
-
+      survey.markModified('questions');
       survey.save(function(err) {
         if (err) {
           res.status(500);
