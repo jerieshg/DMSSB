@@ -8688,6 +8688,12 @@ base-chart.chart {
 .modal-backdrop {
   position: relative; }
 
+.fa-trash:before {
+  color: rgba(255, 0, 0, 0.69); }
+
+.fa-pencil:before {
+  color: #29759a; }
+
 /*!
  * surveyjs - Survey JavaScript library v0.11.0
  * Copyright (c) 2015-2017 Devsoft Baltic O�  - http://surveyjs.org/
