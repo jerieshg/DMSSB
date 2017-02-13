@@ -1,11 +1,13 @@
 <div class="sidebar">
+
     <nav class="sidebar-nav">
         <ul class="nav">
-            <li class="nav-item" ng-show="client.role.role === 'Admin'">
+        <!-- If not regular user -->
+            <li class="nav-item" ng-show="client.role.level  < 3">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.main"><i class="icon-speedometer"></i> Dashboard </a>
             </li>
             <li class="divider"></li>
-            <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.admin')}" ng-show="client.role.role === 'Admin'">
+            <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.admin')}" ng-show="client.role.level === 1">
                 <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.admin')}" href="#"><i class="fa fa-cogs"></i> Administrador</a>
                 <ul class="nav-dropdown-items">
                     <li class="nav-item">

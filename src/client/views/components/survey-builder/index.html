@@ -1,36 +1,46 @@
-<div class="animated fadeIn" ng-controller="surveyBuilderController">
+<div class="animated fadeIn">
+ <div ng-include="'views/components/survey-builder/surveyQuestionModal.html'"></div>
+ <div id="alertArea"></div>
 
-  <div ng-include="'views/components/survey-builder/surveyBasicInformation.html'"></div>
+ <div ng-include="'views/components/survey-builder/surveyBasicInformation.html'"></div>
 
-  <div class="form-divider"></div>
+ <div class="form-divider"></div>
 
-  <div class="row">
-    <!-- Survey Preview -->
-    <div class="col-md-6">
-      <table class="table table-hover table-striped table-responsive" style="margin-top:10px;">
-        <tbody>
-          <tr>
-           <td><strong>#</strong></td>
-           <td><strong>Pregunta</strong></td>
-           <td><strong>Tipo</strong></td>
-           <td><strong>Requerido</strong></td>
-           <td></td>
-           <td></td>
-         </tr>
-         <tr ng:repeat="e in survey.questions">
-           <td>{{$index + 1}}</td>
-           <td>{{e.title}}</td>
-           <td>{{e.formType}}</td>
-           <td>{{(e.isRequired) ? 'Si' : 'No'}}</td>
-           <td><button class="btn btn-danger" ng-click="deleteQuestion(e.name)">Borrar </button></td>
-           <td><button class="btn btn-primary" ng-click="updateQuestion(e)">Editar </button></td>
-         </tr>
-       </tbody>
-     </table>
+ <div class="row">
+  <!-- Survey Preview -->
+  <div class="col-lg-12">
+    <div>
+      <h5 style="display:inline;">Preguntas</h5>
+      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#surveyQuestionModal">
+       <i class="fa fa-plus" aria-hidden="true"/> Nueva Pregunta
+     </button>
    </div>
-
-   <div class="col-md-6" ng-include="'views/components/survey-builder/surveyNewQuestion.html'"></div>
-   <!-- end question info -->
- </div>
- <!-- End .row -->
+   <table class="table table-hover table-striped " style="margin-top:10px;">
+     <thead >
+       <tr>
+       <td><strong>#</strong></td>
+       <td><strong>Pregunta</strong></td>
+       <td><strong>Tipo</strong></td>
+       <td><strong>Requerido</strong></td>
+       <td>
+        <strong>Acciones</strong>
+      </td>
+    </thead>
+    <tbody>
+    <tr ng:repeat="e in survey.questions">
+     <td>{{$index + 1}}</td>
+     <td>{{e.title}}</td>
+     <td>{{e.formType}}</td>
+     <td>{{(e.isRequired) ? 'Si' : 'No'}}</td>
+     <td>
+       <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteQuestion(e.name)"></i>
+       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateQuestion(e)" data-toggle="modal" data-target="#surveyQuestionModal"></i>
+     </td>
+   </tr>
+ </tbody>
+</table>
+</div>
+<!-- end question info -->
+</div>
+<!-- End .row -->
 </div>

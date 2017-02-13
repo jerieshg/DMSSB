@@ -7,6 +7,11 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
     generateSurvey();
   }
 
+  function surveyOnComplete(sender){
+    let completedSurvey = sender;
+    let data = completedSurvey.data;
+  }
+
   function generateSurvey() {
     let client = $rootScope.client;
     let url = '/api/surveys/' + $stateParams.id + '/client/' + $stateParams.client + '/';
@@ -30,14 +35,13 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
 
   function buildSurvey(data) {
     const survey = data;
-    console.log(survey);
     survey.questions = survey.questions.map(question => {
       question.type = question.formType;
       return question;
     });
-
+    
     Survey.Survey.cssType = "bootstrap";
-    var myCss = {
+    var customCSS = {
       root: "survey-container",
       row: "row-separator",
       question: {
@@ -63,7 +67,8 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
 
     $(".survey").Survey({
       model: surveyModel,
-      css: myCss
+      css: customCSS,
+      onComplete: surveyOnComplete
     });
   }
 

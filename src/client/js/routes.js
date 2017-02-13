@@ -6,7 +6,7 @@ angular
 
     $ocLazyLoadProvider.config({
       // Set to true if you want to see what and when is dynamically loaded
-      debug: true
+      debug: false
     });
 
     $breadcrumbProvider.setOptions({
@@ -360,7 +360,8 @@ angular
       $rootScope.client = authentication.currentClient();
 
       let to = trans.$to();
-      if ($rootScope.client.role.role != 'Admin') {
+      //if regular user redirect
+      if ($rootScope.client.role.level === 3) {
         if (to.data.isAdminRequired) {
           return trans.router.stateService.target('app.surveys.main');
         }

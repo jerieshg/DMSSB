@@ -24,3 +24,20 @@
 .no-width{
   width: 0%;
 }
+.table td{
+  text-align:center;
+}
+.table thead{
+  background-color: #263238;
+  color:white;
+}
+.table-striped tbody tr:nth-of-type(odd){
+  background-color: #ffffff;
+}
+.modal{
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 4%;
+}
+.modal-backdrop{
+  position: relative;
+}

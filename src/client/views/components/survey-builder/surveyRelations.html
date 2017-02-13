@@ -1,36 +1,40 @@
-<div class="animated fadeIn" ng-init="retrieveServices()" ng-controller="surveyRelationsController">
+<div class="animated fadeIn" ng-init="retrieveServices()">
 
  <div id="alertArea"></div>
-<form name="relationForms" ng-submit="saveSurvey()">
+ <form name="relationForms" ng-submit="saveSurvey(relationForms.$valid)">
   <div class="row-separator">
-  <button class="btn btn-info" ng-click="goToBuilder()">Volver</button>
-    <input type="submit" class="btn btn-success" value="Guardar"/>
+    <button class="btn btn-primary" ng-click="goToBuilder()">
+      <i class="fa fa-arrow-left" aria-hidden="true"/>
+    </button>
+    <button type="submit" class="btn btn-success" >
+    <i class="fa fa-save" aria-hidden="true"/> Guardar Encuesta
+    </button>
   </div>
 
   <table class="table table-hover table-striped" >
-    <tbody>
+    <thead>
       <tr>
        <td><strong>#</strong></td>
        <td><strong>Pregunta</strong></td>
        <td><strong>Servicio</strong></td>
        <td><strong>Clientes</strong></td>
-       <td></td>
-       <td></td>
      </tr>
+     </thead>
+     <tbody>
      <tr ng:repeat="e in survey.questions">
        <td>{{$index + 1}}</td>
        <td>{{e.title}}</td>
        <td>
-       <select name="services" class="form-control" ng-model="e.service" ng-options="item.service as item.service for item in services" required>
-       <option value="">Seleccione un servicio {{optional ? '(optional)' : ''}}</option>
+         <select name="services" class="form-control" ng-model="e.service" ng-options="item.service as item.service for item in services" required>
+           <option value="">Seleccione un servicio {{optional ? '(optional)' : ''}}</option>
          </select>
        </td>
-        <td>
+       <td>
          <select  name="clients" class="form-control" ng-model="e.clients" ng-options="item for item in survey.clients" multiple required>
          </select>
        </td>
      </tr>
    </tbody>
  </table>
- </form>
+</form>
 </div>

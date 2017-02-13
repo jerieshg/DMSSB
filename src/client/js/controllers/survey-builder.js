@@ -3,10 +3,52 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
   initalizeController();
 
   // NAVIGATION - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  $scope.goToRelations = function() {
-    $state.go('app.survey-builder.relations', {
-      'survey': $scope.survey
-    });
+  $scope.goToRelations = function(valid) {
+    if (valid) {
+      $state.go('app.survey-builder.relations', {
+        'survey': $scope.survey
+      });
+    } else {
+      commonFactory.activateAlert('Por favor verifique la encuesta!', 'danger');
+    }
+  }
+
+  //SAVE
+  $scope.saveSurvey = function(valid) {
+    if (valid) {
+
+      if (!$scope.survey.update) {
+        $scope.survey.created = new Date();
+        $http.post("/api/surveys/", $scope.survey)
+          .then(
+            function(response) {
+              // success callback
+              commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'success');
+            },
+            function(response) {
+              // failure callback
+              console.log(response);
+              commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+            }
+          );
+      } else {
+        console.log($scope.survey);
+        $http.put("/api/surveys/" + $scope.survey._id, $scope.survey)
+          .then(
+            function(response) {
+              // success callback
+              commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
+            },
+            function(response) {
+              // failure callback
+              console.log(response);
+              commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+            }
+          );
+      }
+    } else {
+      commonFactory.activateAlert('Por favor verifique la encuesta!', 'danger');
+    }
   }
 
   // RELATED TO RELATIONS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -26,6 +68,24 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
   $scope.updateQuestion = function(question) {
     $scope.newQuestion = angular.copy(question);
     $scope.newQuestion.update = true;
+
+    if ($scope.newQuestion.showChoices) {
+      $scope.choices.number = $scope.newQuestion.choices.length;
+      for (let [index, value] of $scope.newQuestion.choices.entries()) {
+        $scope.selectedChoices[index] = {
+          text: value,
+          value: $scope.newQuestion.choicesValue[index].value
+        };
+      }
+    }
+
+    if ($scope.newQuestion.formType === 'rating') {
+      $scope.linearScale.selectedStart = $scope.newQuestion.rateValues[0];
+      $scope.linearScale.selectedEnd = $scope.newQuestion.rateValues[$scope.newQuestion.rateValues.length - 1];
+      $scope.linearScale.minRateDescr = $scope.newQuestion.mininumRateDescription;
+      $scope.linearScale.maxRateDescr = $scope.newQuestion.maximumRateDescription;
+    }
+
   }
 
   //SURVEY JS - QUESTION INFORMATION - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -40,7 +100,7 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
 
     //for linear scale only
     if ($scope.newQuestion.formType === 'rating') {
-      $scope.newQuestion.rateValues = commonFactory.generateNumberArray($scope.linearScale.selectedStart.label, $scope.linearScale.selectedEnd.label);
+      $scope.newQuestion.rateValues = commonFactory.generateNumberArray($scope.linearScale.selectedStart, $scope.linearScale.selectedEnd);
       $scope.newQuestion.mininumRateDescription = ($scope.linearScale.minRateDescr) ? $scope.linearScale.minRateDescr : 'No Satisfecho';
       $scope.newQuestion.maximumRateDescription = ($scope.linearScale.maxRateDescr) ? $scope.linearScale.maxRateDescr : 'Completamente Satisfecho';
     }
@@ -78,6 +138,7 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
 
   //HELPER FUNCTIONS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   function initalizeController() {
+    $scope.surveyForm = {};
     $scope.choices = {};
     $scope.business = {};
     $scope.clients = {};
@@ -95,12 +156,14 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
     retrieveDepartments();
 
     $scope.choiceOptions = commonFactory.generateNumberArray(1, 20);
-    $scope.linearScaleStart = commonFactory.generateNumber(0, 1);
-    $scope.linearScaleEnd = commonFactory.generateNumber(2, 10);
+    $scope.linearScaleStart = commonFactory.generateNumberArray(0, 1);
+    $scope.linearScaleEnd = commonFactory.generateNumberArray(2, 10);
 
     if ($stateParams.survey) {
+      console.log("THUS");
       $scope.survey = $stateParams.survey;
     } else if ($stateParams.id) {
+      console.log("THAS");
       $http.get('/api/surveys/' + $stateParams.id)
         .then(
           function(response) {
@@ -174,15 +237,5 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
   }
 }
 
-let app = angular.module('app')
 SurveyBuilderController.$inject = ['$scope', '$state', '$http', '$stateParams', 'commonFactory'];
-app.controller('surveyBuilderController', SurveyBuilderController);
-
-app.filter('range', function() {
-  return function(input, total) {
-    total = parseInt(total);
-    for (var i = 0; i < total; i++)
-      input.push(i);
-    return input;
-  };
-})
+angular.module('app').controller('surveyBuilderController', SurveyBuilderController);

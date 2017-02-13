@@ -26,6 +26,7 @@ module.exports = mongoose.model('Survey', {
       name: String,
       value: Number
     }],
+    rateValues: [Number],
     showChoices: Boolean,
     created: Date
   }],

@@ -1,44 +1,48 @@
-function SurveyRelationsController($scope, $state, $http, $stateParams, commonFactory) {
+function SurveyRelationsController($scope, $state, $http, $stateParams, $window, commonFactory) {
 
   initalizeController();
-
-  //SAVE
-  $scope.saveSurvey = function() {
-
-    if (!$scope.survey.update) {
-      $scope.survey.created = new Date();
-      $http.post("/api/surveys/", $scope.survey)
-        .then(
-          function(response) {
-            // success callback
-            commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'success');
-          },
-          function(response) {
-            // failure callback
-            console.log(response);
-            commonFactory.activateAlert('Woops! Algo paso!', 'danger');
-          }
-        );
-    } else {
-      $http.put("/api/surveys/" + $scope.survey._id, $scope.survey)
-        .then(
-          function(response) {
-            // success callback
-            commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
-          },
-          function(response) {
-            // failure callback
-            console.log(response);
-            commonFactory.activateAlert('Woops! Algo paso!', 'danger');
-          }
-        );
-    }
-
-  }
 
   // RELATED TO RELATIONS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   $scope.retrieveServices = function() {
     retrieveServices();
+  }
+
+  //SAVE
+  $scope.saveSurvey = function(valid) {
+    if (valid) {
+
+      if (!$scope.survey.update) {
+        $scope.survey.created = new Date();
+        $http.post("/api/surveys/", $scope.survey)
+          .then(
+            function(response) {
+              // success callback
+              commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'success');
+            },
+            function(response) {
+              // failure callback
+              console.log(response);
+              commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+            }
+          );
+      } else {
+
+        $http.put("/api/surveys/" + $scope.survey._id, $scope.survey)
+          .then(
+            function(response) {
+              // success callback
+              commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
+            },
+            function(response) {
+              // failure callback
+              console.log(response);
+              commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+            }
+          );
+      }
+    } else {
+      commonFactory.activateAlert('Por favor verifique la encuesta!', 'danger');
+    }
   }
 
 
@@ -59,6 +63,9 @@ function SurveyRelationsController($scope, $state, $http, $stateParams, commonFa
 
   function initalizeController() {
     $scope.survey = $stateParams.survey;
+    if (!$scope.survey) {
+      $window.history.back();
+    }
   }
 
   function retrieveServices() {
@@ -77,5 +84,5 @@ function SurveyRelationsController($scope, $state, $http, $stateParams, commonFa
   }
 }
 
-SurveyRelationsController.$inject = ['$scope', '$state', '$http', '$stateParams', 'commonFactory'];
+SurveyRelationsController.$inject = ['$scope', '$state', '$http', '$stateParams', '$window', 'commonFactory'];
 angular.module('app').controller('surveyRelationsController', SurveyRelationsController);

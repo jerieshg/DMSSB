@@ -32,7 +32,7 @@ function ClientController($scope, $http, commonFactory, authentication) {
   }
 
   $scope.updateClient = function(client) {
-    $scope.selectedClient = client;
+    $scope.selectedClient = angular.copy(client);
     $scope.selectedClient.edit = true;
   }
 

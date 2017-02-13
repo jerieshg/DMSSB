@@ -11,6 +11,7 @@ let clientSchema = new mongoose.Schema({
   },
   role: {
     role: String,
+    level: Number,
     created: Date
   },
   hash: String,

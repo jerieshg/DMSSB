@@ -10,7 +10,7 @@
   </div>  
 
   <table class="table table-hover table-striped" style="margin-top:10px;">
-    <tbody>
+    <thead>
       <tr>
        <td><strong>#</strong></td>
        <td><strong>Nombre de la encuesta</strong></td>
@@ -19,6 +19,8 @@
        <td><strong>Fecha Creada</strong></td>
        <td></td>
      </tr>
+     </thead>
+     <tbody>
      <tr ng:repeat="e in surveys | filter:search">
        <td>{{$index + 1}}</td>
        <td>{{e.surveyName}}</td>

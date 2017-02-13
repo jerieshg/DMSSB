@@ -1,73 +1,77 @@
-<form name="surveyForm" ng-submit="goToRelations()">
-  <div class=" col-md-6">
-      <input type="submit" class="btn btn-info" value="Siguiente">
-      </input>
-  </div>
+<form name="surveyForm">
+  <div>
+   <button type="submit" class="btn btn-primary" ng-click="goToRelations(surveyForm.$valid)">
+     <i class="fa fa-arrow-right" aria-hidden="true"/>
+   </button>
+   <button ng-show="survey.update" class="btn btn-success" ng-click="saveSurvey(surveyForm.$valid)">
+     <i class="fa fa-save" aria-hidden="true"/>  Guardar Encuesta
+   </button>
+ </div>
 
-  <div class="form-divider"></div>
-  <div class="row row-separator">
+ <div class="form-divider"></div>
+ <div class="row row-separator">
 
   <div class=" col-md-12">
-      <label for="empresa">Nombre de encuesta:</label>
-       <input type="text" class="form-control" id="surveyName" name="surveyName" placeholder="Nombre de la encuesta" ng-model="survey.surveyName" required>
-      <div ng-messages="surveyForm.surveyName.$error" ng-show="surveyForm.surveyName.$dirty && surveyForm.surveyName.$invalid">
-        <div ng-message="required" class="text-danger">* Este campo es requerido</div>
-      </div>
-    </div>
-
-    <div class=" col-md-6">
-      <label for="empresa">Empresa:</label>
-      <select id="empresa" name="business" class="form-control" ng-model="survey.business" ng-options="item.business as item.business for item in business" required>
-        <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
-      </select>
-      <div ng-messages="surveyForm.business.$error" ng-show="surveyForm.business.$dirty && surveyForm.business.$invalid">
-        <div ng-message="required" class="text-danger">* Este campo es requerido</div>
-      </div>
-    </div>
-
-    <div class="col-md-6 " >
-      <label for="periodo">Periodo:</label>
-      <div class="input-daterange input-group" id="datepicker">
-        <input type="text" class="form-control" name="start" ng-model="survey.period.start"  placeholder="Periodo 1" required/>
-        <span class="input-group-addon">hasta</span>
-        <input type="text" class="form-control" name="end" ng-model="survey.period.end" placeholder="Periodo 2" required/>
-      </div>
-      <div ng-messages="surveyForm.start.$error" ng-show="surveyForm.start.$dirty && surveyForm.start.$invalid">
-        <div ng-message="required" class="text-danger">* Este campo es requerido</div>
-      </div>
+    <label for="empresa">Nombre de encuesta:</label>
+    <input type="text" class="form-control" id="surveyName" name="surveyName" placeholder="Nombre de la encuesta" ng-model="survey.surveyName" required>
+    <div ng-messages="surveyForm.surveyName.$error" ng-show="surveyForm.surveyName.$dirty && surveyForm.surveyName.$invalid">
+      <div ng-message="required" class="text-danger">* Este campo es requerido</div>
     </div>
   </div>
 
-  <div class="row row-separator">
-    <div class="col-md-6">
-      <label for="dept">Departamento:</label>
-      <select id="dept" name="dept" class="form-control" ng-model="survey.department" ng-options="item.department as item.department for item in departments" required>
-        <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-      </select>
-      <div ng-messages="surveyForm.dept.$error" ng-show="surveyForm.dept.$dirty && surveyForm.dept.$invalid">
-        <div ng-message="required" class="text-danger">* Este campo es requerido</div>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <label for="responsible">Responsable:</label>
-      <input type="text" class="form-control" id="responsible" name="responsible" placeholder="Responsable" ng-model="survey.responsible" required>
-      <div ng-messages="surveyForm.responsible.$error" ng-show="surveyForm.responsible.$dirty && surveyForm.responsible.$invalid">
-        <div ng-message="required" class="text-danger">* Este campo es requerido</div>
-      </div>
+  <div class=" col-md-6">
+    <label for="empresa">Empresa:</label>
+    <select id="empresa" name="business" class="form-control" ng-model="survey.business" ng-options="item.business as item.business for item in business" required>
+      <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
+    </select>
+    <div ng-messages="surveyForm.business.$error" ng-show="surveyForm.business.$dirty && surveyForm.business.$invalid">
+      <div ng-message="required" class="text-danger">* Este campo es requerido</div>
     </div>
   </div>
 
-  <div class="row row-separator">
-    <div class="col-md-6">
-      <label for="clientes">Clientes:</label>
-      <select id="clientes" name="clients" class="form-control" ng-model="survey.clients" ng-options="item.username as item.username for item in clients" multiple required>
-      </select>
-      <div ng-messages="surveyForm.clients.$error" ng-show="surveyForm.clients.$dirty && surveyForm.clients.$invalid">
-        <div ng-message="required" class="text-danger">* Este campo es requerido</div>
-      </div>
+  <div class="col-md-6 " >
+    <label for="periodo">Periodo:</label>
+    <div class="input-daterange input-group" id="datepicker">
+      <input type="text" class="form-control" name="start" ng-model="survey.period.start"  placeholder="Periodo 1" required/>
+      <span class="input-group-addon">hasta</span>
+      <input type="text" class="form-control" name="end" ng-model="survey.period.end" placeholder="Periodo 2" required/>
+    </div>
+    <div ng-messages="surveyForm.start.$error" ng-show="surveyForm.start.$dirty && surveyForm.start.$invalid">
+      <div ng-message="required" class="text-danger">* Este campo es requerido</div>
     </div>
   </div>
+</div>
+
+<div class="row row-separator">
+  <div class="col-md-6">
+    <label for="dept">Departamento:</label>
+    <select id="dept" name="dept" class="form-control" ng-model="survey.department" ng-options="item.department as item.department for item in departments" required>
+      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+    </select>
+    <div ng-messages="surveyForm.dept.$error" ng-show="surveyForm.dept.$dirty && surveyForm.dept.$invalid">
+      <div ng-message="required" class="text-danger">* Este campo es requerido</div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <label for="responsible">Responsable:</label>
+    <input type="text" class="form-control" id="responsible" name="responsible" placeholder="Responsable" ng-model="survey.responsible" required>
+    <div ng-messages="surveyForm.responsible.$error" ng-show="surveyForm.responsible.$dirty && surveyForm.responsible.$invalid">
+      <div ng-message="required" class="text-danger">* Este campo es requerido</div>
+    </div>
+  </div>
+</div>
+
+<div class="row row-separator">
+  <div class="col-md-6">
+    <label for="clientes">Clientes:</label>
+    <select id="clientes" name="clients" class="form-control" ng-model="survey.clients" ng-options="item.username as item.username for item in clients" multiple required>
+    </select>
+    <div ng-messages="surveyForm.clients.$error" ng-show="surveyForm.clients.$dirty && surveyForm.clients.$invalid">
+      <div ng-message="required" class="text-danger">* Este campo es requerido</div>
+    </div>
+  </div>
+</div>
 </form>
 <script type="text/javascript">
   $("#datepicker input").datepicker({});
