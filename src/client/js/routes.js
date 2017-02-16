@@ -42,7 +42,14 @@ angular
             return $ocLazyLoad.load([{
               files: [
                 'js/factories/common.js',
-                'js/controllers/logout.js'
+                'js/controllers/logout.js',
+              ]
+            }, {
+              serie: true,
+              name: 'chart.js',
+              files: [
+                'bower_components/chart.js/dist/Chart.min.js',
+                'bower_components/angular-chart.js/dist/angular-chart.min.js'
               ]
             }]);
           }]
@@ -88,7 +95,7 @@ angular
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
-              files: ['js/controllers/survey-builder.js']
+              files: ['js/controllers/survey/survey-builder.js']
             });
           }]
         }
@@ -141,7 +148,30 @@ angular
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
-              files: ['js/controllers/survey-relations.js']
+              files: ['js/controllers/survey/survey-relations.js']
+            });
+          }]
+        }
+      })
+      .state('app.survey-builder.stats', {
+        url: '/:id/stats/',
+        params: {
+          survey: null
+        },
+        templateUrl: 'views/components/survey-builder/surveyStats.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Estadisticas',
+        },
+        controller: 'surveyStatsController',
+        data: {
+          isAdminRequired: true
+        },
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/survey/survey-stats.js']
             });
           }]
         }
@@ -165,7 +195,7 @@ angular
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load files for an existing module
             return $ocLazyLoad.load({
-              files: ['js/controllers/clients.js']
+              files: ['js/controllers/admin/clients.js']
             });
           }]
         },
@@ -183,7 +213,7 @@ angular
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load files for an existing module
             return $ocLazyLoad.load({
-              files: ['js/controllers/departments.js']
+              files: ['js/controllers/admin/departments.js']
             });
           }]
         },
@@ -201,7 +231,7 @@ angular
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load files for an existing module
             return $ocLazyLoad.load({
-              files: ['js/controllers/business.js']
+              files: ['js/controllers/admin/business.js']
             });
           }]
         },
@@ -219,7 +249,7 @@ angular
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load files for an existing module
             return $ocLazyLoad.load({
-              files: ['js/controllers/service.js']
+              files: ['js/controllers/admin/service.js']
             });
           }]
         },
@@ -251,7 +281,7 @@ angular
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
-              files: ['js/controllers/survey.js']
+              files: ['js/controllers/survey/survey.js']
             });
           }]
         },
@@ -268,16 +298,10 @@ angular
         },
         controller: 'surveyHandlerController',
         resolve: {
-          // loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
-          //   // you can lazy load CSS files
-          //   return $ocLazyLoad.load([{
-          //     files: ['css/font-awesome.min.css']
-          //   }]);
-          // }],
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
-              files: ['js/controllers/survey-handler.js']
+              files: ['js/controllers/survey/survey-handler.js']
             });
           }]
         },

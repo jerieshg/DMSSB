@@ -27,7 +27,7 @@
        <td>{{e.department}}</td>
        <td>{{e.responsible}}</td>
        <td>{{e.created | date: yyyy-mm-dd}}</td>
-       <td><a class="btn btn-success" ui-sref-active="active" ui-sref="app.surveys.handler({id: e._id, client: 'admin'})">Realizar </a></td>
+       <td><a class="btn btn-success" ui-sref-active="active" ui-sref="app.surveys.handler({id: e._id, client: client.username})">Realizar </a></td>
      </tr>
    </tbody>
  </table>

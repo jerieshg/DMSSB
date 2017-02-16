@@ -8,7 +8,7 @@ function SurveyController($rootScope, $scope, $http, commonFactory) {
 
   function retrieveSurveys() {
     let client = $rootScope.client;
-    let url = '/api/surveys/' + client.username + '/client';
+    let url = `/api/surveys/clients/${client.username}`;
 
     if (client.role.role === 'Admin') {
       url = '/api/surveys/';

@@ -1,0 +1,113 @@
+<div class="animated fadeIn">
+<!-- 
+  <div class="statsTabs">
+   <md-content class="md-padding">
+    <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect>
+      <md-tab ng-repeat="service in services"
+      label="{{service.service}}">
+      <div class="demo-tab tab{{$index%4}}" >
+
+        <div class="card" ng-repeat="e in service.charts">
+          <div class="card-header">
+            <i class="fa fa-asterisk icon-bg"></i>{{e.question}}
+          </div>
+          <div class="card-block" >
+            <canvas ng-if="showChartType(e.formType, 'bar')" class="chart chart-bar" chart-data="e.data" chart-labels="e.labels" chart-options="options">
+            </canvas>
+
+            <canvas ng-if="showChartType(e.formType, 'pie')" class="chart chart-pie" chart-data="e.data" chart-labels="e.labels" chart-options="pieOptions">
+            </canvas>
+
+            <canvas ng-if="showChartType(e.formType, 'horizontal-bar')" class="chart chart-horizontal-bar" chart-data="e.data" chart-labels="e.labels" chart-options="options">
+            </canvas>
+
+            <div ng-if="showChartType(e.formType, 'text')" >
+             <table class="table table-hover">
+               <tbody>
+                 <tr ng:repeat="text in e.labels">
+                   <td>{{text}}</td>
+                 </tr>
+               </tbody>
+             </table>
+           </div>
+         </div>
+       </div>
+
+     </div>
+   </md-tab>
+ </md-tabs>
+</md-content> -->
+
+
+<md-content>
+  <md-tabs md-dynamic-height md-border-bottom>
+    <md-tab  ng-repeat="service in services" label="{{service.service}} - ({{service.charts.length}})">
+      <md-content class="md-padding">
+        <div class="card" ng-repeat="e in service.charts">
+          <div class="card-header">
+            <i class="fa fa-asterisk icon-bg"></i>{{e.question}}
+          </div>
+          <div class="card-block" >
+          
+            <canvas ng-if="showChartType(e.formType, 'bar')" class="chart chart-bar" chart-data="e.data" chart-labels="e.labels" chart-options="options">
+            </canvas>
+
+            <canvas ng-if="showChartType(e.formType, 'pie')" class="chart chart-pie" chart-data="e.data" chart-labels="e.labels" chart-options="pieOptions">
+            </canvas>
+
+            <canvas ng-if="showChartType(e.formType, 'horizontal-bar')" class="chart chart-horizontal-bar" chart-data="e.data" chart-labels="e.labels" chart-options="horizontalBarOptions">
+            </canvas>
+
+            <div ng-if="showChartType(e.formType, 'text')" >
+             <table class="table table-hover">
+               <tbody>
+                 <tr ng:repeat="text in e.labels">
+                   <td>{{text}}</td>
+                 </tr>
+               </tbody>
+             </table>
+           </div>
+         </div>
+
+       </div>
+     </md-content>
+   </md-tab>
+ </md-tabs>
+</md-content>
+</div>
+
+
+
+
+
+
+
+
+<!-- <div class="card" ng-repeat="e in charts">
+  <div class="card-header">
+    <i class="fa fa-asterisk icon-bg"></i>{{e.question}}
+
+  </div>
+  <div class="card-block" >
+
+    <canvas ng-if="showChartType(e.formType, 'bar')" class="chart chart-bar" chart-data="e.data" chart-labels="e.labels" chart-options="options">
+    </canvas>
+    <canvas ng-if="showChartType(e.formType, 'pie')" class="chart chart-pie" chart-data="e.data" chart-labels="e.labels" chart-options="pieOptions">
+    </canvas>
+    <canvas ng-if="showChartType(e.formType, 'horizontal-bar')" class="chart chart-horizontal-bar" chart-data="e.data" chart-labels="e.labels" chart-options="options">
+    </canvas>
+    <div ng-if="showChartType(e.formType, 'text')" >
+     <table class="table table-hover">
+       <tbody>
+         <tr ng:repeat="text in e.labels">
+           <td>{{text}}</td>
+         </tr>
+       </tbody>
+     </table>
+   </div>
+
+
+ </div>
+</div> -->
+
+</div>

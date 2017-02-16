@@ -16,7 +16,8 @@ angular
     'ui.router',
     'oc.lazyLoad',
     'ncy-angular-breadcrumb',
-    'angular-loading-bar'
+    'angular-loading-bar',
+    'ngMaterial'
   ])
   .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
     cfpLoadingBarProvider.includeSpinner = false;

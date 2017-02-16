@@ -70,7 +70,7 @@ function SurveyRelationsController($scope, $state, $http, $stateParams, $window,
 
   function retrieveServices() {
     if ($scope.survey.department) {
-      let url = '/api/services/' + $scope.survey.department + '/department/';
+      let url = '/api/services/departments/' + $scope.survey.department;
       $http.get(url)
         .then(
           function(response) {

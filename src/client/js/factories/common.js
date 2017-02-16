@@ -40,6 +40,13 @@ angular.module('app').factory('commonFactory', function() {
       return array.map(function(item) {
         return item.name;
       }).indexOf(name);
+    },
+
+    groupBy: function(array, key) {
+      return array.reduce(function(rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+      }, {});
     }
   }
 

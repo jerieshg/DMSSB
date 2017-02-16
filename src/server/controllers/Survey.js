@@ -83,7 +83,7 @@
     Survey.find({
       questions: {
         $elemMatch: {
-          clients: [client]
+          clients: client
         }
       }
     }, function(error, surveys) {

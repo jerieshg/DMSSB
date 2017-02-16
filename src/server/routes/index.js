@@ -23,23 +23,29 @@ module.exports = function(router) {
   let Service = require('../controllers/Service');
   //Authentication API calls
   let Authentication = require('../controllers/Authentication');
-  //Authentication API calls
+  //Profile API calls
   let Profile = require('../controllers/Profile');
+  //Survey Responses API calls
+  let SurveyResponse = require('../controllers/SurveyResponse');
 
 
   //SURVEY ROUTES
   router.route('/api/surveys/')
     .get(Survey.readAll)
     .post(Survey.create);
-  router.route('/api/surveys/:id')
+  router.route('/api/surveys/:id/')
     .put(Survey.update)
     .delete(Survey.delete);
-  router.route('/api/surveys/:id')
+  router.route('/api/surveys/:id/')
     .get(Survey.find);
-  router.route('/api/surveys/:client/client')
+  router.route('/api/surveys/clients/:client/')
     .get(Survey.findByClient);
-  router.route('/api/surveys/:id/client/:client/')
-    .get(Survey.findbyClientAndId);
+  router.route('/api/surveys/:id/clients/:client/')
+    .get(Survey.findbyClientAndId)
+  router.route('/api/surveys/responses/')
+    .post(SurveyResponse.createMany)
+  router.route('/api/surveys/:id/responses/')
+    .get(SurveyResponse.readBySurveyId);
 
   //BUSINESS ROUTES
   router.route('/api/business/')
@@ -89,7 +95,7 @@ module.exports = function(router) {
     .delete(Service.delete);
   router.route('/api/services/:id')
     .get(Service.find);
-  router.route('/api/services/:dept/department/')
+  router.route('/api/services/departments/:dept')
     .get(Service.findByDepartment);
 
   //AUTHENTICATION ROUTES
@@ -100,6 +106,7 @@ module.exports = function(router) {
   //AUTHENTICATION ROUTES
   router.route('/api/profile/')
     .get(auth, Profile.readProfile);
+
 
   // router to handle all angular requests
   router.get('*', function(req, res) {

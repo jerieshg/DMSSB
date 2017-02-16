@@ -32,7 +32,6 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
             }
           );
       } else {
-        console.log($scope.survey);
         $http.put("/api/surveys/" + $scope.survey._id, $scope.survey)
           .then(
             function(response) {
@@ -62,7 +61,6 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
     let removeIndex = commonFactory.indexInArray($scope.survey.questions, name);
     //if found delete it
     ~removeIndex && $scope.survey.questions.splice(removeIndex, 1);
-    //updates survey
   }
 
   $scope.updateQuestion = function(question) {
@@ -160,10 +158,8 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
     $scope.linearScaleEnd = commonFactory.generateNumberArray(2, 10);
 
     if ($stateParams.survey) {
-      console.log("THUS");
       $scope.survey = $stateParams.survey;
     } else if ($stateParams.id) {
-      console.log("THAS");
       $http.get('/api/surveys/' + $stateParams.id)
         .then(
           function(response) {
