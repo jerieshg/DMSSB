@@ -24,6 +24,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
   function processServiceGlobal(allResults) {
     let groupedService = commonFactory.groupBy(allResults, 'service');
+    console.log(groupedService);
 
     Object.keys(groupedService).map((service) => {
 

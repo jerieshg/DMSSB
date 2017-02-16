@@ -9,20 +9,26 @@
           </button>
         </div>
         <div class="modal-body">
+        <div class="col-md-2 modal-legend">
+               <strong>Acciones: </strong>
+            <i class="fa fa-copy" style="margin-right:5%;" ng-click="copyQuestion()"></i>
+            <i class="fa fa-paste" ng-click="pasteQuestion()"></i>
+           </div>
+        <div class="col-md-10">
           <div class="row row-separator">
             <div class="col-sm-7">
-            <input ng-model="newQuestion.title" name="questionTitle" class="form-control" type="text" placeholder="Titulo de pregunta" required/>
+              <input ng-model="newQuestion.title" name="questionTitle" class="form-control" type="text" placeholder="Titulo de pregunta" required/>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
               <div class="checkbox">
                 <label>
-                <input type="checkbox" value="true" ng-model="newQuestion.isRequired">Requerido</label>
+                  <input type="checkbox" value="true" ng-model="newQuestion.isRequired">Requerido</label>
                 </div>
               </div>
             </div>
 
             <div class="row-separator">
-            <select ng-model="newQuestion.formType" ng-change="onQuestionTypeChange()" class="form-control" name="questionFormType" required>
+              <select ng-model="newQuestion.formType" ng-change="onQuestionTypeChange()" class="form-control" name="questionFormType" required>
                 <option value="">Seleccione un tipo de pregunta</option>
                 <option value="text">Texto</option>
                 <option value="checkbox">Checkbox</option>
@@ -36,14 +42,14 @@
             <!-- Informacion de las opciones -->
             <div class="row row-separator " ng-show="newQuestion.showChoices">
               <div class="col-sm-4">
-              <select id="choicesSelect" class="form-control" ng-model="choices.number" ng-options="item for item in choiceOptions" name="questionChoiceOpts" ng-required="newQuestion.showChoices">
+                <select id="choicesSelect" class="form-control" ng-model="choices.number" ng-options="item for item in choiceOptions" name="questionChoiceOpts" ng-required="newQuestion.showChoices">
                   <option value=""># de opciones {{optional ? '(optional)' : ''}}</option>
                 </select>
               </div>
               <div class="col-sm-8">
-              <div ng-repeat="n in [] | range:choices.number" class="row row-separator">
+                <div ng-repeat="n in [] | range:choices.number" class="row row-separator">
                   <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Opcion" ng-model="selectedChoices[$index].text" name="option-$index" ng-required="newQuestion.showChoices">
+                    <input type="text" class="form-control" placeholder="Opcion" ng-model="selectedChoices[$index].text" name="option-$index" ng-required="newQuestion.showChoices">
                     <span class="input-group-addon">-</span>
                     <input type="number" class="form-control" placeholder="Valor" ng-model="selectedChoices[$index].value" name="value-$index" ng-required="newQuestion.showChoices">
                   </div>
@@ -69,14 +75,16 @@
                </div>
              </div>
            </div>
+           </div>
+           
          </div>
          <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
           <button type="submit" class="btn btn-success">
            <i class="fa fa-save" aria-hidden="true"/> Guardar pregunta
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+         </button>
+       </div>
+     </form>
+   </div>
+ </div>
 </div>

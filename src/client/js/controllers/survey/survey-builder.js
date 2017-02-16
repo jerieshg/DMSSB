@@ -2,6 +2,15 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
 
   initalizeController();
 
+  $scope.copyQuestion = function() {
+    $scope.questionCopy = angular.copy($scope.newQuestion);
+  }
+
+  $scope.pasteQuestion = function() {
+    $scope.updateQuestion($scope.questionCopy);
+    $scope.newQuestion.update = false;
+  }
+
   // NAVIGATION - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   $scope.goToRelations = function(valid) {
     if (valid) {
@@ -106,7 +115,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
       $scope.survey.questions.push(angular.copy($scope.newQuestion));
     }
 
-    clearQuestion();
+    $scope.clearQuestion();
   };
 
   $scope.onQuestionTypeChange = function() {
@@ -130,6 +139,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
 
   //HELPER FUNCTIONS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   function initalizeController() {
+    $scope.questionCopy = {};
     $scope.surveyForm = {};
     $scope.choices = {};
     $scope.business = {};
@@ -137,7 +147,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
     $scope.departments = {};
     $scope.selectedChoices = [{}];
     $scope.linearScale = {};
-    clearQuestion();
+    
 
     $scope.survey = $scope.survey || {
       questions: [],
@@ -198,7 +208,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
       });
   }
 
-  function clearQuestion() {
+  $scope.clearQuestion = function() {
     $scope.selectedChoices = [{}];
     $scope.linearScale = {};
     $scope.newQuestion = {

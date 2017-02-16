@@ -13,6 +13,7 @@
       <tr>
        <td><strong>#</strong></td>
        <td><strong>Nombre de la encuesta</strong></td>
+       <td><strong>Encuesta General</strong></td>
        <td><strong>Departamento</strong></td>
        <td><strong>Responsable</strong></td>
        <td><strong>Fecha Creada</strong></td>
@@ -23,10 +24,11 @@
      <tr ng:repeat="e in surveys | filter:search">
        <td>{{$index + 1}}</td>
        <td>{{e.surveyName}}</td>
+       <td>{{e.general ? 'Si' : 'No'}}</td>
        <td>{{e.department}}</td>
        <td>{{e.responsible}}</td>
        <td>{{e.created | date: yyyy-mm-dd}}</td>
-              <td>
+       <td>
          <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteSurvey(e._id)"></i>
          <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.edit({id: e._id})"></i>
          <i class="fa fa-bar-chart" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.stats({id: e._id})"></i>
