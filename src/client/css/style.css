@@ -8702,6 +8702,9 @@ base-chart.chart {
   /*max-height: 4rem;*/
   /*overflow-y: auto;*/ }
 
+.sv_p_title {
+  margin: 2% 0 1% 0; }
+
 /*!
  * surveyjs - Survey JavaScript library v0.11.0
  * Copyright (c) 2015-2017 Devsoft Baltic O�  - http://surveyjs.org/

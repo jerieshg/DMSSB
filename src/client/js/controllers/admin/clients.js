@@ -53,6 +53,7 @@ function ClientController($scope, $http, commonFactory, authentication) {
   function initializeController() {
     retrieveClients();
     retrieveRoles();
+    retrieveDepartments();
   }
 
   function retrieveClients() {
@@ -72,6 +73,18 @@ function ClientController($scope, $http, commonFactory, authentication) {
       .then(
         function(response) {
           $scope.roles = response.data;
+        },
+        function(response) {
+          console.log(response);
+        }
+      );
+  }
+
+  function retrieveDepartments() {
+    $http.get('/api/departments/')
+      .then(
+        function(response) {
+          $scope.departments = response.data;
         },
         function(response) {
           console.log(response);

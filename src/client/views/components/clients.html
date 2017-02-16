@@ -2,17 +2,35 @@
  <div id="alertArea"></div>
 
  <div class="row" ng-controller="clientsController" ng-submit="saveClient()">
-  <form name="clientForm" class="form-group">
-   <label for="username">Usuario:</label>
-   <input type="text" id="username" class="form-control" ng-model="selectedClient.username" required><br>
-   <label for="password">Contraseña:</label>
-   <input type="password" id="password" class="form-control" ng-model="selectedClient.password" required><br/>
-   <label for="role">Role:</label>
-   <select class="form-control" ng-model="selectedClient.role" ng-options="item.role for item in roles track by item.role">
-    <option value="">Seleccione un rol {{optional ? '(optional)' : ''}}</option>
-  </select>
-  <br/>
-  <input type="submit" class="btn btn-success"/>
+
+  <form name="clientForm" class="row row-separator">
+    <div class="col-md-6">
+      <label for="username">Usuario:</label>
+      <input type="text" id="username" class="form-control" ng-model="selectedClient.username" required>
+    </div>
+
+    <div class="col-md-6">
+     <label for="password">Contraseña:</label>
+     <input type="password" id="password" class="form-control" ng-model="selectedClient.password" required>
+   </div>
+
+   <div class="col-md-6 row-separator">
+    <label for="role">Role:</label>
+    <select class="form-control" ng-model="selectedClient.role" ng-options="item.role for item in roles track by item.role" required>
+      <option value="">Seleccione un rol {{optional ? '(optional)' : ''}}</option>
+    </select>
+  </div>
+
+  <div class="col-md-6" ng-show="selectedClient.role.role === 'Sub-Admin'">
+    <label for="role">Departamento:</label>
+    <select class="form-control" ng-model="selectedClient.department" ng-options="item.department as item.department for item in departments">
+      <option value="">Seleccione un departament {{optional ? '(optional)' : ''}}</option>
+    </select>
+  </div>
+
+  <div class="col-md-12">
+    <input type="submit" class="btn btn-success"/>
+  </div>
 </form>
 
 <div class="input-group row-separator">
@@ -26,6 +44,7 @@
       <td><strong>#</strong></td>
       <td><strong>Usuario</strong></td>
       <td><strong>Rol</strong></td>
+      <td><strong>Departamento</strong></td>
       <td><strong>Fecha Creada</strong></td>
       <td><strong>Acciones</strong></td>
     </tr>
@@ -35,6 +54,7 @@
      <td>{{$index + 1}}</td>
      <td>{{e.username}}</td>
      <td>{{e.role.role}}</td>
+     <td>{{(e.department) ? e.department : 'N/A'}}</td>
      <td>{{e.created | date: yyyy-mm-dd}}</td>
      <td>
        <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteClient(e._id)"></i>

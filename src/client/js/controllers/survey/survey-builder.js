@@ -1,4 +1,4 @@
-function SurveyBuilderController($scope, $state, $http, $stateParams, commonFactory) {
+function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams, commonFactory) {
 
   initalizeController();
 
@@ -146,7 +146,8 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
     clearQuestion();
 
     $scope.survey = $scope.survey || {
-      questions: []
+      questions: [],
+      department: $rootScope.client.department
     };
 
     retrieveBusiness();
@@ -233,5 +234,5 @@ function SurveyBuilderController($scope, $state, $http, $stateParams, commonFact
   }
 }
 
-SurveyBuilderController.$inject = ['$scope', '$state', '$http', '$stateParams', 'commonFactory'];
+SurveyBuilderController.$inject = ['$rootScope', '$scope', '$state', '$http', '$stateParams', 'commonFactory'];
 angular.module('app').controller('surveyBuilderController', SurveyBuilderController);

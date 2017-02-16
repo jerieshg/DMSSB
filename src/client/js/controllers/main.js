@@ -1,4 +1,4 @@
-function MainController($scope, $http, commonFactory) {
+function MainController($rootScope, $scope, $http, commonFactory) {
 
   initializeController();
 
@@ -23,7 +23,13 @@ function MainController($scope, $http, commonFactory) {
   }
 
   function retrieveSurveys() {
-    $http.get('/api/surveys/')
+    let url = '/api/surveys/';
+
+    if ($rootScope.client.role.level === 2) {
+      url = `/api/surveys/department/${$rootScope.client.department}`;
+    }
+
+    $http.get(url)
       .then(
         function(response) {
           $scope.surveys = response.data;
@@ -35,5 +41,5 @@ function MainController($scope, $http, commonFactory) {
   }
 }
 
-MainController.$inject = ['$scope', '$http', 'commonFactory'];
+MainController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory'];
 angular.module('app').controller('mainController', MainController);

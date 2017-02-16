@@ -10,7 +10,7 @@ let clientSchema = new mongoose.Schema({
     unique: true
   },
   role: {},
-  department: {},
+  department: String,
   hash: String,
   salt: Buffer,
   created: Date

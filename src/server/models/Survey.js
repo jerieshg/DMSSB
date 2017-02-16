@@ -30,5 +30,6 @@ module.exports = mongoose.model('Survey', {
     showChoices: Boolean,
     created: Date
   }],
+  general: Boolean,
   created: Date
 });

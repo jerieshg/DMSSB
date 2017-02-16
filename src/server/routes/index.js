@@ -42,6 +42,10 @@ module.exports = function(router) {
     .get(Survey.findByClient);
   router.route('/api/surveys/:id/clients/:client/')
     .get(Survey.findbyClientAndId)
+  router.route('/api/surveys/department/:dept/')
+    .get(Survey.findByDepartment)
+  router.route('/api/surveys/:id/department/:dept/')
+    .get(Survey.findbyDeptAndId)
   router.route('/api/surveys/responses/')
     .post(SurveyResponse.createMany)
   router.route('/api/surveys/:id/responses/')

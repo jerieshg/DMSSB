@@ -81,11 +81,15 @@
   module.exports.findByClient = function(req, res) {
     let client = req.params.client;
     Survey.find({
-      questions: {
-        $elemMatch: {
-          clients: client
+      $or: [{
+        questions: {
+          $elemMatch: {
+            clients: client
+          }
         }
-      }
+      }, {
+        general: true
+      }]
     }, function(error, surveys) {
       if (error) {
         res.status(500);
@@ -115,7 +119,37 @@
         return res.send(error);
       }
 
-      survey.questions = survey.questions.filter(question => question.clients.includes(req.params.client));
+      if (!survey.general) {
+        survey.questions = survey.questions.filter(question => question.clients.includes(req.params.client));
+      }
+
+      res.json(survey);
+    });
+  }
+
+  module.exports.findByDepartment = function(req, res) {
+    Survey.find({
+      department: req.params.dept
+    }, function(error, survey) {
+      if (error) {
+        res.status(500);
+        return res.send(error);
+      }
+
+
+      res.json(survey);
+    });
+  }
+
+  module.exports.findbyDeptAndId = function(req, res) {
+    Survey.findOne({
+      _id: req.params.id,
+      department: req.params.dept
+    }, function(error, survey) {
+      if (error) {
+        res.status(500);
+        return res.send(error);
+      }
 
       res.json(survey);
     });

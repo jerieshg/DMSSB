@@ -70,13 +70,14 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
   }
 
   function generateSurvey() {
-    let client = $rootScope.client;
-    let url = '/api/surveys/' + $stateParams.id + '/clients/' + $stateParams.client + '/';
+    let url = `/api/surveys/${$stateParams.id}/clients/${$stateParams.client}/`;
 
-    if (client.role.role === 'Admin') {
+    if ($rootScope.client.role.level === 1) {
       url = '/api/surveys/' + $stateParams.id;
+    } else if ($rootScope.client.role.level === 2) {
+      url = `/api/surveys/${$stateParams.id}/department/${$rootScope.client.department}`;
     }
-    
+
     $http.get(url)
       .then(
         function(response) {
@@ -90,47 +91,66 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
       );
   }
 
-  function buildSurvey(data) {
-    const survey = data;
+  function buildSurvey(survey) {
+    //set each form type to type;
     survey.questions = survey.questions.map(question => {
       question.type = question.formType;
       return question;
     });
 
+    //group by pages in order to build the pages
+    let groupedSurvey = commonFactory.groupBy(survey.questions, 'service');
+    let pages = [];
+
+    Object.keys(groupedSurvey).forEach((element) => {
+      let value = groupedSurvey[element];
+      element = (element === 'undefined' || element === null) ? '' : element;
+      let page = {
+        title: element,
+        questions: value
+      }
+      pages.push(page);
+    });
+
     $scope.completeSurvey = survey;
 
     Survey.Survey.cssType = "bootstrap";
-    var customCSS = {
-      root: "survey-container",
-      row: "row-separator",
-      question: {
-        root: "sv_q",
-        title: "sv_q_title"
-      },
-      checkbox: {
-        root: 'sv_q_checkbox'
-      },
-      radiogroup: {
-        root: 'sv_q_radiogroup'
-      },
-      rating: {
-        root: 'sv_q_rating',
-        item: 'sv_q_rating_item'
-      },
-      navigationButton: "btn btn-block btn-success row-separator"
-    };
+
 
     var surveyModel = new Survey.Model({
-      questions: survey.questions
+      title: survey.surveyName,
+      pages: pages
     });
+
+    surveyModel.showProgressBar = "top";
 
     $(".survey").Survey({
       model: surveyModel,
-      css: customCSS,
+      css: surveyCustomCSS,
       onComplete: sendDataToServer
     });
   }
 
+  let surveyCustomCSS = {
+    root: "survey-container",
+    row: "row-separator",
+    pageTitle: "sv_p_title",
+    question: {
+      root: "sv_q",
+      title: "sv_q_title"
+    },
+    checkbox: {
+      root: 'sv_q_checkbox'
+    },
+    radiogroup: {
+      root: 'sv_q_radiogroup'
+    },
+    rating: {
+      root: 'sv_q_rating',
+      item: 'sv_q_rating_item'
+    },
+    navigationButton: "btn  btn-primary"
+  };
 }
 
 SurveyHandlerController.$inject = ['$rootScope', '$scope', '$http', '$stateParams', 'commonFactory'];

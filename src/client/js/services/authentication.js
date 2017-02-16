@@ -39,7 +39,8 @@
         payload = JSON.parse(payload);
         return {
           username: payload.username,
-          role: payload.role
+          role: payload.role,
+          department: payload.department
         };
       }
     };

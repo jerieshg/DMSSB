@@ -7,11 +7,13 @@ function SurveyController($rootScope, $scope, $http, commonFactory) {
   }
 
   function retrieveSurveys() {
-    let client = $rootScope.client;
-    let url = `/api/surveys/clients/${client.username}`;
 
-    if (client.role.role === 'Admin') {
+    let url = `/api/surveys/clients/${$rootScope.client.username}`;
+
+    if ($rootScope.client.role.level === 1) {
       url = '/api/surveys/';
+    } else if ($rootScope.client.role.level === 2) {
+      url = `/api/surveys/department/${$rootScope.client.department}`;
     }
 
     $http.get(url)
