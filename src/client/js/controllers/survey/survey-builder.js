@@ -20,30 +20,24 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
       if (!$scope.survey.update) {
         $scope.survey.created = new Date();
         $http.post("/api/surveys/", $scope.survey)
-          .then(
-            function(response) {
-              // success callback
-              commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'success');
-            },
-            function(response) {
-              // failure callback
-              console.log(response);
-              commonFactory.activateAlert('Woops! Algo paso!', 'danger');
-            }
-          );
+          .then(function(response) {
+            // success callback
+            commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'success');
+          })
+          .catch(function(error) {
+            console.log(error);
+            commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+          });
       } else {
         $http.put("/api/surveys/" + $scope.survey._id, $scope.survey)
-          .then(
-            function(response) {
-              // success callback
-              commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
-            },
-            function(response) {
-              // failure callback
-              console.log(response);
-              commonFactory.activateAlert('Woops! Algo paso!', 'danger');
-            }
-          );
+          .then(function(response) {
+            // success callback
+            commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
+          })
+          .catch(function(error) {
+            console.log(error);
+            commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+          });
       }
     } else {
       commonFactory.activateAlert('Por favor verifique la encuesta!', 'danger');
@@ -176,38 +170,32 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
 
   function retrieveBusiness() {
     $http.get('/api/business/')
-      .then(
-        function(response) {
-          $scope.business = response.data;
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        $scope.business = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function retrieveClients() {
     $http.get('/api/clients/')
-      .then(
-        function(response) {
-          $scope.clients = response.data;
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        $scope.clients = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function retrieveDepartments() {
     $http.get('/api/departments/')
-      .then(
-        function(response) {
-          $scope.departments = response.data;
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        $scope.departments = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function clearQuestion() {

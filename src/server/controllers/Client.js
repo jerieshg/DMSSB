@@ -1,9 +1,10 @@
 let Client = require('../models/Client');
 
-module.exports.readAll = function(req, res) {
+module.exports.readAll = function(req, res, next) {
   Client.find({}, function(error, clients) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 
@@ -11,13 +12,14 @@ module.exports.readAll = function(req, res) {
   });
 }
 
-module.exports.update = function(req, res) {
+module.exports.update = function(req, res, next) {
   Client.findOne({
     _id: req.params.id
-  }, function(err, client) {
-    if (err) {
+  }, function(error, client) {
+    if (error) {
       res.status(500);
-      return res.send(err);
+      next(error);
+      return res.send(error);
     }
 
     for (prop in req.body) {
@@ -26,10 +28,11 @@ module.exports.update = function(req, res) {
     client.markModified('role');
     client.setPassword(req.body.password);
 
-    client.save(function(err) {
-      if (err) {
+    client.save(function(error) {
+      if (error) {
         res.status(500);
-        return res.send(err);
+        next(error);
+        return res.send(error);
       }
 
       res.json({
@@ -39,12 +42,13 @@ module.exports.update = function(req, res) {
   });
 }
 
-module.exports.delete = function(req, res) {
+module.exports.delete = function(req, res, next) {
   Client.remove({
     _id: req.params.id
   }, function(error, client) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 
@@ -54,12 +58,13 @@ module.exports.delete = function(req, res) {
   });
 }
 
-module.exports.find = function(req, res) {
+module.exports.find = function(req, res, next) {
   Client.findOne({
     _id: req.params.id
   }, function(error, client) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 

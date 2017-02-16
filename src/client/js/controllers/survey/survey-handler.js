@@ -59,14 +59,12 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
     }
 
     $http.post('/api/surveys/responses/', response)
-      .then(
-        function(response) {
-          console.log(response);
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function generateSurvey() {
@@ -79,16 +77,14 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
     }
 
     $http.get(url)
-      .then(
-        function(response) {
-          if (response.data) {
-            buildSurvey(response.data);
-          }
-        },
-        function(response) {
-          console.log(response);
+      .then(function(response) {
+        if (response.data) {
+          buildSurvey(response.data);
         }
-      );
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function buildSurvey(survey) {

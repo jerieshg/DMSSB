@@ -4,17 +4,14 @@ function MainController($rootScope, $scope, $http, commonFactory) {
 
   $scope.deleteSurvey = function(id) {
     $http.delete("/api/surveys/" + id)
-      .then(
-        function(response) {
-          // success callback
-          commonFactory.activateAlert('Encuesta fue borrada exitosamente!', 'info');
-          retrieveSurveys();
-        },
-        function(response) {
-          // failure callback
-          commonFactory.activateAlert('Woops! Algo paso!', 'danger');
-        }
-      );
+      .then(function(response) {
+        // success callback
+        commonFactory.activateAlert('Encuesta fue borrada exitosamente!', 'info');
+        retrieveSurveys();
+      })
+      .catch(function(error) {
+        commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+      });
 
   }
 
@@ -30,14 +27,12 @@ function MainController($rootScope, $scope, $http, commonFactory) {
     }
 
     $http.get(url)
-      .then(
-        function(response) {
-          $scope.surveys = response.data;
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        $scope.surveys = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 }
 

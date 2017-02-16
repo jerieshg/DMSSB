@@ -8,15 +8,13 @@ function ClientController($scope, $http, commonFactory, authentication) {
     if ($scope.selectedClient.edit) {
       let id = $scope.selectedClient._id;
       $http.put('/api/clients/' + id, $scope.selectedClient)
-        .then(
-          function(response) {
-            commonFactory.activateAlert('Cliente ' + $scope.selectedClient.username + ' fue actualizado exitosamente!', 'info');
-            $scope.selectedClient = {};
-          },
-          function(response) {
-            console.log(response);
-          }
-        );
+        .then(function(response) {
+          commonFactory.activateAlert('Cliente ' + $scope.selectedClient.username + ' fue actualizado exitosamente!', 'info');
+          $scope.selectedClient = {};
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     } else {
       $scope.selectedClient.created = new Date();
       authentication.register($scope.selectedClient)
@@ -38,16 +36,14 @@ function ClientController($scope, $http, commonFactory, authentication) {
 
   $scope.deleteClient = function(id) {
     $http.delete('/api/clients/' + id)
-      .then(
-        function(response) {
-          commonFactory.activateAlert('Cliente borrado exitosamente!', 'danger');
-          retrieveClients();
-          $scope.selectedClient = {};
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        commonFactory.activateAlert('Cliente borrado exitosamente!', 'danger');
+        retrieveClients();
+        $scope.selectedClient = {};
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function initializeController() {
@@ -58,38 +54,32 @@ function ClientController($scope, $http, commonFactory, authentication) {
 
   function retrieveClients() {
     $http.get('/api/clients/')
-      .then(
-        function(response) {
-          $scope.clients = response.data;
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        $scope.clients = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function retrieveRoles() {
     $http.get('/api/roles/')
-      .then(
-        function(response) {
-          $scope.roles = response.data;
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        $scope.roles = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function retrieveDepartments() {
     $http.get('/api/departments/')
-      .then(
-        function(response) {
-          $scope.departments = response.data;
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        $scope.departments = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 }
 

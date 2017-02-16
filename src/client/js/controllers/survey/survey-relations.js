@@ -14,31 +14,25 @@ function SurveyRelationsController($scope, $state, $http, $stateParams, $window,
       if (!$scope.survey.update) {
         $scope.survey.created = new Date();
         $http.post("/api/surveys/", $scope.survey)
-          .then(
-            function(response) {
-              // success callback
-              commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'success');
-            },
-            function(response) {
-              // failure callback
-              console.log(response);
-              commonFactory.activateAlert('Woops! Algo paso!', 'danger');
-            }
-          );
+          .then(function(response) {
+            // success callback
+            commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'success');
+          })
+          .catch(function(error) {
+            console.log(error);
+            commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+          });
       } else {
 
         $http.put("/api/surveys/" + $scope.survey._id, $scope.survey)
-          .then(
-            function(response) {
-              // success callback
-              commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
-            },
-            function(response) {
-              // failure callback
-              console.log(response);
-              commonFactory.activateAlert('Woops! Algo paso!', 'danger');
-            }
-          );
+          .then(function(response) {
+            // success callback
+            commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
+          })
+          .catch(function(error) {
+            console.log(error);
+            commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+          });
       }
     } else {
       commonFactory.activateAlert('Por favor verifique la encuesta!', 'danger');
@@ -72,14 +66,12 @@ function SurveyRelationsController($scope, $state, $http, $stateParams, $window,
     if ($scope.survey.department) {
       let url = '/api/services/departments/' + $scope.survey.department;
       $http.get(url)
-        .then(
-          function(response) {
-            $scope.services = response.data;
-          },
-          function(response) {
-            console.log(response);
-          }
-        );
+        .then(function(response) {
+          $scope.services = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
   }
 }

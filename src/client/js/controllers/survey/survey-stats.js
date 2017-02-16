@@ -164,14 +164,12 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
   function retrieveStats() {
     $http.get('/api/surveys/' + $stateParams.id + '/responses/')
-      .then(
-        function(response) {
-          buildStats(response.data);
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        buildStats(response.data);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 }
 

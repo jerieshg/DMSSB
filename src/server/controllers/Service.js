@@ -1,9 +1,10 @@
 let Service = require('../models/Service');
 
-module.exports.readAll = function(req, res) {
+module.exports.readAll = function(req, res, next) {
   Service.find({}, function(error, service) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 
@@ -11,12 +12,13 @@ module.exports.readAll = function(req, res) {
   });
 }
 
-module.exports.create = function(req, res) {
+module.exports.create = function(req, res, next) {
   let service = new Service(req.body);
 
   service.save(function(error, service) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 
@@ -24,23 +26,25 @@ module.exports.create = function(req, res) {
   });
 }
 
-module.exports.update = function(req, res) {
+module.exports.update = function(req, res, next) {
   Service.findOne({
     _id: req.params.id
-  }, function(err, service) {
-    if (err) {
+  }, function(error, service) {
+    if (error) {
       res.status(500);
-      return res.send(err);
+      next(error);
+      return res.send(error);
     }
 
     for (prop in req.body) {
       service[prop] = req.body[prop];
     }
 
-    service.save(function(err) {
-      if (err) {
+    service.save(function(error) {
+      if (error) {
         res.status(500);
-        return res.send(err);
+        next(error);
+        return res.send(error);
       }
 
       res.json({
@@ -50,12 +54,13 @@ module.exports.update = function(req, res) {
   });
 }
 
-module.exports.delete = function(req, res) {
+module.exports.delete = function(req, res, next) {
   Service.remove({
     _id: req.params.id
   }, function(error, service) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 
@@ -65,12 +70,13 @@ module.exports.delete = function(req, res) {
   });
 }
 
-module.exports.find = function(req, res) {
+module.exports.find = function(req, res, next) {
   Service.findOne({
     _id: req.params.id
   }, function(error, service) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 
@@ -78,12 +84,13 @@ module.exports.find = function(req, res) {
   });
 }
 
-module.exports.findByDepartment = function(req, res) {
+module.exports.findByDepartment = function(req, res, next) {
   Service.find({
     department: req.params.dept
   }, function(error, services) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 

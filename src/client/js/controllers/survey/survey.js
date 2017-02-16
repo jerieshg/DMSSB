@@ -17,14 +17,12 @@ function SurveyController($rootScope, $scope, $http, commonFactory) {
     }
 
     $http.get(url)
-      .then(
-        function(response) {
-          $scope.surveys = response.data;
-        },
-        function(response) {
-          console.log(response);
-        }
-      );
+      .then(function(response) {
+        $scope.surveys = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 }
 

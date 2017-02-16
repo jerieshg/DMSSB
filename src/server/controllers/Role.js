@@ -1,9 +1,10 @@
 let Role = require('../models/Role');
 
-module.exports.readAll = function(req, res) {
+module.exports.readAll = function(req, res, next) {
   Role.find({}, function(error, roles) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 
@@ -11,12 +12,13 @@ module.exports.readAll = function(req, res) {
   });
 }
 
-module.exports.create = function(req, res) {
+module.exports.create = function(req, res, next) {
   let role = new Role(req.body);
 
   role.save(function(error, role) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 
@@ -24,23 +26,25 @@ module.exports.create = function(req, res) {
   });
 }
 
-module.exports.update = function(req, res) {
+module.exports.update = function(req, res, next) {
   Role.findOne({
     _id: req.params.id
-  }, function(err, role) {
-    if (err) {
+  }, function(error, role) {
+    if (error) {
       res.status(500);
-      return res.send(err);
+      next(error);
+      return res.send(error);
     }
 
     for (prop in req.body) {
       role[prop] = req.body[prop];
     }
 
-    role.save(function(err) {
-      if (err) {
+    role.save(function(error) {
+      if (error) {
         res.status(500);
-        return res.send(err);
+        next(error);
+        return res.send(error);
       }
 
       res.json({
@@ -50,12 +54,13 @@ module.exports.update = function(req, res) {
   });
 }
 
-module.exports.delete = function(req, res) {
+module.exports.delete = function(req, res, next) {
   Role.remove({
     _id: req.params.id
   }, function(error, role) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 
@@ -65,12 +70,13 @@ module.exports.delete = function(req, res) {
   });
 }
 
-module.exports.find = function(req, res) {
+module.exports.find = function(req, res, next) {
   Role.findOne({
     _id: req.params.id
   }, function(error, role) {
     if (error) {
       res.status(500);
+      next(error);
       return res.send(error);
     }
 

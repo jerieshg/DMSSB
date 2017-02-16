@@ -1,9 +1,10 @@
   let Survey = require('../models/Survey.js');
 
-  module.exports.readAll = function(req, res) {
+  module.exports.readAll = function(req, res, next) {
     Survey.find({}, function(error, surveys) {
       if (error) {
         res.status(500);
+        next(error);
         return res.send(error);
       }
 
@@ -11,12 +12,13 @@
     });
   }
 
-  module.exports.create = function(req, res) {
+  module.exports.create = function(req, res, next) {
     let survey = new Survey(req.body);
 
     survey.save(function(error, survey) {
       if (error) {
         res.status(500);
+        next(error);
         return res.send(error);
       }
 
@@ -24,23 +26,25 @@
     });
   }
 
-  module.exports.update = function(req, res) {
+  module.exports.update = function(req, res, next) {
     Survey.findOne({
       _id: req.params.id
-    }, function(err, survey) {
-      if (err) {
+    }, function(error, survey) {
+      if (error) {
         res.status(500);
-        return res.send(err);
+        next(error);
+        return res.send(error);
       }
 
       for (prop in req.body) {
         survey[prop] = req.body[prop];
       }
       survey.markModified('questions');
-      survey.save(function(err) {
-        if (err) {
+      survey.save(function(error) {
+        if (error) {
           res.status(500);
-          return res.send(err);
+          next(error);
+          return res.send(error);
         }
 
         res.json({
@@ -50,12 +54,13 @@
     });
   }
 
-  module.exports.delete = function(req, res) {
+  module.exports.delete = function(req, res, next) {
     Survey.remove({
       _id: req.params.id
     }, function(error, survey) {
       if (error) {
         res.status(500);
+        next(error);
         return res.send(error);
       }
 
@@ -65,12 +70,13 @@
     });
   }
 
-  module.exports.find = function(req, res) {
+  module.exports.find = function(req, res, next) {
     Survey.findOne({
       _id: req.params.id
     }, function(error, survey) {
       if (error) {
         res.status(500);
+        next(error);
         return res.send(error);
       }
 
@@ -78,7 +84,7 @@
     });
   }
 
-  module.exports.findByClient = function(req, res) {
+  module.exports.findByClient = function(req, res, next) {
     let client = req.params.client;
     Survey.find({
       $or: [{
@@ -93,6 +99,7 @@
     }, function(error, surveys) {
       if (error) {
         res.status(500);
+        next(error);
         return res.send(error);
       }
 
@@ -110,12 +117,13 @@
 
   }
 
-  module.exports.findbyClientAndId = function(req, res) {
+  module.exports.findbyClientAndId = function(req, res, next) {
     Survey.findOne({
       _id: req.params.id
     }, function(error, survey) {
       if (error) {
         res.status(500);
+        next(error);
         return res.send(error);
       }
 
@@ -127,12 +135,13 @@
     });
   }
 
-  module.exports.findByDepartment = function(req, res) {
+  module.exports.findByDepartment = function(req, res, next) {
     Survey.find({
       department: req.params.dept
     }, function(error, survey) {
       if (error) {
         res.status(500);
+        next(error);
         return res.send(error);
       }
 
@@ -141,13 +150,14 @@
     });
   }
 
-  module.exports.findbyDeptAndId = function(req, res) {
+  module.exports.findbyDeptAndId = function(req, res, next) {
     Survey.findOne({
       _id: req.params.id,
       department: req.params.dept
     }, function(error, survey) {
       if (error) {
         res.status(500);
+        next(error);
         return res.send(error);
       }
 
