@@ -3,7 +3,6 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   initalizeController();
 
   function initalizeController() {
-    retrieveSurvey();
     retrieveStats();
     configureTooltipOptions();
     $scope.survey = {};
@@ -49,7 +48,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
       $scope.services.push(result);
     });
-
+    console.log($scope.totalResult);
     buildRadarMap();
   }
 
@@ -82,7 +81,6 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
           }
         });
       //Ends with the answer
-
       questionAverage.service = e.service;
       if (e.formType === 'rating') {
         //Set 0 to each rate
@@ -98,14 +96,12 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         let average = (answerSum / totalResponses) / maxValue;
         questionAverage.average += average;
         questionAverage.rating = true;
-      }
+      } 
     });
 
     questionAverage.question = chart.question;
-    //if the question is a rating, calculate total average, else sum all the values and divide it by response
-    if (questionAverage.rating) {
-      questionAverage.average = questionAverage.average / questions.length;
-    } else {
+
+    if (!questionAverage.rating) {
       questionAverage.average = (questions.map((e) => Number.parseFloat(e.value)).reduce((a, b) => a + b)) / totalResponses;
     }
 
@@ -120,6 +116,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   }
 
   function buildRadarMap() {
+    console.log($scope.totalResult);
     for (var [key, value] of $scope.totalResult.entries()) {
       $scope.radarGraph.labels.push(key);
       $scope.radarGraph.data.push(
@@ -217,18 +214,6 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     $http.get('/api/surveys/' + $stateParams.id + '/responses/')
       .then(function(response) {
         buildStats(response.data);
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-  }
-
-  function retrieveSurvey() {
-    $http.get('/api/surveys/' + $stateParams.id)
-      .then(function(response) {
-        $scope.survey = response.data;
-        console.log( $scope.survey)
-        
       })
       .catch(function(error) {
         console.log(error);
