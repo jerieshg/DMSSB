@@ -48,7 +48,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
       $scope.services.push(result);
     });
-    console.log($scope.totalResult);
+
     buildRadarMap();
   }
 
@@ -64,7 +64,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     questions.map((e) => {
       let answerSum = 0;
       chart.question = e.question;
-
+      questionAverage.formType = e.formType;
       //splits every answer
       e.answer.split(',').map(
         (answer) => {
@@ -96,7 +96,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         let average = (answerSum / totalResponses) / maxValue;
         questionAverage.average += average;
         questionAverage.rating = true;
-      } 
+      }
     });
 
     questionAverage.question = chart.question;
@@ -116,12 +116,19 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   }
 
   function buildRadarMap() {
-    console.log($scope.totalResult);
     for (var [key, value] of $scope.totalResult.entries()) {
       $scope.radarGraph.labels.push(key);
-      $scope.radarGraph.data.push(
-        (((value.map((e) => e.average).reduce((a, b) => a + b)) / value.length) * 100).toFixed(2)
-      );
+
+      let totalSum = 0;
+      let length = 0;
+      value.forEach((e) => {
+        if (e.formType !== 'text' && e.formType !== 'comment') {
+          totalSum += e.average;
+          length++;
+        }
+      });
+
+      $scope.radarGraph.data.push(((totalSum / length) * 100).toFixed(2));
     }
   }
 
