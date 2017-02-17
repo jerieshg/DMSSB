@@ -1,13 +1,11 @@
 <form name="surveyForm">
   <div>
-   <button type="submit" class="btn btn-primary" ng-click="goToRelations(surveyForm.$valid)" ng-show="!survey.general">
+   <button type="submit" class="btn btn-primary" ng-click="goToRelations(surveyForm.$valid)"">
      <i class="fa fa-arrow-right" aria-hidden="true"/>
    </button>
    <button ng-show="survey.update || survey.general" class="btn btn-success" ng-click="saveSurvey(surveyForm.$valid)">
      <i class="fa fa-save" aria-hidden="true"/>  Guardar Encuesta
    </button>
-
-
  </div>
 
  <div class="form-divider"></div>

@@ -51,7 +51,7 @@
                   <div class="input-group">
                     <input type="text" class="form-control" placeholder="Opcion" ng-model="selectedChoices[$index].text" name="option-$index" ng-required="newQuestion.showChoices">
                     <span class="input-group-addon">-</span>
-                    <input type="number" class="form-control" placeholder="Valor" ng-model="selectedChoices[$index].value" name="value-$index" ng-required="newQuestion.showChoices">
+                    <input type="number" class="form-control" placeholder="Valor (0.0)" ng-model="selectedChoices[$index].value" name="value-$index" ng-required="newQuestion.showChoices" step='0.1' min="0" max="1">
                   </div>
                 </div>
               </div>
