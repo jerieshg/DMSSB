@@ -21,13 +21,13 @@
      </tr>
      </thead>
      <tbody>
-     <tr ng:repeat="e in surveys | filter:search">
-       <td>{{$index + 1}}</td>
+     <tr ng:repeat="e in surveys | filter:search" ng-class="{'danger' : !e.active, 'success' : e.active}">
+       <td >{{$index + 1}}</td>
        <td>{{e.surveyName}}</td>
        <td>{{e.department}}</td>
        <td>{{e.responsible}}</td>
        <td>{{e.created | date: yyyy-mm-dd}}</td>
-       <td><a class="btn btn-success" ui-sref-active="active" ui-sref="app.surveys.handler({id: e._id, client: client.username})">Realizar </a></td>
+       <td><button class="btn btn-success" ui-sref-active="active" ui-sref="app.surveys.handler({id: e._id, client: client.username})" ng-disabled="!e.active">Realizar </button></td>
      </tr>
    </tbody>
  </table>

@@ -18,6 +18,7 @@ module.exports = {
         bower_components_path + '/angular-breadcrumb/dist/angular-breadcrumb.min.js',
         bower_components_path + '/angular-loading-bar/build/loading-bar.min.js',
         bower_components_path + '/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
+        bower_components_path + '/file-saver.js/FileSaver.js',
         node_modules_path + '/survey-jquery/survey.jquery.min.js'
       ]
     }

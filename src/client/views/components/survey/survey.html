@@ -2,9 +2,10 @@
 
  <div id="alertArea"></div>
 
- <div class="row">
+ <div ng-show="!activeSurvey" ng-include="'views/pages/404-no-content.html'"></div>
 
-<div class="survey col-md-12"></div>
+ <div class="row">
+  <div class="survey col-md-12"></div>
 </div>
 <!-- End .row -->
 </div>

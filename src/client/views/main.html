@@ -1,6 +1,8 @@
 <div class="animated fadeIn" ng-controller="mainController" >
  <div id="alertArea"></div>
 
+  <div ng-include="'views/components/survey-builder/actionPlanModal.html'"></div>
+
  <div class="row">
  <a ui-sref-active="active" ui-sref="app.survey-builder.create" class="btn btn-success row-separator">Nueva Encuesta</a>
 
@@ -8,12 +10,13 @@
     <div class="input-group-addon"><i class="fa fa-search"></i></div>
     <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
   </div> 
-  <table class="table table-hover table-striped" style="margin-top:10px;">
+  <table class="table table-hover " style="margin-top:10px;">
     <thead>
       <tr>
        <td><strong>#</strong></td>
        <td><strong>Nombre de la encuesta</strong></td>
        <td><strong>Encuesta General</strong></td>
+       <td><strong>Encuesta Activa</strong></td>
        <td><strong>Departamento</strong></td>
        <td><strong>Responsable</strong></td>
        <td><strong>Fecha Creada</strong></td>
@@ -21,17 +24,19 @@
      </tr>
      </thead>
      <tbody>
-     <tr ng:repeat="e in surveys | filter:search">
+     <tr ng:repeat="e in surveys | filter:search" >
        <td>{{$index + 1}}</td>
        <td>{{e.surveyName}}</td>
        <td>{{e.general ? 'Si' : 'No'}}</td>
+        <td>{{e.active ? 'Si' : 'No'}}</td>
        <td>{{e.department}}</td>
        <td>{{e.responsible}}</td>
        <td>{{e.created | date: yyyy-mm-dd}}</td>
-       <td>
+       <td style="width:10em;">
          <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteSurvey(e._id)"></i>
          <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.edit({id: e._id})"></i>
          <i class="fa fa-bar-chart" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.stats({id: e._id})"></i>
+         <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-click="setActionPlan(e._id)"></i>
        </td>
      </tr>
    </tbody>

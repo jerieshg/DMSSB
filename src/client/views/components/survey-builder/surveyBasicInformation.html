@@ -6,12 +6,14 @@
    <button ng-show="survey.update || survey.general" class="btn btn-success" ng-click="saveSurvey(surveyForm.$valid)">
      <i class="fa fa-save" aria-hidden="true"/>  Guardar Encuesta
    </button>
+    <button class="md-button btn" ng-click="activeSurvey()"><i class="fa " ng-class="{'fa-toggle-on' : survey.active, 'fa-toggle-off' : !survey.active}" aria-hidden="true"></i> Encuesta Activa</button>
  </div>
 
  <div class="form-divider"></div>
  <div class="row row-separator">
 
    <div class=" col-md-12 ">
+
     <div class="checkbox">
       <label>
        <input type="checkbox" autocomplete="off" ng-model="survey.general"> Encuesta General

@@ -27,6 +27,8 @@ module.exports = function(router) {
   let Profile = require('../controllers/Profile');
   //Survey Responses API calls
   let SurveyResponse = require('../controllers/SurveyResponse');
+  //Survey Responses API calls
+  let Excel = require('../controllers/Excel');
 
 
   //SURVEY ROUTES
@@ -110,6 +112,12 @@ module.exports = function(router) {
   //AUTHENTICATION ROUTES
   router.route('/api/profile/')
     .get(auth, Profile.readProfile);
+
+  //Export to Excel
+  router.route('/api/excel/:id')
+    .get(Excel.exportToExcel);
+  router.route('/api/excel/')
+    .post(Excel.exportToExcelBatch)
 
 
   // router to handle all angular requests

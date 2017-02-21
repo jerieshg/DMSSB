@@ -1,0 +1,26 @@
+<div class="modal fade" id="actionPlanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form name="actionPlanForm" ng-submit="generateActionPlan()" class="col-sm-12">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Plan de acción</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        <div class="col-md-10">
+          <div class="row row-separator">
+              <input ng-model="actionPlan.percentage" name="actinoPlanpercentage" class="form-control" type="number" placeholder="Porcentaje a evaluar"  required/>
+            </div>
+         </div>
+         <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-success">
+           <i class="fa fa-save" aria-hidden="true"/> Generar
+         </button>
+       </div>
+     </form>
+   </div>
+ </div>
+</div>

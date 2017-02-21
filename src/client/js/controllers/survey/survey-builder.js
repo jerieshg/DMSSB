@@ -2,6 +2,10 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
 
   initalizeController();
 
+  $scope.activeSurvey = function() {
+    $scope.survey.active = !$scope.survey.active;
+  }
+
   $scope.copyQuestion = function() {
     $scope.questionCopy = angular.copy($scope.newQuestion);
   }
@@ -147,7 +151,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
     $scope.departments = {};
     $scope.selectedChoices = [{}];
     $scope.linearScale = {};
-    
+
 
     $scope.survey = $scope.survey || {
       questions: [],

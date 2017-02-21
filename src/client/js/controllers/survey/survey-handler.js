@@ -3,6 +3,7 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
   initializeController();
 
   function initializeController() {
+    $scope.activeSurvey = false;
     $scope.completeSurvey = {};
     generateSurvey();
   }
@@ -80,14 +81,22 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
       .then(function(response) {
         if (response.data) {
           buildSurvey(response.data);
+        } else {
+          $scope.textNotFound = "no fue encontrada!";
         }
       })
       .catch(function(error) {
         console.log(error);
+        $scope.textNotFound = "no fue encontrada!";
       });
   }
 
   function buildSurvey(survey) {
+    $scope.activeSurvey = survey.active;
+    if (!survey.active) {
+      $scope.textNotFound = "no esta activa!";
+      return;
+    }
     //set each form type to type;
     survey.questions = survey.questions.map(question => {
       question.type = question.formType;

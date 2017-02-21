@@ -1,15 +1,22 @@
 <div class="animated fadeIn">
+  <div ng-include="'views/components/survey-builder/actionPlanModal.html'"></div>
+  
+ <div class="md-toolbar-tools custom-md-toolbar">
+   <h5>{{survey.surveyName}}</h5>&nbsp;<h5 class="small">({{totalResponses}} respuestas)</h5>
+   <span flex class="flex"></span>
+   <i class="fa fa-file-excel-o" aria-hidden="true" ng-click="exportAllResponses()" data-toggle="tooltip" title="Exportar todas las respuestas"></i>
+    <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-click="setActionPlan(e._id)"></i>
+ </div>
 
   <md-content>
     <md-tabs md-dynamic-height md-border-bottom>
-
       <md-tab label="Resultado General">
-        <div class="card" style="width:100%;">
+        <div class="card custom-chart-radar">
           <div class="card-header">
            <i class="fa fa-asterisk icon-bg"></i>Resultado general por servicio 
          </div>
          <div class="card-block" >
-           <canvas  class="chart chart-radar" chart-data="radarGraph.data" chart-labels="radarGraph.labels" chart-options="radarOptions"></canvas>
+           <canvas  class="chart chart-radar " chart-data="radarGraph.data" chart-labels="radarGraph.labels" chart-options="radarOptions"></canvas>
          </div>
        </div>
      </md-tab>
@@ -17,7 +24,7 @@
       <md-content class="md-padding">
         <div class="card" ng-repeat="e in service.charts">
           <div class="card-header">
-            <i class="fa fa-asterisk icon-bg"></i>{{e.question}}
+            <i class="fa fa-asterisk icon-bg"></i>{{e.question}} - <strong>{{e.average}}%</strong>
           </div>
           <div class="card-block" >
 

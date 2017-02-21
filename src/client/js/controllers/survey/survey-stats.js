@@ -3,6 +3,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   initalizeController();
 
   function initalizeController() {
+    retrieveSurvey();
     retrieveStats();
     configureTooltipOptions();
     $scope.survey = {};
@@ -12,12 +13,94 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       labels: [],
       data: []
     };
-    let totalResponses = 0;
+    $scope.actionPlan = {
+      percentage: 50,
+      items: []
+    };
+    $scope.totalResponses = 0;
+  }
+
+  $scope.generateActionPlan = function() {
+    $scope.services.forEach((service) => {
+      service.charts.forEach((e) => {
+        if (e.average <= $scope.actionPlan.percentage) {
+          let item = {
+            service: service.service,
+            question: e.question,
+            percentage: e.average
+          };
+          $scope.actionPlan.items.push(item);
+        }
+      });
+    })
+    
+    $scope.actionPlan.items = commonFactory.groupBy($scope.actionPlan.items, 'service');
+    if ($scope.actionPlan.items.length === 0) {
+      $("#actionPlanModal").modal('toggle');
+      alert('No hay respuestas o no hay preguntas dentro del rango para generar plan de acción');
+      return;
+    }
+
+    $http.post('/api/excel/', $scope.actionPlan, {
+        responseType: 'blob'
+      })
+      .then(function(response) {
+        var blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats'
+        });
+
+        saveAs(blob, "planDeAccion_" + new Date() + ".xlsx");
+        $scope.actionPlan.items = [];
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+    $("#actionPlanModal").modal('toggle');
+  }
+
+  $scope.setActionPlan = function(id) {
+    $scope.apId = id;
+  }
+
+  function downloadActionPlan() {
+    $scope.actionPlan.items = commonFactory.groupBy($scope.actionPlan.items, 'service');
+    $http.post('/api/excel/', $scope.actionPlan, {
+        responseType: 'blob'
+      })
+      .then(function(response) {
+        var blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats'
+        });
+
+        saveAs(blob, "planDeAccion_" + new Date() + ".xlsx");
+        $scope.actionPlan.items = [];
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
+
+  $scope.exportAllResponses = function() {
+    $http({
+        url: `/api/excel/${$stateParams.id}`,
+        method: "GET",
+        responseType: 'blob'
+      }).then(function(response) {
+        var blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats'
+        });
+
+        saveAs(blob, "archivo_" + new Date() + ".xlsx");
+      })
+      .catch(function(error) {
+        commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+      });
   }
 
   function buildStats(data) {
     let allResults = [];
-    totalResponses = data.length;
+    $scope.totalResponses = data.length;
 
     data.forEach(response => {
       allResults = response.results.reduce((coll, item) => {
@@ -55,16 +138,17 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   function processQuestions(questions, result) {
     let chart = {};
 
-    let questionAverage = {
+    let selectedQuestion = {
       average: 0
     }
 
     let answers = new Map();
+    let values = [];
 
     questions.map((e) => {
       let answerSum = 0;
       chart.question = e.question;
-      questionAverage.formType = e.formType;
+      selectedQuestion.formType = e.formType;
       //splits every answer
       e.answer.split(',').map(
         (answer) => {
@@ -81,7 +165,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
           }
         });
       //Ends with the answer
-      questionAverage.service = e.service;
+      selectedQuestion.service = e.service;
       if (e.formType === 'rating') {
         //Set 0 to each rate
         e.rates.forEach(rate => {
@@ -93,24 +177,28 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
         // //calculate average
         let maxValue = e.rates[e.rates.length - 1];
-        let average = (answerSum / totalResponses) / maxValue;
-        questionAverage.average += average;
-        questionAverage.rating = true;
+        let average = (answerSum / $scope.totalResponses) / maxValue;
+        selectedQuestion.average += average;
+        selectedQuestion.rating = true;
       }
+
+
     });
 
-    questionAverage.question = chart.question;
+    selectedQuestion.question = chart.question;
 
-    if (!questionAverage.rating) {
-      questionAverage.average = (questions.map((e) => Number.parseFloat(e.value)).reduce((a, b) => a + b)) / totalResponses;
+    if (!selectedQuestion.rating) {
+      selectedQuestion.average = (questions.map((e) => Number.parseFloat(e.value)).reduce((a, b) => a + b)) / $scope.totalResponses;
     }
 
-    let resultSet = $scope.totalResult.get(questionAverage.service) ? $scope.totalResult.get(questionAverage.service) : [];
-    resultSet.push(questionAverage);
-    $scope.totalResult.set(questionAverage.service, resultSet);
+    let resultSet = $scope.totalResult.get(selectedQuestion.service) ? $scope.totalResult.get(selectedQuestion.service) : [];
+    resultSet.push(selectedQuestion);
+    $scope.totalResult.set(selectedQuestion.service, resultSet);
 
     chart.labels = [...answers.keys()];
     chart.data = [...answers.values()];
+    chart.average = (selectedQuestion.average * 100).toFixed(2);
+    selectedQuestion.percentage = chart.average;
 
     return chart;
   }
@@ -221,6 +309,16 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     $http.get('/api/surveys/' + $stateParams.id + '/responses/')
       .then(function(response) {
         buildStats(response.data);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
+
+  function retrieveSurvey() {
+    $http.get(`/api/surveys/${$stateParams.id}`)
+      .then(function(response) {
+        $scope.survey = response.data;
       })
       .catch(function(error) {
         console.log(error);
