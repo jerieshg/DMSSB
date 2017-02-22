@@ -33,7 +33,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         }
       });
     })
-    
+
     $scope.actionPlan.items = commonFactory.groupBy($scope.actionPlan.items, 'service');
     if ($scope.actionPlan.items.length === 0) {
       $("#actionPlanModal").modal('toggle');
@@ -57,28 +57,6 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       });
 
     $("#actionPlanModal").modal('toggle');
-  }
-
-  $scope.setActionPlan = function(id) {
-    $scope.apId = id;
-  }
-
-  function downloadActionPlan() {
-    $scope.actionPlan.items = commonFactory.groupBy($scope.actionPlan.items, 'service');
-    $http.post('/api/excel/', $scope.actionPlan, {
-        responseType: 'blob'
-      })
-      .then(function(response) {
-        var blob = new Blob([response.data], {
-          type: 'application/vnd.openxmlformats'
-        });
-
-        saveAs(blob, "planDeAccion_" + new Date() + ".xlsx");
-        $scope.actionPlan.items = [];
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
   }
 
   $scope.exportAllResponses = function() {

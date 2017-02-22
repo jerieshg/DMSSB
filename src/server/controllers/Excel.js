@@ -16,7 +16,7 @@ module.exports.exportToExcel = function(req, res) {
     let styles = {
       headers: {
         fill: retrieveFill('2196F3'),
-        font: retrieveCellStyle('FFFFFF', '2196F3', true),
+        font: retrieveFontStyle('FFFFFF', true),
         cellCentered: {
           alignment: {
             horizontal: "center",
@@ -58,20 +58,14 @@ module.exports.exportToExcel = function(req, res) {
       }
     });
 
-    // Create the excel report. 
-    // This function will return Buffer 
     var report = excel.buildExport(
-      [ // <- Notice that this is an array. Pass multiple sheets to create multi sheet report 
-        {
-          name: 'archivo', // <- Specify sheet name (optional) 
-          specification: specification, // <- Report specification 
-          data: dataSet // <-- Report data 
-        }
-      ]
+      [{
+        name: 'archivo',
+        specification: specification,
+        data: dataSet
+      }]
     );
 
-    // You can then return this straight 
-    res.attachment('report.xlsx'); // This is sails.js specific (in general you need to set headers) 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats');
     res.setHeader("Content-Disposition", "attachment; filename=Report.xlsx");
     return res.send(report);
@@ -231,7 +225,6 @@ module.exports.exportToExcelBatch = function(req, res) {
     }]
   );
 
-  res.attachment('report.xlsx');
   res.setHeader('Content-Type', 'application/vnd.openxmlformats');
   res.setHeader("Content-Disposition", "attachment; filename=Report.xlsx");
   return res.send(report);
