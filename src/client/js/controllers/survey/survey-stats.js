@@ -14,7 +14,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       data: []
     };
     $scope.actionPlan = {
-      percentage: 50,
+      percentage: 0,
       items: []
     };
     $scope.totalResponses = 0;
