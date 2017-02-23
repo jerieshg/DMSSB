@@ -33,7 +33,7 @@ module.exports.exportToExcel = function(req, res) {
 
     responses.forEach((element) => {
       let data = {};
-      data["timestamp"] = new Date(element.timestamp);
+      data["Timestamp"] = element.timestamp;
 
       element.results.forEach((question) => {
         let questionText = question.question;
