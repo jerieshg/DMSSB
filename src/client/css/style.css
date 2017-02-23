@@ -2746,10 +2746,10 @@ header.navbar {
     margin-right: 0;
     padding: 0.5rem 1rem;
     background-color: #fff;
-    background-image: url("../img/logo.png");
+    background-image: url("../img/terra_energia_logo.jpg");
     background-repeat: no-repeat;
     background-position: center center;
-    background-size: 70px auto;
+    background-size: 100px auto;
     border-bottom: 1px solid #cfd8dc; }
   header.navbar .navbar-nav {
     flex-direction: row;

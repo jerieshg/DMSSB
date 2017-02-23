@@ -1,4 +1,5 @@
   let Survey = require('../models/Survey.js');
+  let SurveyResponse = require('../models/SurveyResponse');
 
   module.exports.readAll = function(req, res, next) {
     Survey.find({}, function(error, surveys) {
@@ -63,6 +64,17 @@
         next(error);
         return res.send(error);
       }
+
+      SurveyResponse.remove({
+        surveyId: req.params.id
+      }, function(ex, surveyResponse) {
+        if (error) {
+          res.status(500);
+          next(error);
+          return res.send(error);
+        }
+        
+      })
 
       res.json({
         message: 'Successfully deleted'
