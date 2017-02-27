@@ -2,6 +2,16 @@ function MainController($rootScope, $scope, $http, commonFactory) {
 
   initializeController();
 
+  $scope.trackSurvey = function(id) {
+    $http.get(`/api/surveys/${id}/track/`)
+      .then((response) => {
+        $scope.trackUsers = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
   $scope.generateActionPlan = function() {
     $http.get(`/api/surveys/${$scope.apId}/responses/`)
       .then(function(response) {

@@ -1,5 +1,7 @@
   let Survey = require('../models/Survey.js');
   let SurveyResponse = require('../models/SurveyResponse');
+  let Client = require('../models/Client');
+  var ObjectId = require('mongoose').Types.ObjectId;
 
   module.exports.readAll = function(req, res, next) {
     Survey.find({}, function(error, surveys) {
@@ -48,9 +50,7 @@
           return res.send(error);
         }
 
-        res.json({
-          message: 'Survey updated!'
-        });
+        res.json(survey);
       });
     });
   }
@@ -174,5 +174,77 @@
       }
 
       res.json(survey);
+    });
+  }
+
+  module.exports.trackResponses = function(req, res, next) {
+    Survey.distinct("questions.clients", {
+      _id: req.params.id
+    }, function(error, surveyClients) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
+      SurveyResponse.aggregate(
+        [{
+          $match: {
+            surveyId: new ObjectId('58a47fd0df5a5e12ac438eb2')
+          }
+        }, {
+          $group: {
+            _id: '$job',
+            count: {
+              $sum: 1
+            }
+          }
+        }],
+        function(error, surveyResponses) {
+          if (error) {
+            res.status(500);
+            next(error);
+            return res.send(error);
+          }
+
+          Client.aggregate(
+            [{
+              $group: {
+                _id: '$job',
+                count: {
+                  $sum: 1
+                }
+              }
+            }],
+            function(error, clients) {
+              if (error) {
+                res.status(500);
+                next(error);
+                return res.send(error);
+              }
+
+              let responses = [];
+              let responsesCount = [];
+              let totalCountHolder = [];
+              surveyResponses.forEach(e => {
+                responsesCount[e._id] = e.count;
+              });
+
+              clients.forEach(e => {
+                totalCountHolder[e._id] = e.count;
+              });
+
+              surveyClients.forEach(function(n) {
+                responses.push({
+                  _id: n,
+                  current: responsesCount[n] ? responsesCount[n] : 0,
+                  total: totalCountHolder[n] ? totalCountHolder[n] : 0
+                })
+              });
+
+              res.json(responses);
+            });
+        });
+
     });
   }

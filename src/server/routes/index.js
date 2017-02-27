@@ -50,12 +50,16 @@ module.exports = function(router) {
     .get(Survey.findByDepartment)
   router.route('/api/surveys/:id/department/:dept/')
     .get(Survey.findbyDeptAndId)
+  router.route('/api/surveys/:id/track/')
+    .get(Survey.trackResponses)
   router.route('/api/surveys/responses/')
     .post(SurveyResponse.createMany)
   router.route('/api/surveys/:id/responses/')
-    .get(SurveyResponse.readBySurveyId);
+    .get(SurveyResponse.readBySurveyId)
+    .delete(SurveyResponse.delete);
   router.route('/api/surveys/responses/client/:clientId')
     .get(SurveyResponse.readByClientId);
+
 
   //BUSINESS ROUTES
   router.route('/api/business/')

@@ -24,10 +24,10 @@ function SurveyRelationsController($scope, $state, $http, $stateParams, $window,
             commonFactory.activateAlert('Woops! Algo paso!', 'danger');
           });
       } else {
-
-        $http.put("/api/surveys/" + $scope.survey._id, $scope.survey)
+        $http.put(`/api/surveys/${$scope.survey._id}`, $scope.survey)
           .then(function(response) {
-            // success callback
+            $scope.survey = response.data;
+            $scope.survey.update = true;
             commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
           })
           .catch(function(error) {

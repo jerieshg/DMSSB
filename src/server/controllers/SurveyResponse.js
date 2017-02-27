@@ -40,3 +40,19 @@ module.exports.createMany = function(req, res, next) {
     res.json("OK");
   });
 }
+
+module.exports.delete = function(req, res, next) {
+  SurveyResponse.remove({
+    surveyId: req.params.id
+  }, function(error, survey) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    res.json({
+      message: 'Successfully deleted'
+    });
+  });
+}

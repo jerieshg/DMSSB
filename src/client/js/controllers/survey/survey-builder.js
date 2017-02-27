@@ -29,7 +29,6 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
   //SAVE
   $scope.saveSurvey = function(valid) {
     if (valid) {
-
       if (!$scope.survey.update) {
         $scope.survey.created = new Date();
         $http.post("/api/surveys/", $scope.survey)
@@ -44,7 +43,8 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
       } else {
         $http.put("/api/surveys/" + $scope.survey._id, $scope.survey)
           .then(function(response) {
-            // success callback
+            $scope.survey = response.data;
+            $scope.survey.update = true;
             commonFactory.activateAlert('Encuesta fue guardada exitosamente!', 'info');
           })
           .catch(function(error) {
