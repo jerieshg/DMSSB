@@ -223,7 +223,9 @@
                 return res.send(error);
               }
 
-              let responses = [];
+              let data = {
+                responses: []
+              };
               let responsesCount = [];
               let totalCountHolder = [];
               surveyResponses.forEach(e => {
@@ -235,14 +237,16 @@
               });
 
               surveyClients.forEach(function(n) {
-                responses.push({
+                data.responses.push({
                   _id: n,
                   current: responsesCount[n] ? responsesCount[n] : 0,
                   total: totalCountHolder[n] ? totalCountHolder[n] : 0
                 })
               });
 
-              res.json(responses);
+              data.currentTotal = data.responses.map(e => e.current).reduce((a, b) => a + b, 0);
+              data.total = data.responses.map(e => e.total).reduce((a, b) => a + b, 0);
+              res.json(data);
             });
         });
 

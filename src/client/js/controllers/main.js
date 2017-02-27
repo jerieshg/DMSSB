@@ -6,6 +6,7 @@ function MainController($rootScope, $scope, $http, commonFactory) {
     $http.get(`/api/surveys/${id}/track/`)
       .then((response) => {
         $scope.trackUsers = response.data;
+        console.log($scope.trackUsers)
       })
       .catch((error) => {
         console.log(error);

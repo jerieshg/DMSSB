@@ -16,10 +16,15 @@
           <td>Total</td>
         </thead>
         <tbody>
-          <tr ng-repeat="item in trackUsers">
+          <tr ng-repeat="item in trackUsers.responses">
             <td>{{item._id}}</td>
             <td>{{item.current}}</td>
             <td>{{item.total}}</td>
+          </tr>
+          <tr class="table-total-tr">
+            <td>Total</td>
+            <td>{{trackUsers.currentTotal}}</td>
+            <td>{{trackUsers.total}}</td>
           </tr>
         </tbody>
       </table>

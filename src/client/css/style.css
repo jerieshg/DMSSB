@@ -9100,6 +9100,9 @@ hr:after {
   .completed td {
     border-color: blue; }
 
+.table-total-tr {
+  background-color: yellow; }
+
 /*!
  * surveyjs - Survey JavaScript library v0.11.0
  * Copyright (c) 2015-2017 Devsoft Baltic O�  - http://surveyjs.org/
