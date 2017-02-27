@@ -37,10 +37,13 @@
         var payload = token.split('.')[1];
         payload = $window.atob(payload);
         payload = JSON.parse(payload);
+
         return {
+          _id: payload._id,
           username: payload.username,
           role: payload.role,
-          department: payload.department
+          department: payload.department,
+          job: payload.job
         };
       }
     };

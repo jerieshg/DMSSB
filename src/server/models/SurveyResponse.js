@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 
 module.exports = mongoose.model('Survey-Response', {
   surveyId: mongoose.Schema.Types.ObjectId,
-  client: String,
+  job: String,
   results: [{
     service: String,
     question: String,
@@ -12,5 +12,6 @@ module.exports = mongoose.model('Survey-Response', {
     value: String,
     rates: [Number]
   }],
+  clientId: mongoose.Schema.Types.ObjectId,
   timestamp: Date,
 });

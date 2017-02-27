@@ -11,9 +11,10 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
   function sendDataToServer(survey) {
     const data = survey.data;
     const response = {
-      client: $rootScope.client.username,
+      job: $rootScope.client.job,
       results: [],
-      timestamp: new Date()
+      timestamp: new Date(),
+      clientId: $rootScope.client._id
     };
 
     for (const question of Object.keys(data)) {
@@ -69,7 +70,7 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
   }
 
   function generateSurvey() {
-    let url = `/api/surveys/${$stateParams.id}/clients/${$stateParams.client}/`;
+    let url = `/api/surveys/${$stateParams.id}/clients/${$rootScope.client.job}/`;
 
     if ($rootScope.client.role.level === 1) {
       url = '/api/surveys/' + $stateParams.id;

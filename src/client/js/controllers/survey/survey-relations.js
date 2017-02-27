@@ -5,6 +5,7 @@ function SurveyRelationsController($scope, $state, $http, $stateParams, $window,
   // RELATED TO RELATIONS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   $scope.retrieveServices = function() {
     retrieveServices();
+    retrieveJobs();
   }
 
   //SAVE
@@ -63,11 +64,23 @@ function SurveyRelationsController($scope, $state, $http, $stateParams, $window,
   }
 
   function retrieveServices() {
-    if ($scope.survey.department) {
+    if ($scope.survey) {
       let url = '/api/services/departments/' + $scope.survey.department;
       $http.get(url)
         .then(function(response) {
           $scope.services = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
+  }
+
+  function retrieveJobs() {
+    if ($scope.survey) {
+      $http.get('/api/jobs/')
+        .then(function(response) {
+          $scope.jobs = response.data;
         })
         .catch(function(error) {
           console.log(error);

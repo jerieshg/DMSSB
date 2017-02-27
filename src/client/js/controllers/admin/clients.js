@@ -50,6 +50,7 @@ function ClientController($scope, $http, commonFactory, authentication) {
     retrieveClients();
     retrieveRoles();
     retrieveDepartments();
+    retrieveJobs();
   }
 
   function retrieveClients() {
@@ -76,6 +77,16 @@ function ClientController($scope, $http, commonFactory, authentication) {
     $http.get('/api/departments/')
       .then(function(response) {
         $scope.departments = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
+
+  function retrieveJobs() {
+    $http.get('/api/jobs/')
+      .then(function(response) {
+        $scope.jobs = response.data;
       })
       .catch(function(error) {
         console.log(error);

@@ -191,6 +191,7 @@ angular
         ncyBreadcrumb: {
           label: 'Clientes'
         },
+        controller: 'clientsController',
         resolve: {
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load files for an existing module
@@ -209,11 +210,31 @@ angular
         ncyBreadcrumb: {
           label: 'Departamentos'
         },
+        controller: 'departmentsController',
         resolve: {
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load files for an existing module
             return $ocLazyLoad.load({
               files: ['js/controllers/admin/departments.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: true
+        }
+      })
+      .state('app.admin.jobs', {
+        url: '/posiciones-de-trabajo',
+        templateUrl: 'views/components/jobs.html',
+        ncyBreadcrumb: {
+          label: 'Posiciones de Trabajo'
+        },
+        controller: 'jobsController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load files for an existing module
+            return $ocLazyLoad.load({
+              files: ['js/controllers/admin/job.js']
             });
           }]
         },
@@ -227,6 +248,7 @@ angular
         ncyBreadcrumb: {
           label: 'Empresas'
         },
+        controller: 'businessController',
         resolve: {
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load files for an existing module
@@ -245,6 +267,7 @@ angular
         ncyBreadcrumb: {
           label: 'Servicios'
         },
+        controller: 'serviceController',
         resolve: {
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load files for an existing module
@@ -382,7 +405,6 @@ angular
       }
 
       $rootScope.client = authentication.currentClient();
-
       let to = trans.$to();
       //if regular user redirect
       if ($rootScope.client.role.level === 3) {

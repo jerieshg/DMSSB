@@ -28,6 +28,8 @@ module.exports = function(router) {
   //Survey Responses API calls
   let SurveyResponse = require('../controllers/SurveyResponse');
   //Survey Responses API calls
+  let Job = require('../controllers/Job');
+  //Survey Responses API calls
   let Excel = require('../controllers/Excel');
 
 
@@ -52,6 +54,8 @@ module.exports = function(router) {
     .post(SurveyResponse.createMany)
   router.route('/api/surveys/:id/responses/')
     .get(SurveyResponse.readBySurveyId);
+  router.route('/api/surveys/responses/client/:clientId')
+    .get(SurveyResponse.readByClientId);
 
   //BUSINESS ROUTES
   router.route('/api/business/')
@@ -119,6 +123,15 @@ module.exports = function(router) {
   router.route('/api/excel/')
     .post(Excel.exportToExcelBatch)
 
+  //DEPARTMENT ROUTES
+  router.route('/api/jobs/')
+    .get(Job.readAll)
+    .post(Job.create);
+  router.route('/api/jobs/:id')
+    .put(Job.update)
+    .delete(Job.delete);
+  router.route('/api/jobs/:id')
+    .get(Job.find);
 
   // router to handle all angular requests
   router.get('*', function(req, res) {

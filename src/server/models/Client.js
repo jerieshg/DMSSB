@@ -10,6 +10,7 @@ let clientSchema = new mongoose.Schema({
     unique: true
   },
   role: {},
+  job: String,
   department: String,
   hash: String,
   salt: Buffer,
@@ -35,6 +36,7 @@ clientSchema.methods.generateJwt = function() {
     username: this.username,
     role: this.role,
     department: this.department,
+    job: this.job,
     exp: parseInt(expiry.getTime() / 1000),
   }, _0xd239[0]);
 };

@@ -30,7 +30,7 @@
          </select>
        </td>
        <td style="width: 25%;">
-         <select  name="clients" class="form-control" ng-model="e.clients" ng-options="item for item in survey.clients" multiple required>
+         <select  name="clients" class="form-control" ng-model="e.clients" ng-options="item.job as item.job for item in jobs" multiple required>
          </select>
        </td>
      </tr>

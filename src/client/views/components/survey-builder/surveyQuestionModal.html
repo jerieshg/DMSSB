@@ -9,25 +9,21 @@
           </button>
         </div>
         <div class="modal-body">
-        <div class="col-md-2 modal-legend">
-               <strong>Acciones: </strong>
-            <i class="fa fa-copy" style="margin-right:5%;" ng-click="copyQuestion()"></i>
-            <i class="fa fa-paste" ng-click="pasteQuestion()"></i>
-           </div>
-        <div class="col-md-10">
+          <div class="col-md-2 modal-legend">
+           <strong>Acciones: </strong>
+           <i class="fa fa-copy" style="margin-right:5%;" ng-click="copyQuestion()"></i>
+           <i class="fa fa-paste" ng-click="pasteQuestion()"></i>
+         </div>
+         <div class="col-md-10">
           <div class="row row-separator">
-            <div class="col-sm-7">
+            <div class="col-sm-12">
               <input ng-model="newQuestion.title" name="questionTitle" class="form-control" type="text" placeholder="Titulo de pregunta" required/>
             </div>
-            <div class="col-sm-3">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" value="true" ng-model="newQuestion.isRequired">Requerido</label>
-                </div>
-              </div>
-            </div>
 
-            <div class="row-separator">
+          </div>
+
+          <div class="row row-separator">
+          <div class="col-sm-9">
               <select ng-model="newQuestion.formType" ng-change="onQuestionTypeChange()" class="form-control" name="questionFormType" required>
                 <option value="">Seleccione un tipo de pregunta</option>
                 <option value="text">Texto</option>
@@ -37,6 +33,13 @@
                 <option value="comment">Comentario</option>
                 <option value="rating">Escala Lineal</option>
               </select>
+            </div>
+            <div class="col-sm-2">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" value="true" ng-model="newQuestion.isRequired">Requerido</label>
+                </div>
+              </div>
             </div>
 
             <!-- Informacion de las opciones -->
@@ -75,16 +78,16 @@
                </div>
              </div>
            </div>
-           </div>
-           
          </div>
-         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-          <button type="submit" class="btn btn-success">
-           <i class="fa fa-save" aria-hidden="true"/> Guardar pregunta
-         </button>
+
        </div>
-     </form>
-   </div>
+       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-success">
+         <i class="fa fa-save" aria-hidden="true"/> Guardar pregunta
+       </button>
+     </div>
+   </form>
  </div>
+</div>
 </div>

@@ -8646,6 +8646,62 @@ base-chart.chart {
 .label-pill {
   border-radius: 1rem !important; }
 
+@media (max-width: 991px) {
+  body {
+    padding: 0 !important;
+    margin: 0 !important; }
+  header.navbar {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important; }
+    header.navbar .navbar-toggler {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 70px;
+      height: inherit; }
+    header.navbar .navbar-toggler {
+      color: rgba(0, 0, 0, 0.3); }
+    header.navbar .navbar-brand {
+      width: 100% !important;
+      margin: 0 auto !important; }
+    header.navbar .navbar-nav {
+      position: absolute;
+      top: 0;
+      right: 15px;
+      height: inherit; }
+  .sidebar {
+    left: -220px !important;
+    width: 220px !important; }
+    .sidebar ul.nav {
+      width: 220px !important; }
+    .sidebar .sidebar-footer {
+      margin-left: -220px; }
+  .breadcrumb-menu {
+    display: none; }
+  .main {
+    width: 100% !important;
+    padding: 0 !important;
+    padding-top: 55px !important;
+    margin: 0 !important;
+    overflow: hidden; }
+  .aside-menu {
+    right: -250px !important; }
+  .footer {
+    display: none; }
+  html {
+    max-width: 100%;
+    overflow-x: hidden; }
+  body.mobile-open {
+    max-width: 100%;
+    overflow-x: hidden; }
+    body.mobile-open .sidebar {
+      left: 0 !important;
+      margin-left: 0; }
+    body.mobile-open .main {
+      margin-left: 220px !important; } }
+
 .danger {
   background-color: #f2dede; }
 
@@ -9038,6 +9094,11 @@ hr:after {
 
 .sidebar {
   z-index: 50; }
+
+.completed {
+  background-color: #d8e2f0; }
+  .completed td {
+    border-color: blue; }
 
 /*!
  * surveyjs - Survey JavaScript library v0.11.0

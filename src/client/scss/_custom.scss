@@ -423,3 +423,10 @@ content-404{
 .sidebar{
   z-index: 50;
 }
+
+.completed{
+  background-color: #d8e2f0;
+  td{
+    border-color: blue;
+  }
+}

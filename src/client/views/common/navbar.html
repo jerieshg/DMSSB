@@ -6,36 +6,36 @@
             <a class="nav-link navbar-toggler sidebar-toggler" href="#">&#9776;</a>
         </li>
 
-        <li class="nav-item px-1" ng-show="client.role.role === 'Admin'">
-                <a class="nav-link" ui-sref="app.main">Dashboard</a>
+        <li class="nav-item px-1" ng-show="client.role.level === 1">
+            <a class="nav-link" ui-sref="app.main">Dashboard</a>
         </li>
 
-    <li class="nav-item dropdown" ng-show="client.role.level === 1">
-        <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Administrador
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" ui-sref="app.admin.clients">Clientes</a>
-          <a class="dropdown-item" ui-sref="app.admin.business">Empresas</a>
-          <a class="dropdown-item" ui-sref="app.admin.departments">Departamentos</a>
-        </div>
+        <li class="nav-item dropdown" ng-show="client.role.level === 1">
+            <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Administrador
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" ui-sref="app.admin.clients">Clientes</a>
+              <a class="dropdown-item" ui-sref="app.admin.business">Empresas</a>
+              <a class="dropdown-item" ui-sref="app.admin.departments">Departamentos</a>
+          </div>
       </li>
 
-    </ul>
-    <ul class="nav navbar-nav ml-auto hidden-md-down">
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                <img src="img/avatars/1.png" class="img-avatar" alt="admin@bootstrapmaster.com">
-                <span class="hidden-md-down">{{client.username}}</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" ng-controller="logoutController">
+  </ul>
+  <ul class="nav navbar-nav ml-auto hidden-md-down">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            <img src="img/avatars/1.png" class="img-avatar" alt="admin@bootstrapmaster.com">
+            <span class="hidden-md-down">{{client.username}}</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" ng-controller="logoutController">
 
-                <div class="dropdown-header text-center">
-                    <strong>Settings</strong>
-                </div>
-
-                <a class="dropdown-item" href="#" ng-click="logout()"><i class="fa fa-lock"></i> Logout</a>
+            <div class="dropdown-header text-center">
+                <strong>Settings</strong>
             </div>
-        </li>
-    </ul>
+
+            <a class="dropdown-item" href="#" ng-click="logout()"><i class="fa fa-lock"></i> Logout</a>
+        </div>
+    </li>
+</ul>
 </header>
