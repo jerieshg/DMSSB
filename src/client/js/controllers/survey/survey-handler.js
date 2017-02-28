@@ -10,6 +10,7 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
 
   function sendDataToServer(survey) {
     const data = survey.data;
+
     const response = {
       job: $rootScope.client.job,
       results: [],
@@ -20,7 +21,7 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
     for (const question of Object.keys(data)) {
       //Gets selected question
       const selectedQuestions = $scope.completeSurvey.questions.filter(e => {
-        return e.title === question;
+        return e.name === question;
       });
 
       //if no questions found, break the loop
@@ -59,6 +60,7 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
 
       response.results.push(result);
     }
+
 
     $http.post('/api/surveys/responses/', response)
       .then(function(response) {
