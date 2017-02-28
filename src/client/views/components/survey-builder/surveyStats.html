@@ -16,11 +16,11 @@
            <i class="fa fa-asterisk icon-bg"></i>Resultado general por servicio 
          </div>
          <div class="card-block" >
-           <canvas  class="chart chart-radar " chart-data="radarGraph.data" chart-labels="radarGraph.labels" chart-options="radarOptions"></canvas>
+           <canvas  class="chart chart-radar " chart-data="radarGraph.data" chart-labels="radarGraph.labels" chart-options="radarOptions" chart-series="radarGraph.series"></canvas>
          </div>
        </div>
      </md-tab>
-     <md-tab  ng-repeat="service in services" label="{{service.service}} - ({{service.charts.length}})">
+     <md-tab  ng-repeat="service in services" label="{{service.service}} - ({{service.charts.length}})" >
       <md-content class="md-padding">
         <div class="card" ng-repeat="e in service.charts">
           <div class="card-header">
@@ -28,13 +28,13 @@
           </div>
           <div class="card-block" >
 
-            <canvas ng-if="showChartType(e.formType, 'bar')" class="chart chart-bar" chart-data="e.data" chart-labels="e.labels" chart-options="options">
+            <canvas ng-if="showChartType(e.formType, 'bar')" class="chart chart-bar" chart-data="e.data" chart-labels="e.labels" chart-options="options" chart-series="e.series">
             </canvas>
 
-            <canvas ng-if="showChartType(e.formType, 'pie')" class="chart chart-pie" chart-data="e.data" chart-labels="e.labels" chart-options="pieOptions">
+            <canvas ng-if="showChartType(e.formType, 'pie')" class="chart chart-pie" chart-data="e.data" chart-labels="e.labels" chart-options="pieOptions" chart-series="e.series">
             </canvas>
 
-            <canvas ng-if="showChartType(e.formType, 'horizontal-bar')" class="chart chart-horizontal-bar" chart-data="e.data" chart-labels="e.labels" chart-options="horizontalBarOptions">
+            <canvas ng-if="showChartType(e.formType, 'horizontal-bar')" class="chart chart-horizontal-bar" chart-data="e.data" chart-labels="e.labels" chart-options="horizontalBarOptions" chart-series="e.series">
             </canvas>
 
             <div ng-if="showChartType(e.formType, 'text')" >

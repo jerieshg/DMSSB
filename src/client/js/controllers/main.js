@@ -1,12 +1,32 @@
-function MainController($rootScope, $scope, $http, commonFactory) {
+function MainController($rootScope, $scope, $state, $http, commonFactory) {
 
   initializeController();
+
+  $scope.compareSurveys = function() {
+    if (Object.keys($scope.surveyCompareList).length > 1) {
+      $state.go('app.survey-builder.compare-stats', {
+        'surveyIds': $scope.surveyCompareList
+      });
+    } else {
+      commonFactory.activateAlert('No ha elegido encuestas a comparar', 'info');
+    }
+  }
+
+  $scope.addToCompareSurvey = function(value, survey) {
+    if (value) {
+      $scope.surveyCompareList[survey._id] = {
+        surveyName: survey.surveyName,
+        _id: survey._id
+      }
+    } else {
+      delete $scope.surveyCompareList[survey._id];
+    }
+  }
 
   $scope.trackSurvey = function(id) {
     $http.get(`/api/surveys/${id}/track/`)
       .then((response) => {
         $scope.trackUsers = response.data;
-        console.log($scope.trackUsers)
       })
       .catch((error) => {
         console.log(error);
@@ -145,6 +165,7 @@ function MainController($rootScope, $scope, $http, commonFactory) {
       percentage: 0,
       items: []
     };
+    $scope.surveyCompareList = [];
   }
 
   function retrieveSurveys() {
@@ -164,5 +185,5 @@ function MainController($rootScope, $scope, $http, commonFactory) {
   }
 }
 
-MainController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory'];
+MainController.$inject = ['$rootScope', '$scope', '$state', '$http', 'commonFactory'];
 angular.module('app').controller('mainController', MainController);

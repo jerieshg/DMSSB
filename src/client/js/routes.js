@@ -156,7 +156,31 @@ angular
       .state('app.survey-builder.stats', {
         url: '/:id/stats/',
         params: {
-          survey: null
+          survey: null,
+          surveyIds: []
+        },
+        templateUrl: 'views/components/survey-builder/surveyStats.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Estadisticas',
+        },
+        controller: 'surveyStatsController',
+        data: {
+          isAdminRequired: true
+        },
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/survey/survey-stats.js']
+            });
+          }]
+        }
+      })
+      .state('app.survey-builder.compare-stats', {
+        url: '/stats/compare',
+        params: {
+          surveyIds: null
         },
         templateUrl: 'views/components/survey-builder/surveyStats.html',
         //page title goes here

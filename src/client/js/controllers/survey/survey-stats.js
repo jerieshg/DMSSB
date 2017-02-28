@@ -3,15 +3,29 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   initalizeController();
 
   function initalizeController() {
-    retrieveSurvey();
-    retrieveStats();
+    $scope.isComparing = $state.includes('app.survey-builder.compare-stats');
+    let seriesCurrentName = "";
+
+    if ($scope.isComparing) {
+      if (!$stateParams.surveyIds) {
+        $window.history.back();
+        return;
+      }
+
+      retrieveAllStats();
+    } else {
+      retrieveSurvey();
+      retrieveStats();
+    }
+
     configureTooltipOptions();
     $scope.survey = {};
     $scope.services = [];
     $scope.totalResult = new Map();
     $scope.radarGraph = {
       labels: [],
-      data: []
+      data: [],
+      series: []
     };
     $scope.actionPlan = {
       percentage: 0,
@@ -114,7 +128,10 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   }
 
   function processQuestions(questions, result) {
-    let chart = {};
+    let chart = {
+      series: [],
+      data: []
+    };
 
     let selectedQuestion = {
       average: 0
@@ -174,7 +191,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     $scope.totalResult.set(selectedQuestion.service, resultSet);
 
     chart.labels = [...answers.keys()];
-    chart.data = [...answers.values()];
+    chart.data.push([...answers.values()]);
     chart.average = (selectedQuestion.average * 100).toFixed(2);
     selectedQuestion.percentage = chart.average;
 
@@ -182,8 +199,11 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   }
 
   function buildRadarMap() {
+    let data = [];
     for (var [key, value] of $scope.totalResult.entries()) {
-      $scope.radarGraph.labels.push(key);
+      if ($scope.radarGraph.labels.indexOf(key) === -1) {
+        $scope.radarGraph.labels.push(key);
+      }
 
       let totalSum = 0;
       let length = 0;
@@ -194,8 +214,12 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         }
       });
 
-      $scope.radarGraph.data.push(((totalSum / length) * 100).toFixed(2));
+      data.push(((totalSum / length) * 100).toFixed(2));
     }
+    if ($scope.isComparing) {
+      $scope.radarGraph.series.push(seriesCurrentName);
+    }
+    $scope.radarGraph.data.push(data);
   }
 
   $scope.showChartType = function(questionType, chartType) {
@@ -281,6 +305,22 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         }
       }
     };
+  }
+
+  function retrieveAllStats() {
+    Object.keys($stateParams.surveyIds).map((key) => {
+      const surveyObj = $stateParams.surveyIds[key];
+
+      $http.get('/api/surveys/' + surveyObj._id + '/responses/')
+        .then(function(response) {
+          seriesCurrentName = surveyObj.surveyName;
+          buildStats(response.data);
+          $scope.services = [];
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    });
   }
 
   function retrieveStats() {

@@ -9101,7 +9101,8 @@ hr:after {
     border-color: blue; }
 
 .table-total-tr {
-  background-color: yellow; }
+  background-color: #ffff3e;
+  font-weight: bold; }
 
 /*!
  * surveyjs - Survey JavaScript library v0.11.0
