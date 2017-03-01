@@ -17,7 +17,15 @@
 	app.use(bodyParser.urlencoded({
 		extended: true
 	}));
-	app.use(express.static(path.join(__dirname, 'src', 'client')));
+
+	var PRD = (process.env.NODE_ENV && process.env.NODE_ENV === 'production');
+	console.log("PRD: " + PRD);
+	if (PRD) {
+		app.use(express.static(path.join(__dirname, 'src', 'client')));
+	} else {
+		app.use(express.static('dist'));
+	}
+
 
 	//Initialize routes
 	require('./src/server/routes/index')(app);

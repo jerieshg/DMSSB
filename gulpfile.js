@@ -80,12 +80,12 @@ gulp.task('copy:css', function() {
 });
 
 gulp.task('copy:img', function() {
-  return gulp.src('.src/client/img/**/*')
+  return gulp.src('./src/client/img/**/*')
     .pipe(gulp.dest(paths.dist + '/img'));
 });
 
 gulp.task('copy:fonts', function() {
-  return gulp.src('.src/client/fonts/**/*')
+  return gulp.src('./src/client/fonts/**/*')
     .pipe(gulp.dest(paths.dist + '/fonts'));
 });
 
@@ -123,7 +123,7 @@ gulp.task('server:start', () => {
 gulp.task('server:restart', server.restart);
 
 gulp.task('build:dist', function(callback) {
-  runSequence('clean:dist', 'copy:bower', 'copy:css', 'copy:img', 'copy:fonts', 'copy:js', 'copy:views', 'copy:html', 'replace:bower', 'server:start', callback);
+  runSequence('clean:dist', 'copy:bower', 'copy:css', 'copy:img', 'copy:fonts', 'copy:js', 'copy:views', 'copy:html', 'replace:bower', callback);
 });
 
 //Development
@@ -179,5 +179,5 @@ gulp.task('jshint', function() {
     .pipe(plugins.jshint.reporter('default'))
     .pipe(plugins.jshint.reporter('fail'));
 });
-
+gulp.task('build-linux', ['sass', 'sass:watch', 'scripts', 'uglify', 'images', 'jshint']);
 gulp.task('default', ['sass', 'sass:watch', 'scripts', 'uglify', 'images', 'jshint', 'server:start']);

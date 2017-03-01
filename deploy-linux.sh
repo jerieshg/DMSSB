@@ -4,7 +4,7 @@ git pull
 
 #Runs required by the server
 npm install
-gulp
+gulp build:dist
 
-#resart service
+#restart linux service
 systemctl restart enersa-dsm
