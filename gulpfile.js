@@ -179,4 +179,6 @@ gulp.task('jshint', function() {
     .pipe(plugins.jshint.reporter('default'))
     .pipe(plugins.jshint.reporter('fail'));
 });
+
+gulp.task('build:linux', ['sass', 'scripts', 'uglify', 'images', 'jshint']);
 gulp.task('default', ['sass', 'sass:watch', 'scripts', 'uglify', 'images', 'jshint', 'server:start']);

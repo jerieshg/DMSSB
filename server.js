@@ -19,6 +19,7 @@
 	}));
 
 	var isPRD = (process.env.NODE_ENV && process.env.NODE_ENV === 'production');
+	isPRD = false; //temporary
 	if (!isPRD) {
 		app.use(express.static(path.join(__dirname, 'src', 'client')));
 	} else {
