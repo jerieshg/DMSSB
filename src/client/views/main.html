@@ -34,7 +34,7 @@
      <tr ng:repeat="e in surveys | filter:search" >
       <td>
         <div class="checkbox">
-        <label><input type="checkbox" ng-model="compSurveyChkbox" ng-change="addToCompareSurvey(compSurveyChkbox, e)"></label>
+        <label><input type="checkbox" ng-model="compSurveyChkbox"  ng-change="addToCompareSurvey(compSurveyChkbox, e)"></label>
         </div>
       </td>
       <td>{{$index + 1}}</td>

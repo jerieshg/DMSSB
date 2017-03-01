@@ -19,7 +19,7 @@ function SurveyController($rootScope, $scope, $http, commonFactory) {
   function retrieveSurveyResponses() {
     $http.get(`/api/surveys/responses/client/${$rootScope.client._id}`)
       .then(function(response) {
-        $scope.surveyResponses.push(response.data.map(e => e.surveyId)[0]);
+        $scope.surveyResponses = response.data.map(e => e.surveyId);
       })
       .catch(function(error) {
         console.log(error);

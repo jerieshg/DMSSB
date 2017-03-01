@@ -93,6 +93,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   function buildStats(data) {
     let allResults = [];
     $scope.totalResponses = data.length;
+    $scope.totalPerService = [];
 
     data.forEach(response => {
       allResults = response.results.reduce((coll, item) => {
@@ -100,6 +101,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         return coll;
       }, allResults);
     });
+
 
     processServiceGlobal(allResults);
   }
@@ -114,7 +116,10 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         charts: []
       }
 
+      $scope.totalPerService[result.service] = groupedService[service].length;
+
       let groupedQuestions = commonFactory.groupBy(groupedService[service], 'question');
+      $scope.serviceQuestionCount = Object.keys(groupedQuestions).length;
       Object.keys(groupedQuestions).map((key) => {
         const questions = groupedQuestions[key];
         let chart = processQuestions(questions, result);
@@ -172,7 +177,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
         // //calculate average
         let maxValue = e.rates[e.rates.length - 1];
-        let average = (answerSum / $scope.totalResponses) / maxValue;
+        let average = (answerSum / ($scope.totalPerService[selectedQuestion.service] / $scope.serviceQuestionCount)) / maxValue;
         selectedQuestion.average += average;
         selectedQuestion.rating = true;
       }
@@ -183,7 +188,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     selectedQuestion.question = chart.question;
 
     if (!selectedQuestion.rating) {
-      selectedQuestion.average = (questions.map((e) => Number.parseFloat(e.value)).reduce((a, b) => a + b)) / $scope.totalResponses;
+      selectedQuestion.average = (questions.map((e) => Number.parseFloat(e.value)).reduce((a, b) => a + b)) / ($scope.totalPerService[selectedQuestion.service] / $scope.serviceQuestionCount);
     }
 
     let resultSet = $scope.totalResult.get(selectedQuestion.service) ? $scope.totalResult.get(selectedQuestion.service) : [];
