@@ -123,7 +123,7 @@ gulp.task('server:start', () => {
 gulp.task('server:restart', server.restart);
 
 gulp.task('build:dist', function(callback) {
-  runSequence('clean:dist', 'copy:bower', 'copy:css', 'copy:img', 'copy:fonts', 'copy:js', 'copy:views', 'copy:html', 'replace:bower', callback);
+  runSequence('clean:dist', 'scripts', 'uglify', 'sass', 'copy:bower', 'copy:css', 'copy:img', 'copy:fonts', 'copy:js', 'copy:views', 'copy:html', 'replace:bower', callback);
 });
 
 //Development
@@ -179,5 +179,4 @@ gulp.task('jshint', function() {
     .pipe(plugins.jshint.reporter('default'))
     .pipe(plugins.jshint.reporter('fail'));
 });
-gulp.task('build-linux', ['sass', 'sass:watch', 'scripts', 'uglify', 'images', 'jshint']);
 gulp.task('default', ['sass', 'sass:watch', 'scripts', 'uglify', 'images', 'jshint', 'server:start']);
