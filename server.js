@@ -18,14 +18,12 @@
 		extended: true
 	}));
 
-	var PRD = (process.env.NODE_ENV && process.env.NODE_ENV === 'production');
-	console.log("PRD: " + PRD);
-	if (PRD) {
+	var isPRD = (process.env.NODE_ENV && process.env.NODE_ENV === 'production');
+	if (!isPRD) {
 		app.use(express.static(path.join(__dirname, 'src', 'client')));
 	} else {
 		app.use(express.static('dist'));
 	}
-
 
 	//Initialize routes
 	require('./src/server/routes/index')(app);

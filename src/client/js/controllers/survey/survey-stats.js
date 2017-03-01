@@ -349,7 +349,6 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         .then(function(response) {
           seriesCurrentName = surveyObj.surveyName;
           buildStats(response.data);
-          // $scope.services = [];
         })
         .catch(function(error) {
           console.log(error);
