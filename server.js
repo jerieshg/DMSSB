@@ -22,7 +22,7 @@
 	if (!isPRD) {
 		app.use(express.static(path.join(__dirname, 'src', 'client')));
 	} else {
-		app.use(express.static('dist'));
+		app.use(express.static(path.join(__dirname, 'dist')));
 	}
 
 	//Initialize routes
