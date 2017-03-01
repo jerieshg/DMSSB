@@ -18,7 +18,7 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
       clientId: $rootScope.client._id
     };
 
-    for (const question of Object.keys(data)) {
+    for (var question of Object.keys(data)) {
       //Gets selected question
       const selectedQuestions = $scope.completeSurvey.questions.filter(e => {
         return e.name === question;

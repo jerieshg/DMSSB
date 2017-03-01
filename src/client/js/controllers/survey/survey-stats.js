@@ -123,7 +123,9 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       Object.keys(groupedQuestions).map((key) => {
         const questions = groupedQuestions[key];
         let chart = processQuestions(questions, result);
-        result.charts.push(chart);
+        if (chart) {
+          result.charts.push(chart);
+        }
       });
 
       $scope.services.push(result);
@@ -138,6 +140,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       data: []
     };
 
+    //Used for radar graph
     let selectedQuestion = {
       average: 0
     }
@@ -175,7 +178,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         });
         answers = new Map([...answers.entries()].sort());
 
-        // //calculate average
+        //calculate average
         let maxValue = e.rates[e.rates.length - 1];
         let average = (answerSum / ($scope.totalPerService[selectedQuestion.service] / $scope.serviceQuestionCount)) / maxValue;
         selectedQuestion.average += average;
@@ -191,16 +194,41 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       selectedQuestion.average = (questions.map((e) => Number.parseFloat(e.value)).reduce((a, b) => a + b)) / ($scope.totalPerService[selectedQuestion.service] / $scope.serviceQuestionCount);
     }
 
+    //Result set used in radar graph
     let resultSet = $scope.totalResult.get(selectedQuestion.service) ? $scope.totalResult.get(selectedQuestion.service) : [];
     resultSet.push(selectedQuestion);
     $scope.totalResult.set(selectedQuestion.service, resultSet);
 
-    chart.labels = [...answers.keys()];
-    chart.data.push([...answers.values()]);
-    chart.average = (selectedQuestion.average * 100).toFixed(2);
+    let found = false;
+    if ($scope.isComparing) {
+      chart.series.push(seriesCurrentName);
+      //if comparing search for the existing service
+      $scope.services.forEach((service) => {
+        let foundService = service.charts.find((s) => {
+          return s.question.replace(/[^a-zA-Z]/g, "") === chart.question.replace(/[^a-zA-Z]/g, "");
+        });
+
+        if (foundService) {
+          foundService.data.push([...answers.values()])
+          foundService.series.push(seriesCurrentName);
+          found = true;
+        }
+      });
+
+      if (!found) {
+        chart.labels = [...answers.keys()];
+        chart.data.push([...answers.values()]);
+        chart.average = (selectedQuestion.average * 100).toFixed(2);
+      }
+    } else {
+      chart.labels = [...answers.keys()];
+      chart.data.push([...answers.values()]);
+      chart.average = (selectedQuestion.average * 100).toFixed(2);
+    }
+
     selectedQuestion.percentage = chart.average;
 
-    return chart;
+    return !found ? chart : null;
   }
 
   function buildRadarMap() {
@@ -252,7 +280,8 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
           });
           let currentValue = dataset.data[tooltipItem.index];
           let percentage = Math.floor(((currentValue / total) * 100) + 0.5);
-          return currentValue + " - " + percentage + "%";
+          let label = (dataset.label ? dataset.label.substring(0, (dataset.label.length < 17 ? dataset.label.length : 17)) + " - " : "")
+          return label + currentValue + " - " + percentage + "%";
         }
       }
     }
@@ -320,7 +349,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         .then(function(response) {
           seriesCurrentName = surveyObj.surveyName;
           buildStats(response.data);
-          $scope.services = [];
+          // $scope.services = [];
         })
         .catch(function(error) {
           console.log(error);

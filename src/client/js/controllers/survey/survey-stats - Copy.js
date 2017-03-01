@@ -193,19 +193,26 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     let found = false;
 
     if ($scope.isComparing) {
-      $scope.radarGraph.series.push(seriesCurrentName);
 
+      chart.series.push(seriesCurrentName);
+
+      //trying to look for existing service
       $scope.services.forEach((service) => {
         let foundService = service.charts.find((s) => {
           return s.question === chart.question;
         });
 
+        console.log(foundService);
+        //if found, update
         if (foundService) {
+          foundService.series.push(seriesCurrentName);
           foundService.data.push([...answers.values()])
           found = true;
+          break;
         }
       });
 
+      //if not found, add it to the lese
       if (!found) {
         chart.labels = [...answers.keys()];
         chart.data.push([...answers.values()]);
@@ -217,7 +224,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       chart.average = (selectedQuestion.average * 100).toFixed(2);
     }
 
-    chart.average = (selectedQuestion.average * 100).toFixed(2);
+    // chart.average = (selectedQuestion.average * 100).toFixed(2);
     selectedQuestion.percentage = chart.average;
 
     return !found ? chart : null;
