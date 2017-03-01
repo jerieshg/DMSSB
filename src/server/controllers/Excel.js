@@ -1,5 +1,4 @@
 let SurveyResponse = require('../models/SurveyResponse');
-let nodeExcel = require('excel-export');
 let excel = require('node-excel-export');
 
 module.exports.exportToExcel = function(req, res) {
