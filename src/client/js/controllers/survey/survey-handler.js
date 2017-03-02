@@ -15,7 +15,7 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
       job: $rootScope.client.job,
       results: [],
       timestamp: new Date(),
-      clientId: $rootScope.client._id
+      client: $rootScope.client.username
     };
 
     for (var question of Object.keys(data)) {

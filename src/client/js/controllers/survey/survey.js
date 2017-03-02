@@ -3,11 +3,8 @@ function SurveyController($rootScope, $scope, $http, commonFactory) {
   initializeController();
 
   $scope.respondedSurvey = function(e) {
-    if ($scope.surveyResponses.includes(e._id)) {
-      e.completed = true;
-      return true;
-    }
-    return false;
+    e.completed = $scope.surveyResponses.includes(e._id);
+    return e.completed;
   }
 
   function initializeController() {

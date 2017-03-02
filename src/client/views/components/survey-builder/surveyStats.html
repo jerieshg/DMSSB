@@ -1,57 +1,90 @@
 <div class="animated fadeIn">
   <div ng-include="'views/components/survey-builder/actionPlanModal.html'"></div>
   
- <div class="md-toolbar-tools custom-md-toolbar">
-   <h5>{{survey.surveyName}}</h5>&nbsp;<h5 class="small">({{totalResponses}} respuestas)</h5>
-   <span flex class="flex"></span>
-   <i class="fa fa-file-excel-o" aria-hidden="true" ng-click="exportAllResponses()" data-toggle="tooltip" title="Exportar todas las respuestas"></i>
-    <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal"></i>
+  <div class="md-toolbar-tools custom-md-toolbar">
+   <h5 ng-show="isComparing">Comparando encuestas</h5>
+   
+     <h5 ng-hide="isComparing">{{survey.surveyName}}</h5>
+     &nbsp;
+     <h5 class="small" ng-hide="isComparing">({{totalResponses}} respuestas)</h5>
+     <span flex class="flex"></span>
+     <i class="fa fa-file-excel-o" aria-hidden="true" ng-click="exportAllResponses()" data-toggle="tooltip" title="Exportar todas las respuestas" ng-hide="isComparing"></i>
+     <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-hide="isComparing"></i>
  </div>
 
-  <md-content>
-    <md-tabs md-dynamic-height md-border-bottom>
-      <md-tab label="Resultado General">
-        <div class="card custom-chart-radar">
-          <div class="card-header">
-           <i class="fa fa-asterisk icon-bg"></i>Resultado general por servicio 
-         </div>
-         <div class="card-block" >
-           <canvas  class="chart chart-radar " chart-data="radarGraph.data" chart-labels="radarGraph.labels" chart-options="radarOptions" chart-series="radarGraph.series"></canvas>
-         </div>
+ <md-content>
+  <md-tabs md-dynamic-height md-border-bottom>
+    <md-tab label="Resultado General">
+      <div class="card custom-chart-radar">
+        <div class="card-header">
+         <i class="fa fa-asterisk icon-bg"></i>Resultado general por servicio 
        </div>
-     </md-tab>
-     <md-tab  ng-repeat="service in services" label="{{service.service}} - ({{service.charts.length}})" >
-      <md-content class="md-padding">
-        <div class="card" ng-repeat="e in service.charts">
-          <div class="card-header">
-            <i class="fa fa-asterisk icon-bg"></i>{{e.question}} - <strong>{{e.average}}%</strong>
-          </div>
-          <div class="card-block" >
-
-            <canvas ng-if="showChartType(e.formType, 'bar')" class="chart chart-bar" chart-data="e.data" chart-labels="e.labels" chart-options="options" chart-series="e.series">
-            </canvas>
-
-            <canvas ng-if="showChartType(e.formType, 'pie')" class="chart chart-pie" chart-data="e.data" chart-labels="e.labels" chart-options="pieOptions" chart-series="e.series">
-            </canvas>
-
-            <canvas ng-if="showChartType(e.formType, 'horizontal-bar')" class="chart chart-horizontal-bar" chart-data="e.data" chart-labels="e.labels" chart-options="horizontalBarOptions" chart-series="e.series">
-            </canvas>
-
-            <div ng-if="showChartType(e.formType, 'text')" >
-             <table class="table table-hover">
-               <tbody>
-                 <tr ng:repeat="text in e.labels">
-                   <td>{{text}}</td>
-                 </tr>
-               </tbody>
-             </table>
-           </div>
-         </div>
-
+       <div class="card-block" >
+         <canvas  class="chart chart-radar " chart-data="radarGraph.data" chart-labels="radarGraph.labels" chart-options="radarOptions" chart-series="radarGraph.series"></canvas>
        </div>
-     </md-content>
+     </div>
    </md-tab>
- </md-tabs>
+
+   <md-tab label="Clientes" data-ng-if="client.role.level === 1">
+    <table class="table table-hover">
+     <tbody>
+       <tr ng:repeat="client in clients track by $index">
+         <td>{{client}}</td>
+       </tr>
+     </tbody>
+   </table>
+ </md-tab>
+
+ <md-tab  ng-repeat="service in services" label="{{service.service}} - ({{service.charts.length}} preguntas)" >
+  <md-content class="md-padding">
+    <div class="card" ng-repeat="e in service.charts">
+
+      <div class="card-header">
+        <i class="fa fa-asterisk icon-bg"></i>{{e.question}}<p ng-show="!isComparing">- <strong>{{e.average}}%</strong></p>
+      </div>
+      <div class="card-block" >
+
+
+        <canvas ng-if="showChartType(e.formType, 'bar')" class="chart chart-bar" chart-data="e.data" chart-labels="e.labels" chart-options="options" chart-series="e.series">
+        </canvas>
+
+        <canvas ng-if="showChartType(e.formType, 'pie')" class="chart chart-pie" chart-data="e.data" chart-labels="e.labels" chart-options="pieOptions" chart-series="e.series">
+        </canvas>
+
+        <canvas ng-if="showChartType(e.formType, 'horizontal-bar')" class="chart chart-horizontal-bar" chart-data="e.data" chart-labels="e.labels" chart-options="horizontalBarOptions" chart-series="e.series">
+        </canvas>
+
+        <div class="col-sm-5" ng-show="isComparing">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <td ng:repeat="text in e.series track by $index">{{text}}</td>
+              </tr>
+            </thead>
+            <tbody>
+             <tr>
+               <td ng:repeat="text in e.compareAverages track by $index">{{text ? text : 0}}%</td>
+             </tr>
+           </tbody>
+         </table>
+       </div>
+
+       <div ng-if="showChartType(e.formType, 'text')" >
+         <table class="table table-hover">
+           <tbody>
+             <tr ng:repeat="text in e.labels track by $index">
+               <td>{{text}}</td>
+             </tr>
+           </tbody>
+         </table>
+       </div>
+     </div>
+
+   </div>
+ </md-content>
+</md-tab>
+
+</md-tabs>
 </md-content>
 </div>
 
