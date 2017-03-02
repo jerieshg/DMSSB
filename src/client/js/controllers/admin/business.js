@@ -42,15 +42,17 @@ function BusinessController($scope, $http, commonFactory) {
   }
 
   $scope.deleteBusiness = function(id) {
-    $http.delete('/api/business/' + id)
-      .then(function(response) {
-        commonFactory.activateAlert('Empresa borrada exitosamente!', 'danger');
-        retrieveBusiness();
-        $scope.selectedBusiness = {};
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+    if (confirm("Esta seguro de borrar esta empresa?")) {
+      $http.delete('/api/business/' + id)
+        .then(function(response) {
+          commonFactory.activateAlert('Empresa borrada exitosamente!', 'danger');
+          retrieveBusiness();
+          $scope.selectedBusiness = {};
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
   }
 
   function initializeController() {

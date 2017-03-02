@@ -35,15 +35,17 @@ function ClientController($scope, $http, commonFactory, authentication) {
   }
 
   $scope.deleteClient = function(id) {
-    $http.delete('/api/clients/' + id)
-      .then(function(response) {
-        commonFactory.activateAlert('Cliente borrado exitosamente!', 'danger');
-        retrieveClients();
-        $scope.selectedClient = {};
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+    if (confirm("Esta seguro de borrar este cliente?")) {
+      $http.delete('/api/clients/' + id)
+        .then(function(response) {
+          commonFactory.activateAlert('Cliente borrado exitosamente!', 'danger');
+          retrieveClients();
+          $scope.selectedClient = {};
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
   }
 
   function initializeController() {

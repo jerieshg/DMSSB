@@ -62,6 +62,7 @@ angular
         ncyBreadcrumb: {
           label: 'Inicio',
         },
+        controller: 'mainController',
         resolve: {
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
@@ -82,7 +83,6 @@ angular
         ncyBreadcrumb: {
           label: 'Encuesta'
         },
-        controller: 'surveyBuilderController',
         resolve: {
           loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load CSS files
@@ -127,7 +127,8 @@ angular
         },
         controller: 'surveyBuilderController',
         data: {
-          isAdminRequired: true
+          isAdminRequired: true,
+          showConfirmDialog: true
         }
       })
       .state('app.survey-builder.relations', {
@@ -142,7 +143,8 @@ angular
         },
         controller: 'surveyRelationsController',
         data: {
-          isAdminRequired: true
+          isAdminRequired: true,
+          showConfirmDialog: true
         },
         resolve: {
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
@@ -225,7 +227,8 @@ angular
           }]
         },
         data: {
-          isAdminRequired: true
+          isAdminRequired: true,
+          showConfirmDialog: true
         }
       })
       .state('app.admin.departments', {
@@ -244,7 +247,8 @@ angular
           }]
         },
         data: {
-          isAdminRequired: true
+          isAdminRequired: true,
+          showConfirmDialog: true
         }
       })
       .state('app.admin.jobs', {
@@ -263,7 +267,8 @@ angular
           }]
         },
         data: {
-          isAdminRequired: true
+          isAdminRequired: true,
+          showConfirmDialog: true
         }
       })
       .state('app.admin.business', {
@@ -282,7 +287,8 @@ angular
           }]
         },
         data: {
-          isAdminRequired: true
+          isAdminRequired: true,
+          showConfirmDialog: true
         }
       })
       .state('app.admin.services', {
@@ -301,7 +307,8 @@ angular
           }]
         },
         data: {
-          isAdminRequired: true
+          isAdminRequired: true,
+          showConfirmDialog: true
         }
       })
       //USER RELATED
@@ -353,7 +360,8 @@ angular
           }]
         },
         data: {
-          isAdminRequired: false
+          isAdminRequired: false,
+          showConfirmDialog: true
         }
       })
       //SIMPLE PAGES
@@ -380,6 +388,7 @@ angular
     .state('appSimple.login', {
         url: '/login',
         templateUrl: 'views/pages/login.html',
+        controller: 'loginController',
         resolve: {
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
@@ -409,8 +418,6 @@ angular
   }])
   .run(function($rootScope, $transitions, $state, authentication) {
 
-    $rootScope.logout = authentication.logout;
-
     $transitions.onStart({
       to: 'appSimple.login'
     }, function(trans) {
@@ -429,12 +436,37 @@ angular
       }
 
       $rootScope.client = authentication.currentClient();
-      let to = trans.$to();
+      //checks if going to a page that may lose data
+      if (trans.$from().data && trans.$from().data.showConfirmDialog) {
+        return handleLeavingPage($rootScope);
+      }
+
       //if regular user redirect
       if ($rootScope.client.role.level === 3) {
-        if (to.data.isAdminRequired) {
+        if (trans.$to().data.isAdminRequired) {
           return trans.router.stateService.target('app.surveys.main');
         }
       }
     });
   });
+
+function handleLeavingPage($rootScope) {
+  var attachedEvent = window.attachEvent || window.addEventListener;
+  var checkboxEvent = window.attachEvent ? 'onbeforeunload' : 'beforeunload'; /// make IE7, IE8 compatable
+
+  attachedEvent(checkboxEvent, function(e) { // For >=IE7, Chrome, Firefox
+    var confirmationMessage = ' '; // a space
+    (e || window.event).returnValue = confirmationMessage;
+    return confirmationMessage;
+  });
+
+  if (!confirm("Esta seguro de salirse de la pagina? Por favor revise si tiene cambios pendientes sin guardar")) {
+    return false;
+  }
+
+  $rootScope.$on('$destroy', function() {
+    window.onbeforeunload = undefined;
+  });
+
+  return true;
+}

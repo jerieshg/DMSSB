@@ -42,15 +42,17 @@ function JobController($scope, $http, commonFactory) {
   }
 
   $scope.deleteJob = function(id) {
-    $http.delete('/api/jobs/' + id)
-      .then(function(response) {
-        commonFactory.activateAlert('Position de Trabajo borrada exitosamente!', 'danger');
-        retrieveJobs();
-        $scope.selectedJob = {};
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+    if (confirm("Esta seguro de borrar esta posicion de trabajo?")) {
+      $http.delete('/api/jobs/' + id)
+        .then(function(response) {
+          commonFactory.activateAlert('Position de Trabajo borrada exitosamente!', 'danger');
+          retrieveJobs();
+          $scope.selectedJob = {};
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
   }
 
   function initializeController() {

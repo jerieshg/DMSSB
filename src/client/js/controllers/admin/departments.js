@@ -42,15 +42,17 @@ function DepartmentController($scope, $http, commonFactory) {
   }
 
   $scope.deleteDepartment = function(id) {
-    $http.delete('/api/departments/' + id)
-      .then(function(response) {
-        commonFactory.activateAlert('Departmento borrada exitosamente!', 'danger');
-        retrieveDepartments();
-        $scope.selectedDept = {};
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+    if (confirm("Esta seguro de borrar este departamento?")) {
+      $http.delete('/api/departments/' + id)
+        .then(function(response) {
+          commonFactory.activateAlert('Departmento borrada exitosamente!', 'danger');
+          retrieveDepartments();
+          $scope.selectedDept = {};
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
   }
 
   function initializeController() {

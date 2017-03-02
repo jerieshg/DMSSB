@@ -42,15 +42,17 @@ function ServiceController($scope, $http, commonFactory) {
   }
 
   $scope.deleteService = function(id) {
-    $http.delete('/api/services/' + id)
-      .then(function(response) {
-        commonFactory.activateAlert('Servicio borrada exitosamente!', 'danger');
-        retrieveService();
-        $scope.selectedService = {};
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+    if (confirm("Esta seguro de borrar este servicio?")) {
+      $http.delete('/api/services/' + id)
+        .then(function(response) {
+          commonFactory.activateAlert('Servicio borrada exitosamente!', 'danger');
+          retrieveService();
+          $scope.selectedService = {};
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
   }
 
   function initializeController() {

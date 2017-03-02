@@ -64,10 +64,12 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
 
   // QUESTION EDIT & UPDATE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   $scope.deleteQuestion = function(name) {
-    //looks for the name
-    let removeIndex = commonFactory.indexInArray($scope.survey.questions, name);
-    //if found delete it
-    ~removeIndex && $scope.survey.questions.splice(removeIndex, 1);
+    if (confirm("Esta seguro de borrar esta pregunta?")) {
+      //looks for the name
+      let removeIndex = commonFactory.indexInArray($scope.survey.questions, name);
+      //if found delete it
+      ~removeIndex && $scope.survey.questions.splice(removeIndex, 1);
+    }
   }
 
   $scope.updateQuestion = function(question) {
