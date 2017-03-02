@@ -4,6 +4,10 @@ function ServiceController($scope, $http, commonFactory) {
 
   $scope.selectedService = {};
 
+  $scope.newService = function() {
+    $scope.selectedService = {};
+  }
+
   $scope.saveService = function() {
     if ($scope.selectedService.edit) {
       let id = $scope.selectedService._id;

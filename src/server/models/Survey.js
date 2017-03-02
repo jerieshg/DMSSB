@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 
 module.exports = mongoose.model('Survey', {
   surveyName: String,
-  business: String,
+  business: [String],
   department: String,
   period: {
     start: Date,

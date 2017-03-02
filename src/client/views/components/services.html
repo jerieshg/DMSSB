@@ -4,14 +4,17 @@
 
   <div class="row">
     <form name="servicesForm" class="form-group" ng-submit="saveService()">
-     <label for="service">Servicio:</label>
-     <input type="text" id="service" class="form-control" ng-model="selectedService.service" required>
+     <label for="service">Tipo de servicio:</label>
+     <input type="text" id="service" class="form-control" ng-model="selectedService.service" placeholder="Servicio" required>
      <br/>
+     <label for="dept">Departamento:</label>
      <select id="dept" name="dept" class="form-control" ng-model="selectedService.department" ng-options="item.department as item.department for item in departments" required>
       <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
     </select>
     <br/>
-    <input type="submit" class="btn btn-success"/>
+     <button  class="btn btn-success" type="submit">
+       <i class="fa fa-save" aria-hidden="true"/>  Guardar Servicio
+     </button>
   </form>
 
   <div class="input-group row-separator">
@@ -19,6 +22,9 @@
     <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
   </div>   
 
+<button type="button" class="btn btn-info row-separator" ng-click="newService()">
+ <i class="fa fa-plus" aria-hidden="true"/> Nuevo servicio
+ </button>
   <table class="table table-hover">
     <thead>
       <tr>

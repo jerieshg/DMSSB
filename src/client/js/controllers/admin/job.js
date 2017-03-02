@@ -4,6 +4,10 @@ function JobController($scope, $http, commonFactory) {
 
   $scope.selectedJob = {};
 
+  $scope.newJob = function() {
+    $scope.selectedJob = {};
+  }
+
   $scope.saveJob = function() {
     if ($scope.selectedJob.edit) {
       let id = $scope.selectedJob._id;

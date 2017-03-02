@@ -3,7 +3,7 @@
     <div class="modal-content">
       <form name="questionsForm" ng-submit="addQuestionToList()" class="col-sm-12">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Pregunta</h5>
+          <h5 class="modal-title" id="exampleModalLongTitle">Pregunta #{{newQuestion.update ? updateText : survey.questions.length+1}}</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -11,8 +11,8 @@
         <div class="modal-body">
           <div class="col-md-2 modal-legend">
            <strong>Acciones: </strong>
-           <i class="fa fa-copy" style="margin-right:5%;" ng-click="copyQuestion()"></i>
-           <i class="fa fa-paste" ng-click="pasteQuestion()"></i>
+           <i class="fa fa-copy" style="margin-right:5%;" ng-click="copyQuestion()" title="Copiar pregunta"></i>
+           <i class="fa fa-paste" ng-click="pasteQuestion()" title="Pegar pregunta"></i>
          </div>
          <div class="col-md-10">
           <div class="row row-separator">
@@ -26,16 +26,16 @@
           <div class="col-sm-9">
               <select ng-model="newQuestion.formType" ng-change="onQuestionTypeChange()" class="form-control" name="questionFormType" required>
                 <option value="">Seleccione un tipo de pregunta</option>
-                <option value="text">Texto</option>
-                <option value="checkbox">Checkbox</option>
-                <option value="dropdown">Dropdown</option>
-                <option value="radiogroup">Eleccion Multiple</option>
-                <option value="comment">Comentario</option>
+                <option value="text">Respuesta corta</option>
+                <option value="checkbox">Casillas de verificacion</option>
+                <option value="dropdown">Desplegable</option>
+                <option value="radiogroup">Seleccion Multiple</option>
+                <option value="comment">Parrafo</option>
                 <option value="rating">Escala Lineal</option>
               </select>
             </div>
             <div class="col-sm-2">
-              <div class="checkbox">
+              <div class="checkbox" style="color:red">
                 <label>
                   <input type="checkbox" value="true" ng-model="newQuestion.isRequired">Requerido</label>
                 </div>
@@ -71,9 +71,9 @@
                 </div>
 
                 <div class="input-group">
-                 <span class="input-group-addon">{{linearScale.selectedStart}}</span><input type="text" class="form-control" placeholder="Label (No requerido)" ng-model="linearScale.minRateDescr">
+                 <span class="input-group-addon">{{linearScale.selectedStart}}</span><input type="text" class="form-control" placeholder="Etiqueta (Opcional)" ng-model="linearScale.minRateDescr">
                  <span class="input-group-addon"></span>
-                 <input type="text" class="form-control" placeholder="Label (No requerido)" ng-model="linearScale.maxRateDescr">
+                 <input type="text" class="form-control" placeholder="Etiqueta (Opcional)" ng-model="linearScale.maxRateDescr">
                  <span class="input-group-addon">{{linearScale.selectedEnd}}</span>
                </div>
              </div>

@@ -3,14 +3,14 @@
         <ul class="nav">
         <!-- If not regular user -->
             <li class="nav-item" ng-show="client.role.level  < 3">
-                <a class="nav-link" ui-sref-active="active" ui-sref="app.main"><i class="icon-speedometer"></i> Dashboard </a>
+                <a class="nav-link" ui-sref-active="active" ui-sref="app.main"><i class="icon-speedometer"></i> Tablero de encuestas </a>
             </li>
             <li class="divider"></li>
             <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.admin')}" ng-show="client.role.level === 1">
                 <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.admin')}" href="#"><i class="fa fa-cogs"></i> Administrador</a>
                 <ul class="nav-dropdown-items">
                     <li class="nav-item">
-                        <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.clients"><i class="fa fa-users"></i> Clientes</a>
+                        <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.clients"><i class="fa fa-users"></i> Clientes/Usuarios</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.business"><i class="fa fa-industry"></i> Empresas</a>
@@ -28,7 +28,7 @@
             </li>
 
             <li class="nav-item">
-            <a class="nav-link" ui-sref-active="active" ui-sref="app.surveys.main"><i class="fa fa-newspaper-o"></i> Encuestas</a>
+            <a class="nav-link" ui-sref-active="active" ui-sref="app.surveys.main"><i class="fa fa-newspaper-o"></i>Ver Encuestas</a>
             </li>
         </ul>
 

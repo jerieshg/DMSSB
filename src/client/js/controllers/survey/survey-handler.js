@@ -112,9 +112,7 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
 
     Object.keys(groupedSurvey).forEach((element) => {
       let value = groupedSurvey[element];
-      element = (element === 'undefined' || element === null) ? '' : element;
       let page = {
-        title: element,
         questions: value
       }
       pages.push(page);
@@ -131,6 +129,10 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
     });
 
     surveyModel.showProgressBar = "top";
+    surveyModel.pagePrevText = "Atras";
+    surveyModel.pageNextText = "Siguiente";
+    surveyModel.completeText  = "Completar encuesta";
+    surveyModel.completedHtml  = "<h5>Gracias por completar la encuesta! </h5>"
 
     $(".survey").Survey({
       model: surveyModel,

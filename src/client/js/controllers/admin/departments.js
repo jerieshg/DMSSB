@@ -4,6 +4,10 @@ function DepartmentController($scope, $http, commonFactory) {
 
   $scope.selectedDept = {};
 
+  $scope.newDept = function() {
+    $scope.selectedDept = {};
+  }
+
   $scope.saveDepartment = function() {
     if ($scope.selectedDept.edit) {
       let id = $scope.selectedDept._id;

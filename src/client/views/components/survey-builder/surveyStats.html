@@ -8,8 +8,8 @@
      &nbsp;
      <h5 class="small" ng-hide="isComparing">({{totalResponses}} respuestas)</h5>
      <span flex class="flex"></span>
-     <i class="fa fa-file-excel-o" aria-hidden="true" ng-click="exportAllResponses()" data-toggle="tooltip" title="Exportar todas las respuestas" ng-hide="isComparing"></i>
-     <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-hide="isComparing"></i>
+     <i class="fa fa-file-excel-o" aria-hidden="true" ng-click="exportAllResponses()"  title="Exportar todas las respuestas" ng-hide="isComparing"></i>
+     <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-hide="isComparing" title="Generar plan de accion"></i>
  </div>
 
  <md-content>
@@ -40,7 +40,7 @@
     <div class="card" ng-repeat="e in service.charts">
 
       <div class="card-header">
-        <i class="fa fa-asterisk icon-bg"></i>{{e.question}}<p ng-show="!isComparing">- <strong>{{e.average}}%</strong></p>
+        <i class="fa fa-asterisk icon-bg"></i>{{e.question}}<p ng-show="!isComparing">- <strong>{{e.average}}% ({{e.responses}} respuestas)</strong></p>
       </div>
       <div class="card-block" >
 

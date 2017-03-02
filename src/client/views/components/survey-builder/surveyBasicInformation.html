@@ -1,12 +1,16 @@
 <form name="surveyForm">
   <div>
    <button type="submit" class="btn btn-primary" ng-click="goToRelations(surveyForm.$valid)"">
-     <i class="fa fa-arrow-right" aria-hidden="true"/>
+     Siguiente paso <i class="fa fa-arrow-right" aria-hidden="true"/>
    </button>
    <button ng-show="survey.update || survey.general" class="btn btn-success" ng-click="saveSurvey(surveyForm.$valid)">
      <i class="fa fa-save" aria-hidden="true"/>  Guardar Encuesta
    </button>
-    <button class="md-button btn" ng-click="activeSurvey()"><i class="fa " ng-class="{'fa-toggle-on' : survey.active, 'fa-toggle-off' : !survey.active}" aria-hidden="true"></i> Encuesta Activa</button>
+   <div class="survey-activate-wrapper">
+    <button class="md-button btn" ng-click="activeSurvey()" ng-class="{'survey-active' : survey.active, 'survey-inactive' : !survey.active}">
+     <i class="fa " ng-class="{'fa-toggle-on survey-active' : survey.active, 'fa-toggle-off survey-inactive' : !survey.active}" aria-hidden="true"></i> Encuesta {{survey.active ? 'Activa' : 'Inactiva'}}
+    </button>
+    </div>
  </div>
 
  <div class="form-divider"></div>
@@ -31,8 +35,7 @@
 
  <div class=" col-md-6">
   <label for="empresa">Empresa:</label>
-  <select id="empresa" name="business" class="form-control" ng-model="survey.business" ng-options="item.business as item.business for item in business" required>
-    <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
+  <select id="empresa" name="business" class="form-control" ng-model="survey.business" ng-options="item.business as item.business for item in business" multiple required>
   </select>
   <div ng-messages="surveyForm.business.$error" ng-show="surveyForm.business.$dirty && surveyForm.business.$invalid">
     <div ng-message="required" class="text-danger">* Este campo es requerido</div>

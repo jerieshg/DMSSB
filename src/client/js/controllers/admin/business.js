@@ -4,6 +4,10 @@ function BusinessController($scope, $http, commonFactory) {
 
   $scope.selectedBusiness = {};
 
+  $scope.newBusiness = function() {
+    $scope.selectedBusiness = {};
+  }
+
   $scope.saveBusiness = function() {
     if ($scope.selectedBusiness.edit) {
       let id = $scope.selectedBusiness._id;

@@ -436,16 +436,17 @@ angular
       }
 
       $rootScope.client = authentication.currentClient();
-      //checks if going to a page that may lose data
-      if (trans.$from().data && trans.$from().data.showConfirmDialog) {
-        return handleLeavingPage($rootScope);
-      }
 
       //if regular user redirect
       if ($rootScope.client.role.level === 3) {
         if (trans.$to().data.isAdminRequired) {
           return trans.router.stateService.target('app.surveys.main');
         }
+      }
+
+      //checks if going to a page that may lose data
+      if (trans.$from().data && trans.$from().data.showConfirmDialog) {
+        return handleLeavingPage($rootScope);
       }
     });
   });

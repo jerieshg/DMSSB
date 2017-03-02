@@ -8741,7 +8741,7 @@ base-chart.chart {
   width: 0%; }
 
 .table td {
-  text-align: center; }
+  text-align: left; }
 
 .table thead {
   background-color: #263238;
@@ -9103,6 +9103,16 @@ hr:after {
 .table-total-tr {
   background-color: #ffff3e;
   font-weight: bold; }
+
+.survey-activate-wrapper {
+  float: right;
+  margin-top: -5px; }
+
+.survey-inactive {
+  color: red; }
+
+.survey-active {
+  color: green; }
 
 /*!
  * surveyjs - Survey JavaScript library v0.11.0

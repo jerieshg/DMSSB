@@ -15,7 +15,7 @@
    </div>
 
    <div class="col-md-6 row-separator">
-    <label for="role">Role:</label>
+    <label for="role">Tipo de usuario:</label>
     <select class="form-control" ng-model="selectedClient.role" ng-options="item.role for item in roles track by item.role" required>
       <option value="">Seleccione un rol {{optional ? '(optional)' : ''}}</option>
     </select>
@@ -36,7 +36,9 @@
   </div>
 
   <div class="col-md-12">
-    <input type="submit" class="btn btn-success"/>
+      <button  class="btn btn-success" type="submit">
+       <i class="fa fa-save" aria-hidden="true"/>  Guardar Cliente
+     </button>
   </div>
 </form>
 
@@ -45,6 +47,9 @@
   <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
 </div>   
 
+<button type="button" class="btn btn-info row-separator" ng-click="newClient()">
+       <i class="fa fa-plus" aria-hidden="true"/> Nuevo cliente
+ </button>
 <table class="table table-hover">
   <thead>
     <tr>

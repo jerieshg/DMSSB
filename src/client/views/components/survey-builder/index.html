@@ -32,7 +32,7 @@
      <td>{{(e.isRequired) ? 'Si' : 'No'}}</td>
      <td>
        <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteQuestion(e.name)"></i>
-       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateQuestion(e)" data-toggle="modal" data-target="#surveyQuestionModal"></i>
+       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateQuestion(e, $index+1)" data-toggle="modal" data-target="#surveyQuestionModal"></i>
      </td>
    </tr>
  </tbody>

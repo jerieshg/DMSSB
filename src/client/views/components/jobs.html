@@ -3,10 +3,12 @@
 
  <div class="row" ng-submit="saveJob()">
   <form name="jobForm" class="form-group">
-   <label for="job">Posicion de trabajo:</label>
+   <label for="job">Puestos o posiciones de trabajo:</label>
    <input type="text" id="job" class="form-control" ng-model="selectedJob.job" required>
    <br/>
-   <input type="submit" class="btn btn-success"/>
+     <button  class="btn btn-success" type="submit">
+       <i class="fa fa-save" aria-hidden="true"/>  Guardar Posicion de Trabajo
+     </button>
  </form>
 
  <div class="input-group row-separator">
@@ -14,6 +16,9 @@
   <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
 </div>   
 
+<button type="button" class="btn btn-info row-separator" ng-click="newJob()">
+ <i class="fa fa-plus" aria-hidden="true"/> Nueva posicion de trabajo
+ </button>
 <table class="table table-hover">
   <thead>
     <tr>

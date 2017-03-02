@@ -4,6 +4,10 @@ function ClientController($scope, $http, commonFactory, authentication) {
 
   $scope.selectedClient = {};
 
+  $scope.newClient = function() {
+    $scope.selectedClient = {};
+  }
+
   $scope.saveClient = function() {
     if ($scope.selectedClient.edit) {
       let id = $scope.selectedClient._id;

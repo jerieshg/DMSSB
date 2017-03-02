@@ -11,7 +11,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
   }
 
   $scope.pasteQuestion = function() {
-    $scope.updateQuestion($scope.questionCopy);
+    $scope.updateQuestion($scope.questionCopy, 0);
     $scope.newQuestion.update = false;
   }
 
@@ -72,9 +72,10 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
     }
   }
 
-  $scope.updateQuestion = function(question) {
+  $scope.updateQuestion = function(question, index) {
     $scope.newQuestion = angular.copy(question);
     $scope.newQuestion.update = true;
+    $scope.updateText = index;
 
     if ($scope.newQuestion.showChoices) {
       $scope.choices.number = $scope.newQuestion.choices.length;
@@ -154,10 +155,10 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
     $scope.selectedChoices = [{}];
     $scope.linearScale = {};
 
-
     $scope.survey = $scope.survey || {
       questions: [],
-      department: $rootScope.client.department
+      department: $rootScope.client.department,
+      active: true
     };
 
     retrieveBusiness();

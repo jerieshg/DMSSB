@@ -149,7 +149,11 @@
 
   module.exports.findByDepartment = function(req, res, next) {
     Survey.find({
-      department: req.params.dept
+      $or: [{
+        department: req.params.dept
+      }, {
+        general: true
+      }]
     }, function(error, survey) {
       if (error) {
         res.status(500);
@@ -164,8 +168,12 @@
 
   module.exports.findbyDeptAndId = function(req, res, next) {
     Survey.findOne({
-      _id: req.params.id,
-      department: req.params.dept
+      $or: [{
+        _id: req.params.id,
+        department: req.params.dept
+      }, {
+        general: true
+      }]
     }, function(error, survey) {
       if (error) {
         res.status(500);

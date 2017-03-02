@@ -200,6 +200,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     $scope.totalResult.set(selectedQuestion.service, resultSet);
 
     chart.average = (selectedQuestion.average * 100).toFixed(2);
+    chart.responses = questions.length;
 
     let found = false;
     if ($scope.isComparing) {

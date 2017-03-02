@@ -48,9 +48,9 @@
       <td style="width:14em;">
        <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteSurvey(e._id)"></i>
        <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.edit({id: e._id})"></i>
-       <i class="fa fa-bar-chart" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.stats({id: e._id})"></i>
-       <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-click="setActionPlan(e._id)"></i>
-       <i class="fa fa-users" aria-hidden="true" style="margin-left:10px;" data-toggle="modal"  data-target="#trackSurveyResponse" ng-click="trackSurvey(e._id)"></i>
+       <i class="fa fa-bar-chart" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.stats({id: e._id})" title="Mostrar estadisticas de la encuesta"></i>
+       <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-click="setActionPlan(e._id)" title="Generar plan de accion"></i>
+       <i class="fa fa-users" aria-hidden="true" style="margin-left:10px;" data-toggle="modal"  data-target="#trackSurveyResponse" ng-click="trackSurvey(e._id)" title="Monitoreo de encuesta"></i>
      </td>
    </tr>
  </tbody>
