@@ -52,6 +52,8 @@ module.exports = function(router) {
     .get(Survey.findbyDeptAndId)
   router.route('/api/surveys/:id/track/')
     .get(Survey.trackResponses)
+  router.route('/api/surveys/:id/grades/')
+    .post(Survey.updateFinalGrade)
   router.route('/api/surveys/responses/')
     .post(SurveyResponse.createMany)
   router.route('/api/surveys/:id/responses/')

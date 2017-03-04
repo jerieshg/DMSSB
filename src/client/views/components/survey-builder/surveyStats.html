@@ -17,7 +17,7 @@
     <md-tab label="Resultado General">
       <div class="card custom-chart-radar">
         <div class="card-header">
-         <i class="fa fa-asterisk icon-bg"></i>Resultado general por servicio 
+         <i class="fa fa-asterisk icon-bg"></i>Resultado general por servicio <strong ng-hide="isComparing">({{finalGrade * 100 | number: 2 }}%)</strong>
        </div>
        <div class="card-block" >
          <canvas  class="chart chart-radar " chart-data="radarGraph.data" chart-labels="radarGraph.labels" chart-options="radarOptions" chart-series="radarGraph.series"></canvas>

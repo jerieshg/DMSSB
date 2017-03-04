@@ -1,7 +1,13 @@
 <div class="animated fadeIn">
+
  <div id="alertArea"></div>
 
  <div class="row" ng-submit="saveClient()">
+
+   <div class="alert alert-info">
+   <i class="fa fa-info-circle" aria-hidden="true"></i><strong> Informacion de tipo de usuario</strong>
+   <br/>El tipo de usuario <strong>Admin</strong> es encargado de todo el sistema y tiene acceso completo. <strong>Sub-Admin</strong> tiene acceso a crear encuestas de un departamento en especifico y tiene la capacidad de realizar encuestas. El tipo de usuario <strong>regular</strong> solamente tiene acceso a realizar encuestas que se le han asignado.
+  </div>
 
   <form name="clientForm" class="row row-separator">
     <div class="col-md-6 row-separator">
@@ -36,10 +42,10 @@
   </div>
 
   <div class="col-md-12">
-      <button  class="btn btn-success" type="submit">
-       <i class="fa fa-save" aria-hidden="true"/>  Guardar Cliente
-     </button>
-  </div>
+    <button  class="btn btn-success" type="submit">
+     <i class="fa fa-save" aria-hidden="true"/>  Guardar Cliente
+   </button>
+ </div>
 </form>
 
 <div class="input-group row-separator">
@@ -48,8 +54,8 @@
 </div>   
 
 <button type="button" class="btn btn-info row-separator" ng-click="newClient()">
-       <i class="fa fa-plus" aria-hidden="true"/> Nuevo cliente
- </button>
+ <i class="fa fa-plus" aria-hidden="true"/> Nuevo cliente
+</button>
 <table class="table table-hover">
   <thead>
     <tr>

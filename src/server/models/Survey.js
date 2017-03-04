@@ -30,6 +30,7 @@ module.exports = mongoose.model('Survey', {
     showChoices: Boolean,
     created: Date
   }],
+  finalGrade: Number,
   active: Boolean,
   general: Boolean,
   created: Date

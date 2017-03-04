@@ -9,7 +9,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="col-md-2 modal-legend">
+          <div class="col-md-2 modal-legend" >
            <strong>Acciones: </strong>
            <i class="fa fa-copy" style="margin-right:5%;" ng-click="copyQuestion()" title="Copiar pregunta"></i>
            <i class="fa fa-paste" ng-click="pasteQuestion()" title="Pegar pregunta"></i>
@@ -23,7 +23,7 @@
           </div>
 
           <div class="row row-separator">
-          <div class="col-sm-9">
+            <div class="col-sm-8">
               <select ng-model="newQuestion.formType" ng-change="onQuestionTypeChange()" class="form-control" name="questionFormType" required>
                 <option value="">Seleccione un tipo de pregunta</option>
                 <option value="text">Respuesta corta</option>
@@ -34,7 +34,7 @@
                 <option value="rating">Escala Lineal</option>
               </select>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
               <div class="checkbox" style="color:red">
                 <label>
                   <input type="checkbox" value="true" ng-model="newQuestion.isRequired">Requerido</label>
@@ -44,7 +44,7 @@
 
             <!-- Informacion de las opciones -->
             <div class="row row-separator " ng-show="newQuestion.showChoices">
-              <div class="col-sm-4">
+              <div class="col-sm-4 row-separator">
                 <select id="choicesSelect" class="form-control" ng-model="choices.number" ng-options="item for item in choiceOptions" name="questionChoiceOpts" ng-required="newQuestion.showChoices">
                   <option value=""># de opciones {{optional ? '(optional)' : ''}}</option>
                 </select>
@@ -54,13 +54,18 @@
                   <div class="input-group">
                     <input type="text" class="form-control" placeholder="Opcion" ng-model="selectedChoices[$index].text" name="option-$index" ng-required="newQuestion.showChoices">
                     <span class="input-group-addon">-</span>
-                    <input type="number" class="form-control" placeholder="Valor (0.0)" ng-model="selectedChoices[$index].value" name="value-$index" ng-required="newQuestion.showChoices" step='0.1' min="0" max="1">
+                    <input type="number" class="form-control" placeholder="Valor (0%)" ng-model="selectedChoices[$index].value" name="value-$index" ng-required="newQuestion.showChoices" step='10' min="0" max="100">
                   </div>
                 </div>
               </div>
+                  <div class="alert alert-info" style="margin-left:1em">
+                  <i class="fa fa-info-circle" aria-hidden="true"></i><strong> Informacion de valor por opcion</strong>
+              <p> El campo <strong>valor</strong> es un porcentaje basado en 100.</p>
             </div>
-            <!-- End Question Options -->
+            </div>
 
+
+            <!-- End Question Options -->
             <!-- Escala lineal -->
             <div class="col-sm-12" ng-show="newQuestion.formType === 'rating'">
               <div class="row row-separator">
@@ -79,6 +84,8 @@
              </div>
            </div>
          </div>
+
+
 
        </div>
        <div class="modal-footer">

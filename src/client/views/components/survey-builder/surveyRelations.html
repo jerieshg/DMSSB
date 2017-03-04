@@ -7,34 +7,39 @@
       <i class="fa fa-arrow-left" aria-hidden="true"/>
     </button>
     <button type="submit" class="btn btn-success" >
-    <i class="fa fa-save" aria-hidden="true"/> Guardar Encuesta
+      <i class="fa fa-save" aria-hidden="true"/> Guardar Encuesta
     </button>
   </div>
 
-  <table class="table table-hover" >
-    <thead>
-      <tr>
-       <td><strong>#</strong></td>
-       <td><strong>Pregunta</strong></td>
-       <td><strong>Servicio</strong></td>
-       <td><strong>Clientes</strong></td>
-     </tr>
-     </thead>
-     <tbody>
-     <tr ng:repeat="e in survey.questions">
-       <td>{{$index + 1}}</td>
-       <td>{{e.title}}</td>
-       <td>
-         <select name="services" class="form-control" ng-model="e.service" ng-options="item.service as item.service for item in services" required>
-           <option value="">Seleccione un servicio {{optional ? '(optional)' : ''}}</option>
-         </select>
-       </td>
-       <td style="width: 25%;">
-         <select  name="clients" class="form-control" ng-model="e.clients" ng-options="item.job as item.job for item in jobs" multiple required>
-         </select>
-       </td>
-     </tr>
-   </tbody>
- </table>
+  <div class="alert alert-info">
+   <i class="fa fa-info-circle" aria-hidden="true"></i><strong> Ayuda para seleccion multiple </strong><br/>
+   Si necesita seleccionar multiples clientes, utiliza la <strong>tecla control (CTRL)</strong> dejando presionado mientras hace <strong>click</strong> en los clientes que quiere. Si se quiere seleccionar todos los clientes al mismo tiempo, puede utilizar la combinacion de <strong>CTRL + A</strong> para hacerlo. 
+ </div>
+
+ <table class="table table-hover" >
+  <thead>
+    <tr>
+     <td><strong>#</strong></td>
+     <td><strong>Pregunta</strong></td>
+     <td><strong>Servicio</strong></td>
+     <td><strong>Clientes</strong></td>
+   </tr>
+ </thead>
+ <tbody>
+   <tr ng:repeat="e in survey.questions">
+     <td>{{$index + 1}}</td>
+     <td>{{e.title}}</td>
+     <td>
+       <select name="services" class="form-control" ng-model="e.service" ng-options="item.service as item.service for item in services" required>
+         <option value="">Seleccione un servicio {{optional ? '(optional)' : ''}}</option>
+       </select>
+     </td>
+     <td style="width: 25%;">
+       <select  name="clients" class="form-control" ng-model="e.clients" ng-options="item.job as item.job for item in jobs" multiple required>
+       </select>
+     </td>
+   </tr>
+ </tbody>
+</table>
 </form>
 </div>

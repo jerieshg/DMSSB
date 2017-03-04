@@ -26,6 +26,7 @@
         <td><strong>Departamento</strong></td>
         <td><strong>Responsable</strong></td>
         <td><strong>Periodo</strong></td>
+        <td><strong>Nota</strong></td>
         <td><strong>Fecha Creada</strong></td>
         <td><strong>Acciones</strong></td>
       </tr>
@@ -44,12 +45,13 @@
       <td>{{e.department}}</td>
       <td>{{e.responsible}}</td>
       <td>{{e.period.start | date: yyyy-mm-dd}} - {{e.period.end | date: yyyy-mm-dd}}</td>
+      <td>{{(e.finalGrade ? e.finalGrade : 0) * 100 | number: 2}}%</td>
       <td>{{e.created | date: yyyy-mm-dd}}</td>
       <td style="width:14em;">
        <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteSurvey(e._id)"></i>
        <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.edit({id: e._id})"></i>
        <i class="fa fa-bar-chart" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.stats({id: e._id})" title="Mostrar estadisticas de la encuesta"></i>
-       <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-click="setActionPlan(e._id)" title="Generar plan de accion"></i>
+<!--        <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-click="setActionPlan(e._id)" title="Generar plan de accion"></i> -->
        <i class="fa fa-users" aria-hidden="true" style="margin-left:10px;" data-toggle="modal"  data-target="#trackSurveyResponse" ng-click="trackSurvey(e._id)" title="Monitoreo de encuesta"></i>
      </td>
    </tr>

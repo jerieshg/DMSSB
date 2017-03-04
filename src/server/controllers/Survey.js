@@ -55,6 +55,30 @@
     });
   }
 
+  module.exports.updateFinalGrade = function(req, res, next) {
+    Survey.findOne({
+      _id: req.params.id
+    }, function(error, survey) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
+      survey.finalGrade = req.body.finalGrade;
+
+      survey.save(function(error) {
+        if (error) {
+          res.status(500);
+          next(error);
+          return res.send(error);
+        }
+
+        res.json(survey);
+      });
+    });
+  }
+
   module.exports.delete = function(req, res, next) {
     Survey.remove({
       _id: req.params.id

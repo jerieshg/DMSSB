@@ -82,7 +82,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
       for (let [index, value] of $scope.newQuestion.choices.entries()) {
         $scope.selectedChoices[index] = {
           text: value,
-          value: $scope.newQuestion.choicesValue[index].value
+          value: $scope.newQuestion.choicesValue[index].value * 100
         };
       }
     }
@@ -103,9 +103,12 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
       $scope.newQuestion.choices = $scope.selectedChoices.map(e => {
         return e.text;
       });
+      $scope.selectedChoices.forEach((e) => {
+        e.value = e.value / 100;
+      })
       $scope.newQuestion.choicesValue = $scope.selectedChoices;
     }
-
+    
     //for linear scale only
     if ($scope.newQuestion.formType === 'rating') {
       $scope.newQuestion.rateValues = commonFactory.generateNumberArray($scope.linearScale.selectedStart, $scope.linearScale.selectedEnd);

@@ -38,6 +38,9 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
       .then(function(response) {
         buildStats(response.data);
         if ($scope.actionPlan.items.length !== 0) {
+          let percentages = $scope.actionPlan.items.map(e => e.percentage / 100);
+          $scope.actionPlan.finalGrade = (((percentages.reduce((a, b) => +a + +b)) / percentages.length) * 100).toFixed(2);
+
           downloadActionPlan();
         } else {
           commonFactory.activateAlert('No hay respuestas o no hay preguntas dentro del rango para generar plan de acción', 'danger');
@@ -52,6 +55,7 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
 
   function downloadActionPlan() {
     $scope.actionPlan.items = commonFactory.groupBy($scope.actionPlan.items, 'service');
+
     $http.post('/api/excel/', $scope.actionPlan, {
         responseType: 'blob'
       })
@@ -71,6 +75,7 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
   function buildStats(data) {
     let allResults = [];
     $scope.totalResponses = data.length;
+    $scope.actionPlan.totalResponses = $scope.totalResponses;
 
     data.forEach(response => {
       allResults = response.results.reduce((coll, item) => {
@@ -138,6 +143,7 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
     selectedQuestion.percentage = (selectedQuestion.average * 100).toFixed(2);
 
     if (selectedQuestion.percentage <= $scope.actionPlan.percentage) {
+      selectedQuestion.responses = questions.length;
       $scope.actionPlan.items.push(selectedQuestion);
     }
   }

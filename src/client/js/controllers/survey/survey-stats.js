@@ -3,6 +3,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   initalizeController();
 
   function initalizeController() {
+    $scope.finalGrade = 0;
     $scope.isComparing = $state.includes('app.survey-builder.compare-stats');
     let seriesCurrentName = "";
 
@@ -37,17 +38,21 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
   $scope.generateActionPlan = function() {
     $scope.services.forEach((service) => {
+
       service.charts.forEach((e) => {
         if (e.average <= $scope.actionPlan.percentage) {
           let item = {
             service: service.service,
             question: e.question,
-            percentage: e.average
+            percentage: e.average,
+            responses: e.responses
           };
           $scope.actionPlan.items.push(item);
         }
       });
     })
+
+    $scope.actionPlan.finalGrade = ($scope.finalGrade * 100).toFixed(2);
 
     $scope.actionPlan.items = commonFactory.groupBy($scope.actionPlan.items, 'service');
     if ($scope.actionPlan.items.length === 0) {
@@ -95,6 +100,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     let allResults = [];
 
     $scope.totalResponses = data.length;
+    $scope.actionPlan.totalResponses = $scope.totalResponses;
 
     data.forEach(response => {
       allResults = response.results.reduce((coll, item) => {
@@ -201,6 +207,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
     chart.average = (selectedQuestion.average * 100).toFixed(2);
     chart.responses = questions.length;
+    selectedQuestion.responses = questions.length;
 
     let found = false;
     if ($scope.isComparing) {
@@ -233,6 +240,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
   function buildRadarMap() {
     let data = [];
+
     for (var [key, value] of $scope.totalResult.entries()) {
       if ($scope.radarGraph.labels.indexOf(key) === -1) {
         $scope.radarGraph.labels.push(key);
@@ -247,11 +255,13 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         }
       });
 
+      $scope.finalGrade += +(totalSum / length);
       data.push(((totalSum / length) * 100).toFixed(2));
     }
     if ($scope.isComparing) {
       $scope.radarGraph.series.push(seriesCurrentName);
     }
+    $scope.finalGrade = $scope.finalGrade / (data.length - 1);
     $scope.radarGraph.data.push(data);
   }
 
@@ -360,6 +370,14 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     $http.get('/api/surveys/' + $stateParams.id + '/responses/')
       .then(function(response) {
         buildStats(response.data);
+
+        $http.post(`/api/surveys/${$stateParams.id}/grades/`, {
+            finalGrade: $scope.finalGrade
+          })
+          .then((response) => {})
+          .catch((error) => {
+            console.log(error)
+          });
       })
       .catch(function(error) {
         console.log(error);

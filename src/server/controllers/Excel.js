@@ -140,7 +140,15 @@ module.exports.exportToExcelBatch = function(req, res) {
     width: 400
   };
   specification["Nota Final"] = {
-    displayName: "Nota Final",
+    displayName: `Nota Final (${actionPlan.finalGrade}%)`,
+    headerStyle: styles.headers,
+    cellStyle: (value, row) => {
+      return (value) ? styles.cellQuestion : {};
+    },
+    width: 80
+  };
+  specification["# de respuestas"] = {
+    displayName: `# de respuestas (Total: ${actionPlan.totalResponses})`,
     headerStyle: styles.headers,
     cellStyle: (value, row) => {
       return (value) ? styles.cellQuestion : {};
@@ -201,6 +209,7 @@ module.exports.exportToExcelBatch = function(req, res) {
       data["Dimension"] = key;
       data["Preguntas"] = e.question;
       data["Nota Final"] = `${e.percentage}%`;
+      data["# de respuestas"] = e.responses;
       data["Plan de Acción/Actividades"] = "";
       data["Fecha Cierre"] = "";
       data["Responsables"] = "";
@@ -234,6 +243,7 @@ function retrieveEmptyRow() {
   data["Dimension"] = "";
   data["Preguntas"] = "";
   data["Nota Final"] = "";
+  data["# de respuestas"] = "";
   data["Plan de Acción/Actividades"] = "";
   data["Fecha Cierre"] = "";
   data["Responsables"] = "";
