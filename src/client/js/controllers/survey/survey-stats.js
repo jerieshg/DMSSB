@@ -110,7 +110,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     });
 
     $scope.clients = $scope.clients.concat(data.map((e) => e.client));
-
+    $scope.clients = $scope.clients.map(e => e.username);
     processServiceGlobal(allResults);
   }
 

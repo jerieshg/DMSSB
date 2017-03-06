@@ -8702,6 +8702,15 @@ base-chart.chart {
     body.mobile-open .main {
       margin-left: 220px !important; } }
 
+md-toast {
+  z-index: 1200 !important; }
+
+md-toast.md-success-theme .md-toast-content {
+  background-color: green; }
+
+md-toast.md-info-theme .md-toast-content {
+  background-color: #63c2de; }
+
 .danger {
   background-color: #f2dede; }
 

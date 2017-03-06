@@ -17,16 +17,17 @@ module.exports.readBySurveyId = function(req, res, next) {
 
 module.exports.readByClientId = function(req, res, next) {
   SurveyResponse.find({
-    clientId: req.params.clientId
-  }, function(error, responses) {
-    if (error) {
-      res.status(500);
-      next(error);
-      return res.send(error);
-    }
+      'client._id': req.params.clientId
+    },
+    function(error, responses) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
 
-    res.json(responses);
-  });
+      res.json(responses);
+    });
 }
 
 module.exports.createMany = function(req, res, next) {

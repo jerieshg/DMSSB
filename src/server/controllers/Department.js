@@ -1,4 +1,5 @@
 let Department = require('../models/Department');
+let Service = require('../models/Service');
 
 module.exports.readAll = function(req, res, next) {
   Department.find({}, function(error, departments) {
@@ -36,6 +37,8 @@ module.exports.update = function(req, res, next) {
       return res.send(error);
     }
 
+    let previousDept = department.department;
+
     for (prop in req.body) {
       department[prop] = req.body[prop];
     }
@@ -47,9 +50,26 @@ module.exports.update = function(req, res, next) {
         return res.send(error);
       }
 
-      res.json({
-        message: 'Department updated!'
-      });
+      Service.update({
+          department: previousDept
+        }, {
+          $set: {
+            department: department.department
+          }
+        }, {
+          "multi": true
+        },
+        function(error, result) {
+          if (error) {
+            res.status(500);
+            next(error);
+            return res.send(error);
+          }
+
+          res.json({
+            message: 'Department updated!'
+          });
+        })
     });
   });
 }

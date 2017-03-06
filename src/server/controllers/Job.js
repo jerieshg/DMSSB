@@ -1,4 +1,5 @@
 let Job = require('../models/Job');
+let Client = require('../models/Client');
 
 module.exports.readAll = function(req, res, next) {
   Job.find({}, function(error, jobs) {
@@ -36,6 +37,8 @@ module.exports.update = function(req, res, next) {
       return res.send(error);
     }
 
+    let previosJob = job.job;
+
     for (prop in req.body) {
       job[prop] = req.body[prop];
     }
@@ -47,9 +50,26 @@ module.exports.update = function(req, res, next) {
         return res.send(error);
       }
 
-      res.json({
-        message: 'job updated!'
-      });
+      Client.update({
+          job: previosJob
+        }, {
+          $set: {
+            job: job.job
+          }
+        }, {
+          "multi": true
+        },
+        function(error, result) {
+          if (error) {
+            res.status(500);
+            next(error);
+            return res.send(error);
+          }
+
+          res.json({
+            message: 'job updated!'
+          });
+        })
     });
   });
 }

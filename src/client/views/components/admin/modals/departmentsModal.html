@@ -1,0 +1,24 @@
+<div class="modal fade" id="departmentsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form name="deptForm" class="form-group" ng-submit="saveDepartment()">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Departamento</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         <label for="department">Departamento:</label>
+         <input type="text" id="department" class="form-control" ng-model="selectedDept.department" required>
+         <br/>
+         <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button  class="btn btn-success" type="submit">
+           <i class="fa fa-save" aria-hidden="true"/>  Guardar Departamento
+         </button>
+       </div>
+     </form>
+   </div>
+ </div>
+</div>

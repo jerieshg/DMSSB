@@ -15,7 +15,10 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
       job: $rootScope.client.job,
       results: [],
       timestamp: new Date(),
-      client: $rootScope.client.username
+      client: {
+        _id: $rootScope.client._id,
+        username: $rootScope.client.username
+      }
     };
 
     for (var question of Object.keys(data)) {
@@ -131,8 +134,8 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
     surveyModel.showProgressBar = "top";
     surveyModel.pagePrevText = "Atras";
     surveyModel.pageNextText = "Siguiente";
-    surveyModel.completeText  = "Completar encuesta";
-    surveyModel.completedHtml  = "<h5>Gracias por completar la encuesta! </h5>"
+    surveyModel.completeText = "Completar encuesta";
+    surveyModel.completedHtml = "<h5>Gracias por completar la encuesta! </h5>"
 
     $(".survey").Survey({
       model: surveyModel,

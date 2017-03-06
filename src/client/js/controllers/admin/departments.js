@@ -17,7 +17,7 @@ function DepartmentController($scope, $http, commonFactory) {
       let id = $scope.selectedDept._id;
       $http.put('/api/departments/' + id, $scope.selectedDept)
         .then(function(response) {
-          commonFactory.activateAlert('Departmento ' + $scope.selectedDept.department + ' fue actualizado exitosamente!', 'info');
+          commonFactory.toastMessage('Departmento ' + $scope.selectedDept.department + ' fue actualizado exitosamente!', 'info');
           $scope.selectedDept = {};
         })
         .catch(function(error) {
@@ -27,7 +27,7 @@ function DepartmentController($scope, $http, commonFactory) {
       $scope.selectedDept.created = new Date();
       $http.post('/api/departments/', $scope.selectedDept)
         .then(function(response) {
-          commonFactory.activateAlert('Departmento ' + $scope.selectedDept.department + ' fue guardado exitosamente!', 'success');
+          commonFactory.toastMessage('Departmento ' + $scope.selectedDept.department + ' fue guardado exitosamente!', 'success');
           $scope.selectedDept = {};
         })
         .catch(function(error) {

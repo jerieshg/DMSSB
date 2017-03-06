@@ -17,7 +17,7 @@ function ClientController($scope, $http, commonFactory, authentication) {
       let id = $scope.selectedClient._id;
       $http.put('/api/clients/' + id, $scope.selectedClient)
         .then(function(response) {
-          commonFactory.activateAlert('Cliente ' + $scope.selectedClient.username + ' fue actualizado exitosamente!', 'info');
+          commonFactory.toastMessage('Cliente ' + $scope.selectedClient.username + ' fue actualizado exitosamente!', 'info');
           $scope.selectedClient = {};
         })
         .catch(function(error) {
@@ -28,7 +28,7 @@ function ClientController($scope, $http, commonFactory, authentication) {
       authentication.register($scope.selectedClient)
         .then(function(response) {
           if (response.status === 200) {
-            commonFactory.activateAlert('Cliente ' + $scope.selectedClient.username + ' fue creado exitosamente!', 'success');
+            commonFactory.toastMessage('Cliente ' + $scope.selectedClient.username + ' fue creado exitosamente!', 'success');
             $scope.selectedClient = {};
           }
         });

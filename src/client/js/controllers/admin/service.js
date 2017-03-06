@@ -13,7 +13,7 @@ function ServiceController($scope, $http, commonFactory) {
       let id = $scope.selectedService._id;
       $http.put('/api/services/' + id, $scope.selectedService)
         .then(function(response) {
-          commonFactory.activateAlert('Servicio ' + $scope.selectedService.service + ' fue actualizado exitosamente!', 'info');
+          commonFactory.toastMessage('Servicio ' + $scope.selectedService.service + ' fue actualizado exitosamente!', 'info');
           $scope.selectedService = {};
         })
         .catch(function(error) {
@@ -23,7 +23,7 @@ function ServiceController($scope, $http, commonFactory) {
       $scope.selectedService.created = new Date();
       $http.post('/api/services/', $scope.selectedService)
         .then(function(response) {
-          commonFactory.activateAlert('Servicio ' + $scope.selectedService.service + ' fue guardado exitosamente!', 'success');
+          commonFactory.toastMessage('Servicio ' + $scope.selectedService.service + ' fue guardado exitosamente!', 'success');
           $scope.selectedService = {};
         })
         .catch(function(error) {

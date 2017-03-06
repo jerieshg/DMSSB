@@ -2,23 +2,17 @@
 
   <div id="alertArea"></div>
 
+  <div ng-include="'views/components/admin/modals/businessModal.html'"></div>
+
   <div class="row">
     <div class="col-md-12 hide-print">
-      <form name="businessForm" class="form-group" ng-submit="saveBusiness()">
-       <label for="business">Empresa:</label>
-       <input type="text" id="business" class="form-control" ng-model="selectedBusiness.business" required>
-       <br/>
-       <button  class="btn btn-success" type="submit">
-         <i class="fa fa-save" aria-hidden="true"/>  Guardar Empresa
-       </button>
-     </form>
 
      <div class="input-group row-separator">
       <div class="input-group-addon"><i class="fa fa-search"></i></div>
       <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
     </div>      
 
-    <button type="button" class="btn btn-info row-separator" ng-click="newBusiness()">
+    <button type="button" class="btn btn-info row-separator" ng-click="newBusiness()" data-toggle="modal" data-target="#businessModal">
      <i class="fa fa-plus" aria-hidden="true"/> Nueva empresa
    </button>
 
@@ -44,7 +38,7 @@
      <td>{{e.created | date: yyyy-mm-dd}}</td>
      <td>
        <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteBusiness(e._id)"></i>
-       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateBusiness(e._id)"></i>
+       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateBusiness(e._id)" data-toggle="modal" data-target="#businessModal"></i>
      </td>
    </tr>
  </tbody>

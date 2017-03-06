@@ -17,7 +17,7 @@ function BusinessController($scope, $http, commonFactory) {
       let id = $scope.selectedBusiness._id;
       $http.put('/api/business/' + id, $scope.selectedBusiness)
         .then(function(response) {
-          commonFactory.activateAlert('Empresa ' + $scope.selectedBusiness.business + ' fue actualizado exitosamente!', 'info');
+          commonFactory.toastMessage('Empresa ' + $scope.selectedBusiness.business + ' fue actualizado exitosamente!', 'info');
           $scope.selectedBusiness = {};
         })
         .catch(function(error) {
@@ -27,7 +27,7 @@ function BusinessController($scope, $http, commonFactory) {
       $scope.selectedBusiness.created = new Date();
       $http.post('/api/business/', $scope.selectedBusiness)
         .then(function(response) {
-          commonFactory.activateAlert('Empresa ' + $scope.selectedBusiness.business + ' fue guardado exitosamente!', 'success');
+          commonFactory.toastMessage('Empresa ' + $scope.selectedBusiness.business + ' fue guardado exitosamente!', 'success');
           $scope.selectedBusiness = {};
         })
         .catch(function(error) {

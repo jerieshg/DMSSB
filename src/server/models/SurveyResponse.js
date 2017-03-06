@@ -12,6 +12,6 @@ module.exports = mongoose.model('Survey-Response', {
     value: String,
     rates: [Number]
   }],
-  client: String,
+  client: {},
   timestamp: Date,
 });

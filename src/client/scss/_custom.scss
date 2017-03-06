@@ -1,4 +1,17 @@
-// Here you can add other styles
+md-toast{
+  z-index:1200 !important;
+}
+md-toast.md-success-theme {
+    .md-toast-content {
+        background-color: green;
+    }
+}
+md-toast.md-info-theme {
+    .md-toast-content {
+        background-color: #63c2de;
+    }
+}
+
 .danger{
   background-color: #f2dede;
 }

@@ -213,7 +213,7 @@ angular
       })
       .state('app.admin.clients', {
         url: '/clientes',
-        templateUrl: 'views/components/clients.html',
+        templateUrl: 'views/components/admin/clients.html',
         ncyBreadcrumb: {
           label: 'Clientes'
         },
@@ -233,7 +233,7 @@ angular
       })
       .state('app.admin.departments', {
         url: '/departamentos',
-        templateUrl: 'views/components/departments.html',
+        templateUrl: 'views/components/admin/departments.html',
         ncyBreadcrumb: {
           label: 'Departamentos'
         },
@@ -253,7 +253,7 @@ angular
       })
       .state('app.admin.jobs', {
         url: '/posiciones-de-trabajo',
-        templateUrl: 'views/components/jobs.html',
+        templateUrl: 'views/components/admin/jobs.html',
         ncyBreadcrumb: {
           label: 'Posiciones de Trabajo'
         },
@@ -273,7 +273,7 @@ angular
       })
       .state('app.admin.business', {
         url: '/empresas',
-        templateUrl: 'views/components/business.html',
+        templateUrl: 'views/components/admin/business.html',
         ncyBreadcrumb: {
           label: 'Empresas'
         },
@@ -293,7 +293,7 @@ angular
       })
       .state('app.admin.services', {
         url: '/service',
-        templateUrl: 'views/components/services.html',
+        templateUrl: 'views/components/admin/services.html',
         ncyBreadcrumb: {
           label: 'Servicios'
         },

@@ -1,0 +1,52 @@
+<div class="modal fade" id="clientsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+     <form name="clientForm"  ng-submit="saveClient()">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Cliente/Usuario</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="col-md-6 row-separator">
+          <label for="username">Usuario:</label>
+          <input type="text" id="username" class="form-control" ng-model="selectedClient.username" required>
+        </div>
+
+        <div class="col-md-6 row-separator">
+         <label for="password">Contraseña:</label>
+         <input type="password" id="password" class="form-control" ng-model="selectedClient.password" required>
+       </div>
+
+       <div class="col-md-6 row-separator">
+        <label for="role">Tipo de usuario:</label>
+        <select class="form-control" ng-model="selectedClient.role" ng-options="item.role for item in roles track by item.role" required>
+          <option value="">Seleccione un rol {{optional ? '(optional)' : ''}}</option>
+        </select>
+      </div>
+
+      <div class="col-md-6 row-separator" >
+        <label for="role">Posicion de trabajo:</label>
+        <select class="form-control" ng-model="selectedClient.job" ng-options="item.job as item.job for item in jobs" required> 
+          <option value="">Seleccione una posicion de trabajo {{optional ? '(optional)' : ''}}</option>
+        </select>
+      </div>
+
+      <div class="col-md-6 row-separator" ng-show="selectedClient.role.role === 'Sub-Admin'">
+        <label for="role">Departamento:</label>
+        <select class="form-control" ng-model="selectedClient.department" ng-options="item.department as item.department for item in departments">
+          <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+        </select>
+      </div>
+      <br/>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button  class="btn btn-success" type="submit">
+        <i class="fa fa-save" aria-hidden="true"/>  Guardar Cliente
+       </button>
+     </div>
+   </form>
+ </div>
+</div>
+</div>

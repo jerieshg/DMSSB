@@ -17,7 +17,7 @@ function JobController($scope, $http, commonFactory) {
       let id = $scope.selectedJob._id;
       $http.put('/api/jobs/' + id, $scope.selectedJob)
         .then(function(response) {
-          commonFactory.activateAlert('Position de Trabajo ' + $scope.selectedJob.position + ' fue actualizado exitosamente!', 'info');
+          commonFactory.toastMessage('Position de Trabajo ' + $scope.selectedJob.job + ' fue actualizado exitosamente!', 'info');
           $scope.selectedJob = {};
         })
         .catch(function(error) {
@@ -27,7 +27,7 @@ function JobController($scope, $http, commonFactory) {
       $scope.selectedJob.created = new Date();
       $http.post('/api/jobs/', $scope.selectedJob)
         .then(function(response) {
-          commonFactory.activateAlert('Position de Trabajo ' + $scope.selectedJob.position + ' fue guardado exitosamente!', 'success');
+          commonFactory.toastMessage('Position de Trabajo ' + $scope.selectedJob.job + ' fue guardado exitosamente!', 'success');
           $scope.selectedJob = {};
         })
         .catch(function(error) {

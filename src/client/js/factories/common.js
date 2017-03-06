@@ -1,6 +1,15 @@
-angular.module('app').factory('commonFactory', function() {
+angular.module('app').factory('commonFactory', function($mdToast) {
 
   return {
+    toastMessage: function(message, type) {
+      $mdToast.show(
+        $mdToast.simple()
+        .textContent(message)
+        .position('start right')
+        .hideDelay(3000)
+        .theme(type)
+      );
+    },
     activateAlert: function(message, alertType) {
       $('#alertArea').append('<div class="alert alert-' + alertType + ' alert-dismissible fade show" role="alert" id="alertArea" ><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + message + '</div>');
 
