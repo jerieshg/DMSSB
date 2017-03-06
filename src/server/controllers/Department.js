@@ -1,5 +1,6 @@
 let Department = require('../models/Department');
 let Service = require('../models/Service');
+let Client = require('../models/Client');
 
 module.exports.readAll = function(req, res, next) {
   Department.find({}, function(error, departments) {
@@ -66,10 +67,30 @@ module.exports.update = function(req, res, next) {
             return res.send(error);
           }
 
-          res.json({
-            message: 'Department updated!'
-          });
+
         })
+
+      Client.update({
+          department: previousDept
+        }, {
+          $set: {
+            department: department.department
+          }
+        }, {
+          "multi": true
+        },
+        function(error, result) {
+          if (error) {
+            res.status(500);
+            next(error);
+            return res.send(error);
+          }
+
+        });
+
+      res.json({
+        message: 'Department updated!'
+      });
     });
   });
 }

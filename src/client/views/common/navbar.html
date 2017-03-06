@@ -10,14 +10,16 @@
             <a class="nav-link" ui-sref="app.main">Tablero de encuestas</a>
         </li>
 
-        <li class="nav-item dropdown" ng-show="client.role.level === 1">
+        <li class="nav-item dropdown" ng-show="client.role.level === 1 || client.role.level === 2">
             <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Administrador
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" ui-sref="app.admin.clients">Clientes/Usuarios</a>
-              <a class="dropdown-item" ui-sref="app.admin.business">Empresas</a>
-              <a class="dropdown-item" ui-sref="app.admin.departments">Departamentos</a>
+              <a class="dropdown-item" ui-sref="app.admin.clients" ng-show="client.role.level === 1">Clientes/Usuarios</a>
+              <a class="dropdown-item" ui-sref="app.admin.business" ng-show="client.role.level === 1">Empresas</a>
+              <a class="dropdown-item" ui-sref="app.admin.departments" ng-show="client.role.level === 1">Departamentos</a>
+              <a class="dropdown-item" ui-sref="app.admin.services">Servicios</a>
+              <a class="dropdown-item" ui-sref="app.admin.jobs" ng-show="client.role.level === 1">Posiciones de Trabajo</a>
           </div>
       </li>
 

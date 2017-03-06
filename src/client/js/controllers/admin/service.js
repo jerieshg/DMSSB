@@ -1,4 +1,4 @@
-function ServiceController($scope, $http, commonFactory) {
+function ServiceController($rootScope, $scope, $http, commonFactory) {
 
   initializeController();
 
@@ -68,6 +68,9 @@ function ServiceController($scope, $http, commonFactory) {
     $http.get('/api/services/')
       .then(function(response) {
         $scope.services = response.data;
+        if ($rootScope.client.role.level === 2) {
+          $scope.services = $scope.services.filter((e) => $rootScope.client.department === e.department);
+        }
       })
       .catch(function(error) {
         console.log(error);
@@ -78,6 +81,9 @@ function ServiceController($scope, $http, commonFactory) {
     $http.get('/api/departments/')
       .then(function(response) {
         $scope.departments = response.data;
+        if ($rootScope.client.role.level === 2) {
+          $scope.departments = $scope.departments.filter((e) => $rootScope.client.department === e.department);
+        }
       })
       .catch(function(error) {
         console.log(error);
@@ -85,5 +91,5 @@ function ServiceController($scope, $http, commonFactory) {
   }
 }
 
-ServiceController.$inject = ['$scope', '$http', 'commonFactory'];
+ServiceController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory'];
 angular.module('app').controller('serviceController', ServiceController);
