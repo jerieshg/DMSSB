@@ -4,6 +4,10 @@ function ClientController($scope, $http, commonFactory, authentication) {
 
   $scope.selectedClient = {};
 
+  $scope.print = function() {
+    commonFactory.printTable("adminTable");
+  }
+
   $scope.newClient = function() {
     $scope.selectedClient = {};
   }

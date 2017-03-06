@@ -33919,3 +33919,9 @@ md-input-container.md-icon-left.md-icon-right > label .md-placeholder {
 @media print {
   .hide-print:not(.show-print):not(.show) {
     display: none !important; } }
+
+@media only print {
+  .hide-print, .app-header, .app-footer {
+    display: none; }
+  #adminTable {
+    display: block !important; } }

@@ -3,24 +3,32 @@
   <div id="alertArea"></div>
 
   <div class="row">
-    <form name="businessForm" class="form-group" ng-submit="saveBusiness()">
-     <label for="business">Empresa:</label>
-     <input type="text" id="business" class="form-control" ng-model="selectedBusiness.business" required>
-     <br/>
-     <button  class="btn btn-success" type="submit">
-     <i class="fa fa-save" aria-hidden="true"/>  Guardar Empresa
-     </button>
-   </form>
+    <div class="col-md-12 hide-print">
+      <form name="businessForm" class="form-group" ng-submit="saveBusiness()">
+       <label for="business">Empresa:</label>
+       <input type="text" id="business" class="form-control" ng-model="selectedBusiness.business" required>
+       <br/>
+       <button  class="btn btn-success" type="submit">
+         <i class="fa fa-save" aria-hidden="true"/>  Guardar Empresa
+       </button>
+     </form>
 
-   <div class="input-group row-separator">
-    <div class="input-group-addon"><i class="fa fa-search"></i></div>
-    <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
-  </div>      
+     <div class="input-group row-separator">
+      <div class="input-group-addon"><i class="fa fa-search"></i></div>
+      <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
+    </div>      
 
-  <button type="button" class="btn btn-info row-separator" ng-click="newBusiness()">
-   <i class="fa fa-plus" aria-hidden="true"/> Nueva empresa
- </button>
- <table class="table table-hover">
+    <button type="button" class="btn btn-info row-separator" ng-click="newBusiness()">
+     <i class="fa fa-plus" aria-hidden="true"/> Nueva empresa
+   </button>
+
+   <button type="button" class="btn btn-secondary row-separator" onClick="window.print()" style="margin-left: 1%;">
+     <i class="fa fa-print" aria-hidden="true"/> Imprimir
+   </button>
+   
+ </div>
+
+ <table class="table table-hover" id="adminTable">
   <thead>
     <tr>
      <td><strong>#</strong></td>

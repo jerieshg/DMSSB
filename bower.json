@@ -15,7 +15,9 @@
     "chart.js": "^2.3.0",
     "angular-chart.js": "^1.0.3",
     "bootstrap-datepicker": "^1.6.4",
-    "angular-material": "master"
+    "angular-material": "master",
+    "file-saver": "^1.3.3",
+    "angular-file-saver": "^1.1.3"
   },
   "private": true
 }

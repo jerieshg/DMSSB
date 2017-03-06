@@ -4,6 +4,10 @@ function BusinessController($scope, $http, commonFactory) {
 
   $scope.selectedBusiness = {};
 
+  $scope.print = function() {
+    commonFactory.printTable("adminTable");
+  }
+
   $scope.newBusiness = function() {
     $scope.selectedBusiness = {};
   }

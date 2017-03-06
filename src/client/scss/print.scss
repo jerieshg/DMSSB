@@ -1,0 +1,9 @@
+@media only print{
+  .hide-print, .app-header, .app-footer{
+    display: none;
+  }
+
+  #adminTable{
+    display: block !important;
+  }
+}

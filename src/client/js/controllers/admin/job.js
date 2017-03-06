@@ -4,6 +4,10 @@ function JobController($scope, $http, commonFactory) {
 
   $scope.selectedJob = {};
 
+  $scope.print = function() {
+    commonFactory.printTable("adminTable");
+  }
+
   $scope.newJob = function() {
     $scope.selectedJob = {};
   }

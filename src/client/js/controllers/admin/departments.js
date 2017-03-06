@@ -4,6 +4,10 @@ function DepartmentController($scope, $http, commonFactory) {
 
   $scope.selectedDept = {};
 
+  $scope.print = function() {
+    commonFactory.printTable("adminTable");
+  }
+
   $scope.newDept = function() {
     $scope.selectedDept = {};
   }
