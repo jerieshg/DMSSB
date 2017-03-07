@@ -1,5 +1,5 @@
 #cleans repository
-git reset --hard
+git reset --hard HEAD
 git pull
 
 #Runs required by the server
