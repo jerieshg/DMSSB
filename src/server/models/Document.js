@@ -6,6 +6,10 @@ let schema = new mongoose.Schema({
     type: String,
     unique: true
   },
+  code: {
+    type: String,
+    unique: true
+  },
   version: String,
   requestedDate: Date,
   priority: String,

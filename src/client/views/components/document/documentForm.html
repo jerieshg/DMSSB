@@ -4,7 +4,7 @@
       <button  class="btn btn-success" type="submit">
        <i class="fa fa-save" aria-hidden="true"/>  Guardar
      </button>
-     <a  class="btn btn-primary"  ui-sref-active="active" ui-sref="app.docs.history({id: selectedDocument._id})" title="Ver historial del documento">
+     <a  class="btn btn-primary"  ui-sref-active="active" ui-sref="app.docs.history({id: selectedDocument._id})" title="Ver historial del documento" ng-show="selectedDocument._id">
        <i class="fa fa-eye" aria-hidden="true"/>  Ver Historial
      </a>
    </div>
@@ -18,7 +18,7 @@
 
   <div class="col-sm-7">
    <label for="docName">Nombre de documento o registro:</label>
-   <input name="docName" type="text" class="form-control" placeholder="Nombre del documento o registro" ng-model="selectedDocument.name" ng-disabled="selectedDocument._id" required>
+   <input name="docName" type="text" class="form-control" placeholder="Nombre del documento o registro" ng-model="selectedDocument.name" required>
  </div>
  <div class="col-sm-2">
   <label for="verison">Version vigente:</label>

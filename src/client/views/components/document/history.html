@@ -1,6 +1,13 @@
 <div class="animated fadeIn">
 
- <div class="card" style="width: 25rem;margin-left:1em;"  ng:repeat="e in documentHistory.history | orderBy : created : true">
+<div class="col-sm-12 row-separator">
+   <a class="btn btn-primary"  ui-sref-active="active" ui-sref="app.docs.edit({id: selectedDocument._id})">
+    <i class="fa fa-arrow-left" aria-hidden="true"/>
+  </a>
+</div>   
+
+
+<div class="card" style="width: 25rem;margin-left:1em;"  ng:repeat="e in documentHistory.history | orderBy : created : true">
   <div class="card-header">
     <td>Cambio {{documentHistory.history.length - ($index + 1)}}</td>
   </div>

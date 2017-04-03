@@ -1,6 +1,6 @@
 let Document = require('../models/Document');
 let path = require("path");
-
+let randomstring = require("randomstring");
 
 module.exports.readAll = function(req, res, next) {
   Document.find({}, function(error, document) {
@@ -25,6 +25,13 @@ module.exports.create = function(req, res, next) {
       path: e.path
     });
   });
+
+  let randomNumber = randomstring.generate({
+    length: 5,
+    charset: 'numeric'
+  });
+
+  doc.code = `${doc.type.type.match(/\b(\w)/g).join('').toUpperCase()}-${randomNumber}`;
 
   doc.save(function(error, doc) {
     if (error) {
@@ -133,5 +140,27 @@ module.exports.downloadFile = function(req, res, next) {
     if (err) {
       console.log("ERROR:", err);
     }
+  });
+}
+module.exports.findToAuthorizeDocuments = function(req, res, next) {
+
+  Document.find({
+    $or: [{
+      questions: {
+        $elemMatch: {
+          clients: client
+        }
+      }
+    }, {
+      general: true
+    }]
+  }, function(error, docs) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    res.json(docs);
   });
 }
