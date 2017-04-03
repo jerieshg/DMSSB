@@ -1,13 +1,7 @@
 (function() {
 
-  angular
-    .module('app')
-    .service('authentication', authentication);
-
-  authentication.$inject = ['$http', '$window'];
 
   function authentication($http, $window) {
-
     var saveToken = function(token) {
       $window.localStorage['mean-token'] = token;
     };
@@ -53,12 +47,11 @@
     var register = function(client) {
       return $http.post('/api/auth/register/', client)
         .then(function(response) {
-            return response;
-          },
-          function(response) {
-            console.log("error: " + response);
-          }
-        );
+          return response;
+        }, function(error) {
+          console.log(error);
+          return error;
+        });
     };
 
     var login = function(client) {
@@ -88,4 +81,6 @@
     };
   }
 
+  authentication.$inject = ['$http', '$window'];
+  angular.module('app').service('authentication', authentication);
 })();

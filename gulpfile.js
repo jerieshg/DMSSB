@@ -131,12 +131,15 @@ gulp.task('scripts', () => {
   return browserify({
       debug: true,
       entries: [paths.src.scripts + '/app.js',
-        paths.src.scripts + 'services/authentication.js',
         paths.src.scripts + 'services/business.js',
         paths.src.scripts + 'services/department.js',
         paths.src.scripts + 'services/service.js',
         paths.src.scripts + 'services/system.js',
-        paths.src.scripts + 'services/implications.js'
+        paths.src.scripts + 'services/implications.js',
+        paths.src.scripts + 'services/authentication.js',
+        paths.src.scripts + 'services/clients.js',
+        paths.src.scripts + 'services/docType.js',
+        paths.src.scripts + 'services/job.js'
       ]
     })
     .transform("babelify", {

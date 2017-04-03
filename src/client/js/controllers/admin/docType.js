@@ -1,4 +1,4 @@
-function DocTypesController($scope, $http, commonFactory) {
+function DocTypesController($scope, $http, commonFactory, documentTypes, clients) {
 
   initializeController();
 
@@ -30,31 +30,19 @@ function DocTypesController($scope, $http, commonFactory) {
     }
 
     if ($scope.selectedDocType.edit) {
-      let id = $scope.selectedDocType._id;
-      $http.put('/api/document-types/' + id, $scope.selectedDocType)
-        .then(function(response) {
-          commonFactory.toastMessage('Tipo de documento ' + $scope.selectedDocType.type + ' fue actualizado exitosamente!', 'info');
+      documentTypes.update($scope.selectedDocType)
+        .then((data) => {
           $scope.selectedDocType = {};
-        })
-        .catch(function(error) {
-          console.log(error);
+          retrieveDocTypes();
         });
     } else {
       $scope.selectedDocType.created = new Date();
-      $http.post('/api/document-types/', $scope.selectedDocType)
-        .then(function(response) {
-          commonFactory.toastMessage('Tipo de documento ' + $scope.selectedDocType.type + ' fue guardado exitosamente!', 'success');
+      documentTypes.save($scope.selectedDocType)
+        .then((data) => {
           $scope.selectedDocType = {};
-        })
-        .catch(function(error) {
-          console.log(error);
-          if (error.data.code === 11000) {
-            commonFactory.toastMessage(`Tipo de Documento ${$scope.selectedDocType.type} ya existe.`, 'danger');
-          }
+          retrieveDocTypes();
         });
     }
-
-    retrieveDocTypes();
   }
 
   $scope.updateDocType = function(docType) {
@@ -72,14 +60,10 @@ function DocTypesController($scope, $http, commonFactory) {
 
   $scope.deleteDocType = function(id) {
     if (commonFactory.dialog("Esta seguro de borrar este tipo de documento?")) {
-      $http.delete('/api/document-types/' + id)
-        .then(function(response) {
-          commonFactory.activateAlert('Tipo de documento borrado exitosamente!', 'danger');
+      documentTypes.delete(id)
+        .then((data) => {
           retrieveDocTypes();
           $scope.selectedDocType = {};
-        })
-        .catch(function(error) {
-          console.log(error);
         });
     }
   }
@@ -94,25 +78,19 @@ function DocTypesController($scope, $http, commonFactory) {
   }
 
   function retrieveDocTypes() {
-    $http.get('/api/document-types/')
-      .then(function(response) {
-        $scope.docTypes = response.data;
-      })
-      .catch(function(error) {
-        console.log(error);
+    documentTypes.readAll()
+      .then((data) => {
+        $scope.docTypes = data;
       });
   }
 
   function retrieveClients() {
-    $http.get('/api/clients/')
-      .then(function(response) {
-        $scope.clients = response.data;
-      })
-      .catch(function(error) {
-        console.log(error);
+    clients.readAll()
+      .then((data) => {
+        $scope.clients = data;
       });
   }
 }
 
-DocTypesController.$inject = ['$scope', '$http', 'commonFactory'];
+DocTypesController.$inject = ['$scope', '$http', 'commonFactory', 'documentTypes', 'clients'];
 angular.module('app').controller('docTypesController', DocTypesController);

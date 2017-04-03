@@ -10,7 +10,6 @@ function ImplicationController($rootScope, $scope, $http, commonFactory, implica
 
   $scope.saveImplication = function() {
     if ($scope.selectedImplication.edit) {
-      let id = $scope.selectedImplication._id;
       implications.update($scope.selectedImplication)
         .then((data) => {
           $scope.selectedImplication = {};

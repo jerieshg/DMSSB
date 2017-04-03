@@ -10,20 +10,21 @@ function ServiceController($rootScope, $scope, $http, commonFactory, service, de
 
   $scope.saveService = function() {
     if ($scope.selectedService.edit) {
-      let id = $scope.selectedService._id;
       service.update($scope.selectedService)
         .then((response) => {
           $scope.selectedService = {};
+          retrieveService();
         });
     } else {
       $scope.selectedService.created = new Date();
       service.save($scope.selectedService)
         .then((response) => {
           $scope.selectedService = {};
+          retrieveService();
         });
     }
 
-    retrieveService();
+
   }
 
   $scope.updateService = function(id) {

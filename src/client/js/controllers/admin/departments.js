@@ -12,24 +12,23 @@ function DepartmentController($scope, $http, commonFactory, department) {
 
   $scope.saveDepartment = function() {
     if ($scope.selectedDept.edit) {
-      let id = $scope.selectedDept._id;
-      department.update($scope.selectedDept)
+      departments.update($scope.selectedDept)
         .then((data) => {
           $scope.selectedDept = {};
+          retrieveDepartments();
         });
     } else {
       $scope.selectedDept.created = new Date();
-      department.save($scope.selectedDept)
+      departments.save($scope.selectedDept)
         .then((data) => {
           $scope.selectedDept = {};
+          retrieveDepartments();
         });
     }
-
-    retrieveDepartments();
   }
 
   $scope.updateDepartment = function(id) {
-    department.find(id)
+    departments.find(id)
       .then((data) => {
         $scope.selectedDept = data;
         $scope.selectedDept.edit = true;
@@ -38,7 +37,7 @@ function DepartmentController($scope, $http, commonFactory, department) {
 
   $scope.deleteDepartment = function(id) {
     if (commonFactory.dialog("Esta seguro de borrar este departamento?")) {
-      department.delete(id)
+      departments.delete(id)
         .then((data) => {
           retrieveDepartments();
           $scope.selectedDept = {};
@@ -55,12 +54,12 @@ function DepartmentController($scope, $http, commonFactory, department) {
   }
 
   function retrieveDepartments() {
-    department.readAll()
+    departments.readAll()
       .then((data) => {
         $scope.departments = data;
       })
   }
 }
 
-DepartmentController.$inject = ['$scope', '$http', 'commonFactory', 'department'];
+DepartmentController.$inject = ['$scope', '$http', 'commonFactory', 'departments'];
 angular.module('app').controller('departmentsController', DepartmentController);

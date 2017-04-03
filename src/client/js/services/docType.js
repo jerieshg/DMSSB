@@ -1,9 +1,9 @@
 (function() {
 
-  function departments($http, commonFactory) {
+  function documentTypes($http, commonFactory) {
 
     var readAll = function() {
-      return $http.get('/api/departments/')
+      return $http.get('/api/document-types/')
         .then((response) => {
           return response.data;
         })
@@ -15,7 +15,7 @@
     };
 
     var find = function(id) {
-      return $http.get(`/api/departments/${id}`)
+      return $http.get(`/api/document-types/${id}`)
         .then((response) => {
           return response.data;
         })
@@ -27,9 +27,9 @@
     };
 
     var _delete = function(id) {
-      return $http.delete(`/api/departments/${id}`)
+      return $http.delete(`/api/document-types/${id}`)
         .then((response) => {
-          commonFactory.toastMessage('Departmento borrada exitosamente!', 'danger');
+          commonFactory.toastMessage('Tipo de documento borrado exitosamente!', 'danger');
           return response.data;
         })
         .catch((error) => {
@@ -39,16 +39,16 @@
         });
     };
 
-    var save = function(department) {
-      return $http.post('/api/departments/', department)
+    var save = function(docType) {
+      return $http.post('/api/document-types/', docType)
         .then((response) => {
-          commonFactory.toastMessage(`Departmento  ${department.department} fue guardado exitosamente!`, 'success');
+          commonFactory.toastMessage(`Tipo de documento  ${docType.type} fue guardado exitosamente!`, 'success');
           return response.data;
         })
         .catch((error) => {
           console.log(error);
           if (error.data.code === 11000) {
-            commonFactory.toastMessage(`Departamento ${department.department} ya existe.`, 'danger');
+            commonFactory.toastMessage(`Tipo de documento ${docType.type} ya existe.`, 'danger');
           } else {
             commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
           }
@@ -56,16 +56,16 @@
         });
     };
 
-    var update = function(department) {
-      return $http.put(`/api/departments/${department._id}`, department)
+    var update = function(docType) {
+      return $http.put(`/api/document-types/${docType._id}`, docType)
         .then((response) => {
-          commonFactory.toastMessage('Departmento ' + department.department + ' fue actualizado exitosamente!', 'info');
+          commonFactory.toastMessage('Tipo de documento ' + docType.type + ' fue actualizado exitosamente!', 'info');
           return response.data;
         })
         .catch((error) => {
           console.log(error);
           if (error.data.code === 11000) {
-            commonFactory.toastMessage(`Departamento ${department.department} ya existe.`, 'danger');
+            commonFactory.toastMessage(`Tipo de documento ${docType.type} ya existe.`, 'danger');
           } else {
             commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
           }
@@ -82,6 +82,6 @@
     };
   }
 
-  departments.$inject = ['$http', 'commonFactory'];
-  angular.module('app').service('departments', departments);
+  documentTypes.$inject = ['$http', 'commonFactory'];
+  angular.module('app').service('documentTypes', documentTypes);
 })();
