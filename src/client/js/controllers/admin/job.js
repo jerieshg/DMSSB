@@ -52,6 +52,7 @@ function JobController($scope, $http, commonFactory, jobs) {
   }
 
   function retrieveJobs() {
+    jobs.readAll()
       .then((data) => {
         $scope.jobs = data;
       });
