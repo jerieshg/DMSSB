@@ -17,7 +17,7 @@ function JobController($scope, $http, commonFactory) {
       let id = $scope.selectedJob._id;
       $http.put('/api/jobs/' + id, $scope.selectedJob)
         .then(function(response) {
-          commonFactory.toastMessage(`Position de Trabajo ${$scope.selectedJob.job} fue actualizado exitosamente!`, 'info');
+          commonFactory.toastMessage(`Posicion de Trabajo ${$scope.selectedJob.job} fue actualizado exitosamente!`, 'info');
           $scope.selectedJob = {};
         })
         .catch(function(error) {
@@ -27,11 +27,14 @@ function JobController($scope, $http, commonFactory) {
       $scope.selectedJob.created = new Date();
       $http.post('/api/jobs/', $scope.selectedJob)
         .then(function(response) {
-          commonFactory.toastMessage(`Position de Trabajo ${$scope.selectedJob.job} fue guardado exitosamente!`, 'success');
+          commonFactory.toastMessage(`Posicion de Trabajo ${$scope.selectedJob.job} fue guardado exitosamente!`, 'success');
           $scope.selectedJob = {};
         })
         .catch(function(error) {
           console.log(error);
+          if (error.data.code === 11000) {
+            commonFactory.toastMessage(`Posicion de Trabajo ${$scope.selectedJob.job} ya existe.`, 'danger');
+          }
         });
     }
 
@@ -50,7 +53,7 @@ function JobController($scope, $http, commonFactory) {
   }
 
   $scope.deleteJob = function(id) {
-    if (confirm("Esta seguro de borrar esta posicion de trabajo?")) {
+    if (commonFactory.dialog("Esta seguro de borrar esta posicion de trabajo?")) {
       $http.delete('/api/jobs/' + id)
         .then(function(response) {
           commonFactory.activateAlert('Position de Trabajo borrada exitosamente!', 'danger');

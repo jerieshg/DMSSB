@@ -1,7 +1,7 @@
 'use strict'
 var mongoose = require('mongoose');
 
-module.exports = mongoose.model('Survey', {
+let schema = new mongoose.Schema({
   surveyName: String,
   business: [String],
   department: String,
@@ -34,4 +34,6 @@ module.exports = mongoose.model('Survey', {
   active: Boolean,
   general: Boolean,
   created: Date
-});
+})
+
+module.exports = mongoose.model('Survey', schema);

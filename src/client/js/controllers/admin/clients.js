@@ -1,4 +1,4 @@
-function ClientController($scope, $http, commonFactory, authentication) {
+function ClientController($scope, $http, commonFactory, authentication, business) {
 
   initializeController();
 
@@ -31,6 +31,12 @@ function ClientController($scope, $http, commonFactory, authentication) {
             commonFactory.toastMessage('Cliente ' + $scope.selectedClient.username + ' fue creado exitosamente!', 'success');
             $scope.selectedClient = {};
           }
+        })
+        .catch(function(error) {
+          console.log(error);
+          if (error.data.code === 11000) {
+            commonFactory.toastMessage(`Cliente ${$scope.selectedClient.username} ya existe.`, 'danger');
+          }
         });
     }
 
@@ -43,7 +49,7 @@ function ClientController($scope, $http, commonFactory, authentication) {
   }
 
   $scope.deleteClient = function(id) {
-    if (confirm("Esta seguro de borrar este cliente?")) {
+    if (commonFactory.dialog("Esta seguro de borrar este cliente?")) {
       $http.delete('/api/clients/' + id)
         .then(function(response) {
           commonFactory.activateAlert('Cliente borrado exitosamente!', 'danger');
@@ -61,6 +67,7 @@ function ClientController($scope, $http, commonFactory, authentication) {
     retrieveRoles();
     retrieveDepartments();
     retrieveJobs();
+    retrieveBusiness();
   }
 
   function retrieveClients() {
@@ -102,7 +109,14 @@ function ClientController($scope, $http, commonFactory, authentication) {
         console.log(error);
       });
   }
+
+  function retrieveBusiness() {
+    business.readAll()
+      .then((data) => {
+        $scope.business = data;
+      })
+  }
 }
 
-ClientController.$inject = ['$scope', '$http', 'commonFactory', 'authentication'];
+ClientController.$inject = ['$scope', '$http', 'commonFactory', 'authentication', 'business'];
 angular.module('app').controller('clientsController', ClientController);

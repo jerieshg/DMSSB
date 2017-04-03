@@ -1,0 +1,137 @@
+<div class="animate fadeIn">
+  <form name="documentForm" class="row" enctype="multipart/form-data" ng-submit="saveDocument()">
+    <div class="col-sm-3">
+      <button  class="btn btn-success" type="submit">
+       <i class="fa fa-save" aria-hidden="true"/>  Guardar
+     </button>
+     <a  class="btn btn-primary"  ui-sref-active="active" ui-sref="app.docs.history({id: selectedDocument._id})" title="Ver historial del documento">
+       <i class="fa fa-eye" aria-hidden="true"/>  Ver Historial
+     </a>
+   </div>
+
+   <div class="col-sm-3">
+    <label for="docName">Estado:</label>
+    <strong>{{selectedDocument.status}}</strong>
+  </div>
+
+  <div class="form-divider"></div>
+
+  <div class="col-sm-7">
+   <label for="docName">Nombre de documento o registro:</label>
+   <input name="docName" type="text" class="form-control" placeholder="Nombre del documento o registro" ng-model="selectedDocument.name" ng-disabled="selectedDocument._id" required>
+ </div>
+ <div class="col-sm-2">
+  <label for="verison">Version vigente:</label>
+  <input name="verison" type="text" class="form-control" placeholder="Version vigente" ng-model="selectedDocument.version" required>
+</div>
+<div class="col-sm-3">
+ <label for="priority">Prioridad:</label>
+ <select name="priority" id="priority" class="form-control" ng-model="selectedDocument.priority" ng-options="item for item in priorities" required>
+  <option value="">Seleccione una prioridad  {{optional ? '(optional)' : ''}}</option>
+</select>
+</div>
+
+<div class="form-divider"></div>
+
+<div class="col-sm-4">
+  <label for="tipo">Tipo:</label>
+  <select name="tipo" id="tipo" class="form-control" ng-model="selectedDocument.type" ng-options="item as item.type for item in docTypes track by item.type" required>
+    <option value="">Seleccione un tipo  {{optional ? '(optional)' : ''}}</option>
+  </select>
+</div>
+<div class="col-sm-4" ng-show="selectedDocument.type.blueprint">
+  <label for="system">Sistema:</label>
+  <select name="system" id="system" class="form-control" ng-model="selectedDocument.system" ng-options="item.system as item.system for item in systems" ng-change="updateImplication()">
+    <option value="">Seleccione un sistema  {{optional ? '(optional)' : ''}}</option>
+  </select>
+</div>
+<div class="col-sm-4" ng-show="selectedDocument.type.blueprint && selectedDocument.system">
+  <label for="implication">Implicacion:</label>
+  <select name="implication" id="implication" class="form-control"  ng-model="selectedDocument.implication" ng-options="item for item in retrieveImplications()">
+    <option value="">Seleccione una implicacion  {{optional ? '(optional)' : ''}}</option>
+  </select>
+</div>
+
+<div class="form-divider"></div>
+
+<div class="col-sm-4">
+  <label for="requester">Solicitante:</label>
+  <select name="requester" id="requester" class="form-control" ng-model="selectedDocument.requester" ng-options="item.username as item.username for item in clients" required>
+    <option value="">Seleccione un usuario  {{optional ? '(optional)' : ''}}</option>
+  </select>
+</div>
+<div class="col-sm-4">
+  <label for="dept">Departamento:</label>
+  <select name="dept" id="dept" class="form-control" ng-model="selectedDocument.department" ng-options="item.department as item.department for item in departments" required>
+    <option value="">Seleccione una departamento  {{optional ? '(optional)' : ''}}</option>
+  </select>
+</div>
+<div class="col-sm-4">
+  <label for="business">Planta:</label>
+  <select name="business" id="business" class="form-control" ng-model="selectedDocument.business" ng-options="item.business as item.business for item in business" required>
+    <option value="">Seleccione una planta  {{optional ? '(optional)' : ''}}</option>
+  </select>
+</div>
+
+<div class="form-divider"></div>
+
+<div class="col-sm-3 datepicker" style="padding-left:1em;">
+  <label for="requestedDate">Fecha solicitud:</label>
+  <input name="requestedDate" type="text" class="form-control" placeholder="Fecha solicitud" ng-model="selectedDocument.requestedDate" required>
+</div>
+<div class="col-sm-3 datepicker" style="padding-left:1em;">
+ <label for="requiredDate">Fecha requerida:</label>
+ <input name="requiredDate" type="text" class="form-control" placeholder="Fecha requerida" ng-model="selectedDocument.requiredDate" required>
+</div>
+<div class="col-sm-3 datepicker" style="padding-left:1em;">
+ <label for="requiredDate">Fecha Vencimiento:</label>
+ <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate">
+</div>
+<div class="col-sm-3">
+  <label for="reqSGIA" style="font-weight: bold;">Requiere Revision SGIA:
+    <input name="reqSGIA" type="checkbox" class="form-control" ng-model="selectedDocument.requiresSGIA">
+  </label>
+</div>
+
+
+
+<div class="form-divider"></div>
+<div class="col-sm-4">
+  <label for="file">Adjuntar archivo: </label>
+  <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple>
+</div>
+<div class="col-sm-12">
+  <label for="comments">Comentario:</label>
+  <textarea name="comments" id="comments" rows="5" class="form-control" ng-model="selectedDocument.comments"></textarea>
+</div>
+
+<div class="form-divider"></div>
+
+<div class="col-sm-12" ng-show="selectedDocument._id">
+  <h3>Archivos</h3>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <td>#</td>
+        <td>Nombre</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="file in selectedDocument.files">
+       <td >{{$index + 1}}</td>
+       <td>{{file.fileName}}</td>
+       <td><a href="#" ng-click="download(file.fileName,file.path)">Descarga</a></td>
+     </tr>
+   </tbody>
+ </table>
+</div>
+
+<!-- <div class="col-sm-4 row-separator">
+  <button  class="btn btn-success" type="submit">
+   <i class="fa fa-save" aria-hidden="true"/>  Guardar
+ </button>
+</div> -->
+</form>
+</div>

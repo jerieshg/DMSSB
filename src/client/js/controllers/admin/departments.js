@@ -1,8 +1,6 @@
-function DepartmentController($scope, $http, commonFactory) {
+function DepartmentController($scope, $http, commonFactory, department) {
 
   initializeController();
-
-  $scope.selectedDept = {};
 
   $scope.print = function() {
     commonFactory.printTable("adminTable");
@@ -15,23 +13,15 @@ function DepartmentController($scope, $http, commonFactory) {
   $scope.saveDepartment = function() {
     if ($scope.selectedDept.edit) {
       let id = $scope.selectedDept._id;
-      $http.put('/api/departments/' + id, $scope.selectedDept)
-        .then(function(response) {
-          commonFactory.toastMessage('Departmento ' + $scope.selectedDept.department + ' fue actualizado exitosamente!', 'info');
+      department.update($scope.selectedDept)
+        .then((data) => {
           $scope.selectedDept = {};
-        })
-        .catch(function(error) {
-          console.log(error);
         });
     } else {
       $scope.selectedDept.created = new Date();
-      $http.post('/api/departments/', $scope.selectedDept)
-        .then(function(response) {
-          commonFactory.toastMessage('Departmento ' + $scope.selectedDept.department + ' fue guardado exitosamente!', 'success');
+      department.save($scope.selectedDept)
+        .then((data) => {
           $scope.selectedDept = {};
-        })
-        .catch(function(error) {
-          console.log(error);
         });
     }
 
@@ -39,44 +29,38 @@ function DepartmentController($scope, $http, commonFactory) {
   }
 
   $scope.updateDepartment = function(id) {
-    $http.get('/api/departments/' + id)
-      .then(function(response) {
-        $scope.selectedDept = response.data;
+    department.find(id)
+      .then((data) => {
+        $scope.selectedDept = data;
         $scope.selectedDept.edit = true;
       })
-      .catch(function(error) {
-        console.log(error);
-      });
   }
 
   $scope.deleteDepartment = function(id) {
-    if (confirm("Esta seguro de borrar este departamento?")) {
-      $http.delete('/api/departments/' + id)
-        .then(function(response) {
-          commonFactory.activateAlert('Departmento borrada exitosamente!', 'danger');
+    if (commonFactory.dialog("Esta seguro de borrar este departamento?")) {
+      department.delete(id)
+        .then((data) => {
           retrieveDepartments();
           $scope.selectedDept = {};
         })
-        .catch(function(error) {
+        .catch((error) => {
           console.log(error);
         });
     }
   }
 
   function initializeController() {
+    $scope.selectedDept = {};
     retrieveDepartments();
   }
 
   function retrieveDepartments() {
-    $http.get('/api/departments/')
-      .then(function(response) {
-        $scope.departments = response.data;
+    department.readAll()
+      .then((data) => {
+        $scope.departments = data;
       })
-      .catch(function(error) {
-        console.log(error);
-      });
   }
 }
 
-DepartmentController.$inject = ['$scope', '$http', 'commonFactory'];
+DepartmentController.$inject = ['$scope', '$http', 'commonFactory', 'department'];
 angular.module('app').controller('departmentsController', DepartmentController);

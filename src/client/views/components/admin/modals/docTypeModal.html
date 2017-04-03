@@ -1,0 +1,70 @@
+<div class="modal fade" id="docTypeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form name="deptForm" class="form-group" ng-submit="saveDocType()">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Tipo de documento</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <div class="col-md-3 modal-legend" >
+           <strong>Opciones: </strong>
+           <div class="checkbox-legend">
+            <label style="font-size:10px;">
+             <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.blueprint" title="Seleccione esta casilla si el documento es un plano.">
+             Plano
+           </label>
+         </div>
+         <div class="checkbox-legend" ng-show="!selectedDocType.blueprint">
+           <label style="font-size:10px;">
+            <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.bossPriority" title="Seleccione esta casilla para que cuando el documento o registro sea enviado por un jefe, automaticamente pasa al siguiente paso del flujo designado. Opcion habilitada cuando el documento NO es un plano.">
+            Prioridad para jefe
+          </label>
+        </div>
+      </div>
+
+      <div class="col-md-9">
+       <label for="type">Tipo de documento:</label>
+       <input type="text" id="type" class="form-control" ng-model="selectedDocType.type" required>
+       <br/>
+       <label for="code">Codigo:</label>
+       <input type="text" id="code" class="form-control" ng-model="selectedDocType.code" required>
+       <br/>
+       <div ng-show="selectedDocType.blueprint">
+        <label for="auths">Autorizados:</label>
+        <div class="row-separator">
+         <select id="choicesSelect" class="form-control" ng-model="choices.number" ng-options="item for item in choiceOptions" name="choicesNumber" ng-required="selectedDocType.blueprint">
+          <option value=""># de autorizados {{optional ? '(optional)' : ''}}</option>
+        </select>
+      </div>
+    </div>
+    <!-- Blueprints section -->
+    <div class="col-sm-12"  ng-show="selectedDocType.blueprint">
+      <div ng-repeat="n in [] | range:choices.number" class="row row-separator">
+        <div class="input-group">
+          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedAuths[$index]._id" name="option-$index" ng-options="item._id as item.username for item in clients" ng-required="selectedDocType.blueprint">
+            <option value="">Seleccione usuario {{optional ? '(optional)' : ''}}</option>
+          </select>
+          <span class="input-group-addon">-</span>
+          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedAuths[$index].priority" name="option-$index" ng-options="item for item in priorityLevels" ng-required="selectedDocType.blueprint">
+           <option value="">Seleccione prioridad {{optional ? '(optional)' : ''}}</option>
+         </select>
+       </div>
+     </div>
+   </div>
+   <!-- end plueprint section -->
+   <br/>
+ </div>
+ <div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+  <button  class="btn btn-success" type="submit">
+   <i class="fa fa-save" aria-hidden="true"/>  Guardar Tipo de documento
+ </button>
+</div>
+</form>
+</div>
+</div>
+</div>

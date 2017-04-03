@@ -24,7 +24,7 @@ module.exports.create = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json(department._id);
+    res.json(department);
   });
 }
 
@@ -88,9 +88,7 @@ module.exports.update = function(req, res, next) {
 
         });
 
-      res.json({
-        message: 'Department updated!'
-      });
+      res.json(department);
     });
   });
 }
@@ -105,9 +103,7 @@ module.exports.delete = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json({
-      message: 'Successfully deleted'
-    });
+    res.json(department);
   });
 }
 

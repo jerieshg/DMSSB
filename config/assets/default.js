@@ -19,6 +19,9 @@ module.exports = {
         bower_components_path + '/angular-loading-bar/build/loading-bar.min.js',
         bower_components_path + '/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
         bower_components_path + '/file-saver/FileSaver.min.js',
+        bower_components_path + '/ng-file-upload/ng-file-upload-shim.min.js',
+        bower_components_path + '/ng-file-upload/ng-file-upload.min.js',
+        bower_components_path + '/angular-object-diff/dist/angular-object-diff.min.js',
         node_modules_path + '/survey-jquery/survey.jquery.min.js'
       ]
     }

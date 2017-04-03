@@ -1,7 +1,7 @@
 'use strict'
 var mongoose = require('mongoose');
 
-module.exports = mongoose.model('Survey-Response', {
+let schema = new mongoose.Schema({
   surveyId: mongoose.Schema.Types.ObjectId,
   job: String,
   results: [{
@@ -14,4 +14,6 @@ module.exports = mongoose.model('Survey-Response', {
   }],
   client: {},
   timestamp: Date,
-});
+})
+
+module.exports = mongoose.model('Survey-Response', schema);

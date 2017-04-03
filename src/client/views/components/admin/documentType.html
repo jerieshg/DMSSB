@@ -1,0 +1,47 @@
+<div class="animated fadeIn">
+
+ <div id="alertArea"></div>
+
+ <div ng-include="'views/components/admin/modals/docTypeModal.html'"></div>
+
+ <div class="row">
+   <div class="hide-print col-md-12">
+
+     <div class="input-group row-separator">
+      <div class="input-group-addon"><i class="fa fa-search"></i></div>
+      <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
+    </div>   
+
+    <button type="button" class="btn btn-info row-separator" ng-click="newDocType()" data-toggle="modal" data-target="#docTypeModal">
+     <i class="fa fa-plus" aria-hidden="true"/> Nuevo tipo de documento
+   </button>
+
+   <button type="button" class="btn btn-secondary row-separator" onClick="window.print()" style="margin-left: 1%;">
+     <i class="fa fa-print" aria-hidden="true"/> Imprimir
+   </button>
+ </div>
+ 
+ <table class="table table-hover" id="adminTable">
+  <thead>
+    <tr>
+     <td><strong>#</strong></td>
+     <td><strong>Tipo de documento</strong></td>
+     <td><strong>Fecha Creada</strong></td>
+     <td><strong>Acciones</strong></td>
+   </tr>
+ </thead>
+ <tbody>
+   <tr ng:repeat="e in docTypes | filter:search">
+     <td>{{$index + 1}}</td>
+     <td>{{e.type}}</td>
+     <td>{{e.created | date: yyyy-mm-dd}}</td>
+     <td>
+       <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteDocType(e._id)"></i>
+       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateDocType(e)" data-toggle="modal" data-target="#docTypeModal"></i>
+     </td>
+   </tr>
+ </tbody>
+</table>
+</div>
+<!-- /.row -->
+</div>

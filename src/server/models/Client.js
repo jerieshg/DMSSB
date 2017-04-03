@@ -9,6 +9,8 @@ let clientSchema = new mongoose.Schema({
     type: String,
     unique: true
   },
+  email: String,
+  business: String,
   role: {},
   job: String,
   department: String,
@@ -34,6 +36,8 @@ clientSchema.methods.generateJwt = function() {
   return jwt.sign({
     _id: this._id,
     username: this.username,
+    email: this.email,
+    business: this.buisness,
     role: this.role,
     department: this.department,
     job: this.job,

@@ -56,6 +56,26 @@ angular.module('app').factory('commonFactory', function($mdToast) {
         (rv[x[key]] = rv[x[key]] || []).push(x);
         return rv;
       }, {});
+    },
+
+    dialog: function(message) {
+      var open_time = new Date();
+      var result = confirm(message);
+      var close_time = new Date();
+
+      if (close_time - open_time < 10) {
+        return true;
+      } else {
+        return result;
+      }
+    },
+
+    formatDate: function(date) {
+      var day = date.getDate();
+      var monthIndex = date.getMonth();
+      var year = date.getFullYear();
+
+      return monthIndex + '/' + day + '/' + year;
     }
   }
 

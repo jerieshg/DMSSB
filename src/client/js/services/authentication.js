@@ -41,6 +41,8 @@
         return {
           _id: payload._id,
           username: payload.username,
+          email: payload.email,
+          business: payload.business,
           role: payload.role,
           department: payload.department,
           job: payload.job

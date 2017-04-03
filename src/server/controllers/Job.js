@@ -23,7 +23,7 @@ module.exports.create = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json(job._id);
+    res.json(job);
   });
 }
 
@@ -66,9 +66,7 @@ module.exports.update = function(req, res, next) {
             return res.send(error);
           }
 
-          res.json({
-            message: 'job updated!'
-          });
+          res.json(job);
         })
     });
   });
@@ -84,9 +82,7 @@ module.exports.delete = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json({
-      message: 'Successfully deleted'
-    });
+    res.json(job);
   });
 }
 

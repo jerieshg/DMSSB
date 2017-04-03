@@ -1,4 +1,4 @@
-function ServiceController($rootScope, $scope, $http, commonFactory) {
+function ServiceController($rootScope, $scope, $http, commonFactory, service, department) {
 
   initializeController();
 
@@ -11,23 +11,15 @@ function ServiceController($rootScope, $scope, $http, commonFactory) {
   $scope.saveService = function() {
     if ($scope.selectedService.edit) {
       let id = $scope.selectedService._id;
-      $http.put('/api/services/' + id, $scope.selectedService)
-        .then(function(response) {
-          commonFactory.toastMessage('Servicio ' + $scope.selectedService.service + ' fue actualizado exitosamente!', 'info');
+      service.update($scope.selectedService)
+        .then((response) => {
           $scope.selectedService = {};
-        })
-        .catch(function(error) {
-          console.log(error);
         });
     } else {
       $scope.selectedService.created = new Date();
-      $http.post('/api/services/', $scope.selectedService)
-        .then(function(response) {
-          commonFactory.toastMessage('Servicio ' + $scope.selectedService.service + ' fue guardado exitosamente!', 'success');
+      service.save($scope.selectedService)
+        .then((response) => {
           $scope.selectedService = {};
-        })
-        .catch(function(error) {
-          console.log(error);
         });
     }
 
@@ -35,26 +27,19 @@ function ServiceController($rootScope, $scope, $http, commonFactory) {
   }
 
   $scope.updateService = function(id) {
-    $http.get('/api/services/' + id)
-      .then(function(response) {
-        $scope.selectedService = response.data;
+    service.find(id)
+      .then(function(data) {
+        $scope.selectedService = data;
         $scope.selectedService.edit = true;
-      })
-      .catch(function(error) {
-        console.log(error);
       });
   }
 
   $scope.deleteService = function(id) {
-    if (confirm("Esta seguro de borrar este servicio?")) {
-      $http.delete('/api/services/' + id)
-        .then(function(response) {
-          commonFactory.activateAlert('Servicio borrada exitosamente!', 'danger');
+    if (commonFactory.dialog("Esta seguro de borrar este servicio?")) {
+      service.delete(id)
+        .then((response) => {
           retrieveService();
           $scope.selectedService = {};
-        })
-        .catch(function(error) {
-          console.log(error);
         });
     }
   }
@@ -65,31 +50,25 @@ function ServiceController($rootScope, $scope, $http, commonFactory) {
   }
 
   function retrieveService() {
-    $http.get('/api/services/')
-      .then(function(response) {
-        $scope.services = response.data;
+    service.readAll()
+      .then((data) => {
+        $scope.services = data;
         if ($rootScope.client.role.level === 2) {
           $scope.services = $scope.services.filter((e) => $rootScope.client.department === e.department);
         }
-      })
-      .catch(function(error) {
-        console.log(error);
       });
   }
 
   function retrieveDepartments() {
-    $http.get('/api/departments/')
-      .then(function(response) {
-        $scope.departments = response.data;
+    department.readAll()
+      .then((data) => {
+        $scope.departments = data;
         if ($rootScope.client.role.level === 2) {
           $scope.departments = $scope.departments.filter((e) => $rootScope.client.department === e.department);
         }
-      })
-      .catch(function(error) {
-        console.log(error);
       });
   }
 }
 
-ServiceController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory'];
+ServiceController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'service', 'department'];
 angular.module('app').controller('serviceController', ServiceController);
