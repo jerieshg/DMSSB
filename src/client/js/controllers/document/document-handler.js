@@ -30,6 +30,8 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
         $scope.progress =
           Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
       });
+
+      //sends email
     }
   };
 

@@ -48,6 +48,9 @@
 	require('./src/server/config/passport');
 	app.use(passport.initialize());
 
+	//Node process every 15 minutes checking for expired documents
+	require('./src/server/controllers/EmailCheck');
+
 	//Log errors
 	app.use(function(err, req, res, next) {
 		console.error(err.stack);

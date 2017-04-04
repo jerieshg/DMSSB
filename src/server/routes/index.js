@@ -59,6 +59,8 @@ module.exports = function(router) {
   let _System = require('../controllers/System');
   //Document API calls
   let Implication = require('../controllers/Implication');
+  //EMAIL
+  let Email = require('../controllers/Email');
 
   //SURVEY ROUTES
   router.route('/api/surveys/')
@@ -217,6 +219,14 @@ module.exports = function(router) {
     .delete(DocumentHistory.delete);
   router.route('/api/documents-history/:id')
     .get(DocumentHistory.find);
+
+  //Email Routers
+  router.route('/api/email/:email/new')
+    .get(Email.newDocument);
+  router.route('/api/email/:email/update')
+    .get(Email.updatedDocument);
+  router.route('/api/email/:email/expired')
+    .get(Email.expiredDocumentCheck);
 
   // router to handle all angular requests
   router.get('*', function(req, res) {

@@ -60,8 +60,11 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 
   $scope.saveDocument = function() {
+    //updates document history
     updateDocumentHistory();
+    //updates document
 
+    //sends email
 
     //   if ($scope.files && $scope.files.length) {
 
