@@ -144,21 +144,52 @@ module.exports.downloadFile = function(req, res, next) {
 }
 module.exports.findToAuthorizeDocuments = function(req, res, next) {
 
-  Document.find({
-    $or: [{
-      questions: {
-        $elemMatch: {
-          clients: client
-        }
+  Document.find({},
+    function(error, docs) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
       }
-    }, {
-      general: true
-    }]
-  }, function(error, docs) {
+
+      res.json(docs);
+    });
+}
+
+module.exports.search = function(req, res, next) {
+
+  for (var key of Object.keys(req.body)) {
+    if (req.body[key] === '') {
+      req.body[key] = null;
+    }
+  }
+
+  Document.find({}, function(error, docs) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
+    }
+
+    if (req.body.code) {
+      docs = docs.filter((doc) => {
+        return doc.code.includes(req.body.code);
+      });
+    }
+    if (req.body.name) {
+      docs = docs.filter((doc) => {
+        return doc.name.includes(req.body.name);
+      })
+    }
+    if (req.body.status) {
+      docs = docs.filter((doc) => {
+        return doc.status === req.body.status;
+      })
+    }
+    if (req.body.department) {
+      docs = docs.filter((doc) => {
+        return doc.department === req.body.department;
+      })
     }
 
     res.json(docs);

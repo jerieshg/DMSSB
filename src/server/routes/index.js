@@ -203,6 +203,8 @@ module.exports = function(router) {
     .get(Document.downloadFile);
   router.route('/api/documents/:id')
     .get(Document.find);
+  router.route('/api/documents/search/')
+    .post(Document.search);
   router.route('/api/documents/:name')
     .post(upload.any(), Document.create);
   router.route('/api/documents/clients/:id')

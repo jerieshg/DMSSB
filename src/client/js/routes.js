@@ -536,6 +536,35 @@ angular
           showConfirmDialog: true
         }
       })
+      .state('app.docs.search', {
+        url: '/documents/search/',
+        templateUrl: 'views/components/document/search.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Busqueda de Documentos y registros',
+        },
+        controller: 'searchDocumentController',
+        resolve: {
+          loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load CSS files
+            return $ocLazyLoad.load([{
+              serie: true,
+              name: 'bootstrap-date-picker',
+              files: ['bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css']
+            }]);
+          }],
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/search-document.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false,
+          showConfirmDialog: false
+        }
+      })
       .state('app.docs.history', {
         url: '/history/:id',
         templateUrl: 'views/components/document/history.html',
