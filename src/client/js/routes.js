@@ -311,6 +311,66 @@ angular
           showConfirmDialog: true
         }
       })
+      .state('app.admin.doctypes', {
+        url: '/document-types',
+        templateUrl: 'views/components/admin/documentType.html',
+        ncyBreadcrumb: {
+          label: 'Tipo de documentos'
+        },
+        controller: 'docTypesController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load files for an existing module
+            return $ocLazyLoad.load({
+              files: ['js/controllers/admin/docType.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: true,
+          showConfirmDialog: true
+        }
+      })
+      .state('app.admin.systems', {
+        url: '/systems',
+        templateUrl: 'views/components/admin/systems.html',
+        ncyBreadcrumb: {
+          label: 'Sistemas'
+        },
+        controller: 'systemController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load files for an existing module
+            return $ocLazyLoad.load({
+              files: ['js/controllers/admin/system.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: true,
+          showConfirmDialog: true
+        }
+      })
+      .state('app.admin.implications', {
+        url: '/implicatons',
+        templateUrl: 'views/components/admin/implications.html',
+        ncyBreadcrumb: {
+          label: 'Implicaciones'
+        },
+        controller: 'implicationController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load files for an existing module
+            return $ocLazyLoad.load({
+              files: ['js/controllers/admin/implication.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: true,
+          showConfirmDialog: true
+        }
+      })
       //USER RELATED
       .state('app.surveys', {
         url: "/survey",
@@ -362,6 +422,168 @@ angular
         data: {
           isAdminRequired: false,
           showConfirmDialog: true
+        }
+      })
+      // CENTRO DOCUMENTAL
+      .state('app.docs', {
+        url: "/centro-documental",
+        abstract: true,
+        template: '<ui-view></ui-view>',
+        ncyBreadcrumb: {
+          label: 'Centro Documental'
+        },
+        data: {
+          isAdminRequired: false
+        }
+      })
+      .state('app.docs.main', {
+        url: '/home',
+        templateUrl: 'views/components/document/index.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Inicio',
+        },
+        controller: 'documentController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/document.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false
+        }
+      })
+      .state('app.docs.pending', {
+        url: '/pending-approval-documents',
+        templateUrl: 'views/components/document/pendingApprovalDocuments.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Documents para aprobar',
+        },
+        controller: 'pendingApprovalDocumentController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/pending-documents.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false
+        }
+      })
+      .state('app.docs.create', {
+        url: '/create',
+        templateUrl: 'views/components/document/documentForm.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Inicio',
+        },
+        controller: 'documentHandlerController',
+        resolve: {
+          loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load CSS files
+            return $ocLazyLoad.load([{
+              serie: true,
+              name: 'bootstrap-date-picker',
+              files: ['bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css']
+            }]);
+          }],
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/document-handler.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false
+        }
+      })
+      .state('app.docs.edit', {
+        url: '/documents/:id',
+        params: {
+          survey: null
+        },
+        templateUrl: 'views/components/document/documentForm.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Documento',
+        },
+        controller: 'updateDocumentController',
+        resolve: {
+          loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load CSS files
+            return $ocLazyLoad.load([{
+              serie: true,
+              name: 'bootstrap-date-picker',
+              files: ['bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css']
+            }]);
+          }],
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/update-document.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false,
+          showConfirmDialog: true
+        }
+      })
+      .state('app.docs.search', {
+        url: '/documents/search/',
+        templateUrl: 'views/components/document/search.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Busqueda de Documentos y registros',
+        },
+        controller: 'searchDocumentController',
+        resolve: {
+          loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load CSS files
+            return $ocLazyLoad.load([{
+              serie: true,
+              name: 'bootstrap-date-picker',
+              files: ['bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css']
+            }]);
+          }],
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/search-document.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false,
+          showConfirmDialog: false
+        }
+      })
+      .state('app.docs.history', {
+        url: '/history/:id',
+        templateUrl: 'views/components/document/history.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Historial',
+        },
+        controller: 'documentHistoryController',
+        resolve: {
+
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/document-history.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false
         }
       })
       //SIMPLE PAGES
@@ -461,8 +683,16 @@ function handleLeavingPage($rootScope) {
     return confirmationMessage;
   });
 
-  if (!confirm("Esta seguro de salirse de la pagina? Por favor revise si tiene cambios pendientes sin guardar")) {
-    return false;
+  var open_time = new Date();
+  var result = !confirm("Esta seguro de salirse de la pagina? Por favor revise si tiene cambios pendientes sin guardar");
+  var close_time = new Date();
+
+  if (close_time - open_time < 10) {
+    return true;
+  } else {
+    if (result) {
+      return false;
+    }
   }
 
   $rootScope.$on('$destroy', function() {

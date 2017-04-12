@@ -22,7 +22,7 @@ module.exports.create = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json(service._id);
+    res.json(service);
   });
 }
 
@@ -47,9 +47,7 @@ module.exports.update = function(req, res, next) {
         return res.send(error);
       }
 
-      res.json({
-        message: 'Service updated!'
-      });
+      res.json(service);
     });
   });
 }
@@ -64,9 +62,7 @@ module.exports.delete = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json({
-      message: 'Successfully deleted'
-    });
+    res.json(service);
   });
 }
 

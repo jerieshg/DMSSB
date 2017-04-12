@@ -35,9 +35,7 @@ module.exports.update = function(req, res, next) {
         return res.send(error);
       }
 
-      res.json({
-        message: 'Client updated!'
-      });
+      res.json(client);
     });
   });
 }
@@ -52,9 +50,7 @@ module.exports.delete = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json({
-      message: 'Successfully deleted'
-    });
+    res.json(client);
   });
 }
 

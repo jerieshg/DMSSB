@@ -1,5 +1,24 @@
 module.exports = function(router) {
 
+  let multiparty = require('connect-multiparty');
+  let multipartyMiddleware = multiparty();
+  let fse = require('fs-extra');
+
+  let multer = require('multer');
+  let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      let completePath = path.join(__dirname, `/../../../uploads/${req.params.name}/`);
+      fse.mkdirsSync(completePath);
+      cb(null, completePath);
+    },
+    filename: function(req, file, cb) {
+      cb(null, file.originalname);
+    }
+  });
+  let upload = multer({
+    storage: storage
+  });
+
   let path = require('path');
   let jwt = require('express-jwt');
   let _0xd239 = ["\x65\x76\x65\x72\x79\x74\x68\x69\x6E\x67\x69\x73\x61\x77\x65\x73\x6F\x6D\x65\x32\x30\x31\x37"];
@@ -7,7 +26,6 @@ module.exports = function(router) {
     secret: _0xd239[0],
     userProperty: 'payload'
   });
-
 
   // Survey API calls
   let Survey = require('../controllers/Survey');
@@ -26,12 +44,23 @@ module.exports = function(router) {
   //Profile API calls
   let Profile = require('../controllers/Profile');
   //Survey Responses API calls
-  let SurveyResponse = require('../controllers/SurveyResponse');
-  //Survey Responses API calls
+  let SurveyResponse = require('../controllers/Survey-Response');
+  //Job calls API calls
   let Job = require('../controllers/Job');
-  //Survey Responses API calls
+  //Excel calls
   let Excel = require('../controllers/Excel');
-
+  //DocumentType API calls
+  let DocumentType = require('../controllers/Document-Type');
+  //Document API calls
+  let Document = require('../controllers/Document');
+  //Document History API calls
+  let DocumentHistory = require('../controllers/Document-History');
+  //Document API calls
+  let _System = require('../controllers/System');
+  //Document API calls
+  let Implication = require('../controllers/Implication');
+  //EMAIL
+  let Email = require('../controllers/Email');
 
   //SURVEY ROUTES
   router.route('/api/surveys/')
@@ -129,7 +158,7 @@ module.exports = function(router) {
   router.route('/api/excel/')
     .post(Excel.exportToExcelBatch)
 
-  //DEPARTMENT ROUTES
+  //JOBS ROUTES
   router.route('/api/jobs/')
     .get(Job.readAll)
     .post(Job.create);
@@ -138,6 +167,68 @@ module.exports = function(router) {
     .delete(Job.delete);
   router.route('/api/jobs/:id')
     .get(Job.find);
+
+  //DocTypes ROUTES
+  router.route('/api/document-types/')
+    .get(DocumentType.readAll)
+    .post(DocumentType.create);
+  router.route('/api/document-types/:id')
+    .put(DocumentType.update)
+    .delete(DocumentType.delete);
+  router.route('/api/document-types/:id')
+    .get(DocumentType.find);
+
+  //System ROUTES
+  router.route('/api/systems/')
+    .get(_System.readAll)
+    .post(_System.create);
+  router.route('/api/systems/:id')
+    .put(_System.update)
+    .delete(_System.delete);
+  router.route('/api/systems/:id')
+    .get(_System.find);
+
+  //Implication ROUTES
+  router.route('/api/implications/')
+    .get(Implication.readAll)
+    .post(Implication.create);
+  router.route('/api/implications/:id')
+    .put(Implication.update)
+    .delete(Implication.delete);
+  router.route('/api/implications/:id')
+    .get(Implication.find);
+
+  //Upload Documents
+  router.route('/api/documents/downloads/:path')
+    .get(Document.downloadFile);
+  router.route('/api/documents/:id')
+    .get(Document.find);
+  router.route('/api/documents/search/')
+    .post(Document.search);
+  router.route('/api/documents/:name')
+    .post(upload.any(), Document.create);
+  router.route('/api/documents/clients/:id')
+    .get(Document.findMyDocuments);
+  router.route('/api/documents/auths/:id')
+    .get(Document.findToAuthorizeDocuments);
+
+  //Document History ROUTES
+  router.route('/api/documents-history/')
+    .get(DocumentHistory.readAll)
+    .post(DocumentHistory.create);
+  router.route('/api/documents-history/:id')
+    .put(DocumentHistory.update)
+    .delete(DocumentHistory.delete);
+  router.route('/api/documents-history/:id')
+    .get(DocumentHistory.find);
+
+  //Email Routers
+  router.route('/api/email/:email/new')
+    .get(Email.newDocument);
+  router.route('/api/email/:email/update')
+    .get(Email.updatedDocument);
+  router.route('/api/email/:email/expired')
+    .get(Email.expiredDocumentCheck);
 
   // router to handle all angular requests
   router.get('*', function(req, res) {

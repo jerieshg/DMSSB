@@ -1,8 +1,6 @@
-function BusinessController($scope, $http, commonFactory) {
+function BusinessController($scope, $http, commonFactory, business) {
 
   initializeController();
-
-  $scope.selectedBusiness = {};
 
   $scope.print = function() {
     commonFactory.printTable("adminTable");
@@ -14,69 +12,51 @@ function BusinessController($scope, $http, commonFactory) {
 
   $scope.saveBusiness = function() {
     if ($scope.selectedBusiness.edit) {
-      let id = $scope.selectedBusiness._id;
-      $http.put('/api/business/' + id, $scope.selectedBusiness)
-        .then(function(response) {
-          commonFactory.toastMessage('Empresa ' + $scope.selectedBusiness.business + ' fue actualizado exitosamente!', 'info');
+      business.update($scope.selectedBusiness)
+        .then((data) => {
           $scope.selectedBusiness = {};
-        })
-        .catch(function(error) {
-          console.log(error);
+          retrieveBusiness();
         });
     } else {
       $scope.selectedBusiness.created = new Date();
-      $http.post('/api/business/', $scope.selectedBusiness)
-        .then(function(response) {
-          commonFactory.toastMessage('Empresa ' + $scope.selectedBusiness.business + ' fue guardado exitosamente!', 'success');
+      business.save($scope.selectedBusiness)
+        .then((data) => {
           $scope.selectedBusiness = {};
-        })
-        .catch(function(error) {
-          console.log(error);
+          retrieveBusiness();
         });
     }
-
-    retrieveBusiness();
   }
 
   $scope.updateBusiness = function(id) {
-    $http.get('/api/business/' + id)
-      .then(function(response) {
-        $scope.selectedBusiness = response.data;
+    business.find(id)
+      .then((data) => {
+        $scope.selectedBusiness = data;
         $scope.selectedBusiness.edit = true;
       })
-      .catch(function(error) {
-        console.log(error);
-      });
   }
 
   $scope.deleteBusiness = function(id) {
-    if (confirm("Esta seguro de borrar esta empresa?")) {
-      $http.delete('/api/business/' + id)
-        .then(function(response) {
-          commonFactory.activateAlert('Empresa borrada exitosamente!', 'danger');
+    if (commonFactory.dialog("Esta seguro de borrar esta empresa?")) {
+      business.delete(id)
+        .then((data) => {
           retrieveBusiness();
           $scope.selectedBusiness = {};
         })
-        .catch(function(error) {
-          console.log(error);
-        });
     }
   }
 
   function initializeController() {
+    $scope.selectedBusiness = {};
     retrieveBusiness();
   }
 
   function retrieveBusiness() {
-    $http.get('/api/business/')
-      .then(function(response) {
-        $scope.business = response.data;
+    business.readAll()
+      .then((data) => {
+        $scope.business = data;
       })
-      .catch(function(error) {
-        console.log(error);
-      });
   }
 }
 
-BusinessController.$inject = ['$scope', '$http', 'commonFactory'];
+BusinessController.$inject = ['$scope', '$http', 'commonFactory', 'business'];
 angular.module('app').controller('businessController', BusinessController);

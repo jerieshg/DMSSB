@@ -11,6 +11,11 @@ md-toast.md-info-theme {
         background-color: #63c2de;
     }
 }
+md-toast.md-danger-theme {
+    .md-toast-content {
+        background-color: red;
+    }
+}
 
 .danger{
   background-color: #f2dede;
@@ -38,6 +43,7 @@ md-toast.md-info-theme {
   overflow: hidden;
   background-color: #e5e5e5;
   border-bottom: 1px solid #ffffff;
+  width:100%;
 }
 
 .error-message{
@@ -459,4 +465,13 @@ content-404{
 }
 .survey-active{
   color: green;
+}
+.checkbox-legend{
+  text-align:center;
+}
+.scrollable{
+  overflow-y: scroll;
+    height: 2.9em;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.15);
 }

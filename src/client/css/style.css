@@ -8711,6 +8711,9 @@ md-toast.md-success-theme .md-toast-content {
 md-toast.md-info-theme .md-toast-content {
   background-color: #63c2de; }
 
+md-toast.md-danger-theme .md-toast-content {
+  background-color: red; }
+
 .danger {
   background-color: #f2dede; }
 
@@ -8735,7 +8738,8 @@ md-toast.md-info-theme .md-toast-content {
   margin: 9px 1px;
   overflow: hidden;
   background-color: #e5e5e5;
-  border-bottom: 1px solid #ffffff; }
+  border-bottom: 1px solid #ffffff;
+  width: 100%; }
 
 .error-message {
   color: red; }
@@ -9122,6 +9126,15 @@ hr:after {
 
 .survey-active {
   color: green; }
+
+.checkbox-legend {
+  text-align: center; }
+
+.scrollable {
+  overflow-y: scroll;
+  height: 2.9em;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.15); }
 
 /*!
  * surveyjs - Survey JavaScript library v0.11.0

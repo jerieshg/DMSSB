@@ -1,4 +1,4 @@
-function ClientController($scope, $http, commonFactory, authentication) {
+function ClientController($scope, $http, commonFactory, authentication, clients, departments, jobs, business) {
 
   initializeController();
 
@@ -14,27 +14,28 @@ function ClientController($scope, $http, commonFactory, authentication) {
 
   $scope.saveClient = function() {
     if ($scope.selectedClient.edit) {
-      let id = $scope.selectedClient._id;
-      $http.put('/api/clients/' + id, $scope.selectedClient)
-        .then(function(response) {
-          commonFactory.toastMessage('Cliente ' + $scope.selectedClient.username + ' fue actualizado exitosamente!', 'info');
+      clients.update($scope.selectedClient)
+        .then((data) => {
           $scope.selectedClient = {};
-        })
-        .catch(function(error) {
-          console.log(error);
+          retrieveClients();
         });
     } else {
       $scope.selectedClient.created = new Date();
       authentication.register($scope.selectedClient)
-        .then(function(response) {
+        .then((response) => {
           if (response.status === 200) {
             commonFactory.toastMessage('Cliente ' + $scope.selectedClient.username + ' fue creado exitosamente!', 'success');
             $scope.selectedClient = {};
+            retrieveClients();
+          } else if (response.status === 500) {
+            commonFactory.toastMessage(`Oops! Algo erroneo paso: ${response.data.errmsg}`, 'danger');
+
+            if (response.data && response.data.code === 11000) {
+              commonFactory.toastMessage(`Cliente ${$scope.selectedClient.username} ya existe.`, 'danger');
+            }
           }
         });
     }
-
-    retrieveClients();
   }
 
   $scope.updateClient = function(client) {
@@ -43,15 +44,11 @@ function ClientController($scope, $http, commonFactory, authentication) {
   }
 
   $scope.deleteClient = function(id) {
-    if (confirm("Esta seguro de borrar este cliente?")) {
-      $http.delete('/api/clients/' + id)
-        .then(function(response) {
-          commonFactory.activateAlert('Cliente borrado exitosamente!', 'danger');
+    if (commonFactory.dialog("Esta seguro de borrar este cliente?")) {
+      clients.delete(id)
+        .then((data) => {
           retrieveClients();
           $scope.selectedClient = {};
-        })
-        .catch(function(error) {
-          console.log(error);
         });
     }
   }
@@ -61,21 +58,19 @@ function ClientController($scope, $http, commonFactory, authentication) {
     retrieveRoles();
     retrieveDepartments();
     retrieveJobs();
+    retrieveBusiness();
   }
 
   function retrieveClients() {
-    $http.get('/api/clients/')
-      .then(function(response) {
-        $scope.clients = response.data;
-      })
-      .catch(function(error) {
-        console.log(error);
+    clients.readAll()
+      .then((data) => {
+        $scope.clients = data;
       });
   }
 
   function retrieveRoles() {
     $http.get('/api/roles/')
-      .then(function(response) {
+      .then((response) => {
         $scope.roles = response.data;
       })
       .catch(function(error) {
@@ -84,25 +79,26 @@ function ClientController($scope, $http, commonFactory, authentication) {
   }
 
   function retrieveDepartments() {
-    $http.get('/api/departments/')
-      .then(function(response) {
-        $scope.departments = response.data;
-      })
-      .catch(function(error) {
-        console.log(error);
+    departments.readAll()
+      .then((data) => {
+        $scope.departments = data;
       });
   }
 
   function retrieveJobs() {
-    $http.get('/api/jobs/')
-      .then(function(response) {
-        $scope.jobs = response.data;
-      })
-      .catch(function(error) {
-        console.log(error);
+    jobs.readAll()
+      .then((data) => {
+        $scope.jobs = data;
       });
+  }
+
+  function retrieveBusiness() {
+    business.readAll()
+      .then((data) => {
+        $scope.business = data;
+      })
   }
 }
 
-ClientController.$inject = ['$scope', '$http', 'commonFactory', 'authentication'];
+ClientController.$inject = ['$scope', '$http', 'commonFactory', 'authentication', 'clients', 'departments', 'jobs', 'business'];
 angular.module('app').controller('clientsController', ClientController);

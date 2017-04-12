@@ -1,8 +1,13 @@
 'use strict'
 var mongoose = require('mongoose');
 
-module.exports = mongoose.model('Role', {
-  role: String,
+let schema = new mongoose.Schema({
+  role: {
+    type: String,
+    unique: true
+  },
   level: Number,
   created: Date
-});
+})
+
+module.exports = mongoose.model('Role', schema);

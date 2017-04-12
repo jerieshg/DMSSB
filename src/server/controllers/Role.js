@@ -22,7 +22,7 @@ module.exports.create = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json(role._id);
+    res.json(role);
   });
 }
 
@@ -47,9 +47,7 @@ module.exports.update = function(req, res, next) {
         return res.send(error);
       }
 
-      res.json({
-        message: 'Role updated!'
-      });
+      res.json(role);
     });
   });
 }
@@ -64,9 +62,7 @@ module.exports.delete = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json({
-      message: 'Successfully deleted'
-    });
+    res.json(role);
   });
 }
 

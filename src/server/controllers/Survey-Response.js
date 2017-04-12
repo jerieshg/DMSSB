@@ -1,4 +1,4 @@
-let SurveyResponse = require('../models/SurveyResponse');
+let SurveyResponse = require('../models/Survey-Response');
 let mongoose = require('mongoose');
 
 module.exports.readBySurveyId = function(req, res, next) {
@@ -38,7 +38,7 @@ module.exports.createMany = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json("OK");
+    res.json(responses);
   });
 }
 
@@ -52,8 +52,6 @@ module.exports.delete = function(req, res, next) {
       return res.send(error);
     }
 
-    res.json({
-      message: 'Successfully deleted'
-    });
+    res.json(survey);
   });
 }

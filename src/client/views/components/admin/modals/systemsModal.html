@@ -1,0 +1,27 @@
+<div class="modal fade" id="systemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+     <form name="businessForm" class="form-group" ng-submit="saveSystem()">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Sistema</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <label for="system">Sistema:</label>
+       <input type="text" id="system" class="form-control" ng-model="selectedSystem.system" required>
+       <br/>
+         <label for="implication">Implicacion:</label>
+       <select id="implication" name="implication" class="form-control" ng-model="selectedSystem.implications" ng-options="item.implication as item.implication for item in implications" required multiple>
+      </select>
+       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button  class="btn btn-success" type="submit">
+          <i class="fa fa-save" aria-hidden="true"/>  Guardar Sistema
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>

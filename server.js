@@ -6,16 +6,32 @@
 	var app = express();
 	var http = require('http').Server(app);
 	var path = require('path');
-	var mongoose = require('mongoose');
 	var passport = require('passport');
-
-	//connect to mongoose
-	mongoose.connect('mongodb://127.0.0.1/enersa');
+	var fs = require('fs');
+	var morgan = require('morgan');
+	var rfs = require('rotating-file-stream');
 
 	//CONFIGURATIONS
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({
 		extended: true
+	}));
+
+	// create a write stream (in append mode)
+	var logDirectory = path.join(__dirname, 'logs');
+	// ensure log directory exists
+	if (!fs.existsSync(logDirectory)) {
+		fs.mkdirSync(logDirectory);
+	}
+	// create a rotating write stream
+	var accessLogStream = rfs('access.log', {
+		interval: '1d', // rotate daily
+		path: logDirectory
+	});
+
+	// setup the logger
+	app.use(morgan('combined', {
+		stream: accessLogStream
 	}));
 
 	var isPRD = (process.env.NODE_ENV && process.env.NODE_ENV === 'production');
@@ -26,11 +42,14 @@
 		app.use(express.static(path.join(__dirname, 'dist')));
 	}
 
-	//Initialize routes
-	require('./src/server/routes/index')(app);
+	//call database connection
+	require('./src/server/models/db')(app);
 	//Initalize passport
 	require('./src/server/config/passport');
 	app.use(passport.initialize());
+
+	//Node process every 15 minutes checking for expired documents
+	require('./src/server/controllers/EmailCheck');
 
 	//Log errors
 	app.use(function(err, req, res, next) {

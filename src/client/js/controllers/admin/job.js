@@ -1,4 +1,4 @@
-function JobController($scope, $http, commonFactory) {
+function JobController($scope, $http, commonFactory, jobs) {
 
   initializeController();
 
@@ -14,51 +14,35 @@ function JobController($scope, $http, commonFactory) {
 
   $scope.saveJob = function() {
     if ($scope.selectedJob.edit) {
-      let id = $scope.selectedJob._id;
-      $http.put('/api/jobs/' + id, $scope.selectedJob)
-        .then(function(response) {
-          commonFactory.toastMessage(`Position de Trabajo ${$scope.selectedJob.job} fue actualizado exitosamente!`, 'info');
+      jobs.update($scope.selectedJob)
+        .then((data) => {
           $scope.selectedJob = {};
-        })
-        .catch(function(error) {
-          console.log(error);
+          retrieveJobs();
         });
     } else {
       $scope.selectedJob.created = new Date();
-      $http.post('/api/jobs/', $scope.selectedJob)
-        .then(function(response) {
-          commonFactory.toastMessage(`Position de Trabajo ${$scope.selectedJob.job} fue guardado exitosamente!`, 'success');
+      jobs.save($scope.selectedJob)
+        .then((data) => {
           $scope.selectedJob = {};
-        })
-        .catch(function(error) {
-          console.log(error);
+          retrieveJobs();
         });
     }
-
-    retrieveJobs();
   }
 
   $scope.updateJob = function(id) {
-    $http.get('/api/jobs/' + id)
-      .then(function(response) {
-        $scope.selectedJob = response.data;
+    jobs.find(id)
+      .then((data) => {
+        $scope.selectedJob = data;
         $scope.selectedJob.edit = true;
-      })
-      .catch(function(error) {
-        console.log(error);
       });
   }
 
   $scope.deleteJob = function(id) {
-    if (confirm("Esta seguro de borrar esta posicion de trabajo?")) {
-      $http.delete('/api/jobs/' + id)
-        .then(function(response) {
-          commonFactory.activateAlert('Position de Trabajo borrada exitosamente!', 'danger');
+    if (commonFactory.dialog("Esta seguro de borrar esta posicion de trabajo?")) {
+      jobs.delete(id)
+        .then((data) => {
           retrieveJobs();
           $scope.selectedJob = {};
-        })
-        .catch(function(error) {
-          console.log(error);
         });
     }
   }
@@ -68,15 +52,12 @@ function JobController($scope, $http, commonFactory) {
   }
 
   function retrieveJobs() {
-    $http.get('/api/jobs/')
-      .then(function(response) {
-        $scope.jobs = response.data;
-      })
-      .catch(function(error) {
-        console.log(error);
+    jobs.readAll()
+      .then((data) => {
+        $scope.jobs = data;
       });
   }
 }
 
-JobController.$inject = ['$scope', '$http', 'commonFactory'];
+JobController.$inject = ['$scope', '$http', 'commonFactory', 'jobs'];
 angular.module('app').controller('jobsController', JobController);

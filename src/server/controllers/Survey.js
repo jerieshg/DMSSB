@@ -1,5 +1,5 @@
   let Survey = require('../models/Survey.js');
-  let SurveyResponse = require('../models/SurveyResponse');
+  let SurveyResponse = require('../models/Survey-Response');
   let Client = require('../models/Client');
   var ObjectId = require('mongoose').Types.ObjectId;
 
@@ -25,7 +25,7 @@
         return res.send(error);
       }
 
-      res.json(survey._id);
+      res.json(survey);
     });
   }
 
@@ -100,9 +100,7 @@
 
       })
 
-      res.json({
-        message: 'Successfully deleted'
-      });
+      res.json(survey);
     });
   }
 
