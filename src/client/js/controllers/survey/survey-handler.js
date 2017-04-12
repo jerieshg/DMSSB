@@ -98,9 +98,9 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
   }
 
   function buildSurvey(survey) {
-    $scope.activeSurvey = survey.active;
-    if (!survey.active) {
-      $scope.textNotFound = "no esta activa!";
+    $scope.activeSurvey = survey.active && !$stateParams.c;
+    if (!survey.active || ($stateParams.c && survey.uniqueResponses)) {
+      $scope.textNotFound = !survey.active ? "no esta activa!" : 'ya esta completada!';
       return;
     }
     //set each form type to type;

@@ -10,6 +10,9 @@
     <label class="md-button btn">
      <input type="checkbox" autocomplete="off" ng-model="survey.general"> <strong>Encuesta General</strong>
    </label>
+   <label class="md-button btn"  title="Seleccionar para que el encuestado no pueda volver a contestar una encuesta">
+     <input type="checkbox" autocomplete="off" ng-model="survey.uniqueResponses" title="Seleccionar para que el encuestado no pueda volver a contestar una encuesta"> <strong>Respuestas unicas</strong>
+   </label>
    <button class="md-button btn" ng-click="activeSurvey()" ng-class="{'survey-active' : survey.active, 'survey-inactive' : !survey.active}">
      <i class="fa " ng-class="{'fa-toggle-on survey-active' : survey.active, 'fa-toggle-off survey-inactive' : !survey.active}" aria-hidden="true"></i> Encuesta {{survey.active ? 'Activa' : 'Inactiva'}}
    </button>
@@ -24,11 +27,11 @@
 
    <div class="alert alert-info">
      <i class="fa fa-info-circle" aria-hidden="true"></i><strong> Informacion de tipo de encuesta</strong><br/>
-    La <strong>encuesta general </strong> es un tipo de encuesta que es dirigida a todos los clientes, sin importar el departamento o posicion/puesto de trabajo. Si se necesita una encuesta de este tipo, por favor marque la casilla. Si se deja sin marcar, sera una encuesta especifica en la cual se necesita especificar los clientes en el siguiente paso.  
-  </div>
-</div>
+     La <strong>encuesta general </strong> es un tipo de encuesta que es dirigida a todos los clientes, sin importar el departamento o posicion/puesto de trabajo. Si se necesita una encuesta de este tipo, por favor marque la casilla. Si se deja sin marcar, sera una encuesta especifica en la cual se necesita especificar los clientes en el siguiente paso.  
+   </div>
+ </div>
 
-<div class=" col-md-12">
+ <div class=" col-md-12">
   <label for="empresa">Nombre de encuesta:</label>
   <input type="text" class="form-control" id="surveyName" name="surveyName" placeholder="Nombre de la encuesta" ng-model="survey.surveyName" required>
   <div ng-messages="surveyForm.surveyName.$error" ng-show="surveyForm.surveyName.$dirty && surveyForm.surveyName.$invalid">
