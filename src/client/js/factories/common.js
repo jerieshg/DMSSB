@@ -76,6 +76,15 @@ angular.module('app').factory('commonFactory', function($mdToast) {
       var year = date.getFullYear();
 
       return monthIndex + '/' + day + '/' + year;
+    },
+
+    checkProperties: function(obj) {
+      for (var key of Object.keys(obj)) {
+        if (obj[key] !== null && obj[key] != "")
+          return false;
+      }
+
+      return true;
     }
   }
 

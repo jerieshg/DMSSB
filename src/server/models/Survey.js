@@ -30,6 +30,7 @@ let schema = new mongoose.Schema({
     showChoices: Boolean,
     created: Date
   }],
+  uniqueResponses: Boolean,
   finalGrade: Number,
   active: Boolean,
   general: Boolean,

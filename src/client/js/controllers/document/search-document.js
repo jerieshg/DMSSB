@@ -3,7 +3,7 @@ function SearchDocumentController($rootScope, $scope, $http, commonFactory, depa
   initializeController();
 
   $scope.doSearch = function() {
-    if ($scope.search && !checkProperties($scope.search)) {
+    if ($scope.search && !commonFactory.checkProperties($scope.search)) {
       $http.post('/api/documents/search/', $scope.search)
         .then((response) => {
           $scope.searchDocuments = response.data;
@@ -16,15 +16,6 @@ function SearchDocumentController($rootScope, $scope, $http, commonFactory, depa
       commonFactory.toastMessage('No se ha escogido elementos de busqueda, por favor ingrese al menos uno.', 'danger');
       $scope.searchDocuments = [];
     }
-  }
-
-  function checkProperties(obj) {
-    for (var key of Object.keys(obj)) {
-      if (obj[key] !== null && obj[key] != "")
-        return false;
-    }
-
-    return true;
   }
 
   function initializeController() {
