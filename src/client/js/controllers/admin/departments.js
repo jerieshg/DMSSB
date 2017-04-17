@@ -1,4 +1,4 @@
-function DepartmentController($scope, $http, commonFactory, department) {
+function DepartmentController($scope, $http, commonFactory, departments) {
 
   initializeController();
 
