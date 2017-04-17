@@ -2,13 +2,33 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
 
   initializeController();
 
+  $scope.duplicateSurvey = function(survey) {
+    if (commonFactory.dialog("Esta seguro que quiere duplicar esta encuesta?")) {
+      let duplicate = angular.copy(survey);
+      delete duplicate._id;
+      delete duplicate._v;
+      duplicate.finalGrade = 0;
+      duplicate.created = new Date();
+
+      $http.post("/api/surveys/", duplicate)
+        .then(function(response) {
+          retrieveSurveys();
+          commonFactory.toastMessage('Encuesta fue duplicada exitosamente!', 'success');
+        })
+        .catch(function(error) {
+          console.log(error);
+          commonFactory.toastMessage('Woops! Algo paso!', 'danger');
+        });
+    }
+  }
+
   $scope.compareSurveys = function() {
     if (Object.keys($scope.surveyCompareList).length > 1) {
       $state.go('app.survey-builder.compare-stats', {
         'surveyIds': $scope.surveyCompareList
       });
     } else {
-      commonFactory.activateAlert('No ha elegido encuestas a comparar', 'info');
+      commonFactory.toastMessage('No ha elegido encuestas a comparar', 'info');
     }
   }
 
@@ -43,7 +63,7 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
 
           downloadActionPlan();
         } else {
-          commonFactory.activateAlert('No hay respuestas o no hay preguntas dentro del rango para generar plan de acción', 'danger');
+          commonFactory.toastMessage('No hay respuestas o no hay preguntas dentro del rango para generar plan de acción', 'danger');
         }
       })
       .catch(function(error) {
@@ -153,15 +173,15 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
   }
 
   $scope.deleteSurvey = function(id) {
-    if (confirm("Esta seguro de borrar esta encuesta?")) {
+    if (commonFactory.dialog("Esta seguro de borrar esta encuesta?")) {
       $http.delete("/api/surveys/" + id)
         .then(function(response) {
           // success callback
-          commonFactory.activateAlert('Encuesta fue borrada exitosamente!', 'info');
+          commonFactory.toastMessage('Encuesta fue borrada exitosamente!', 'info');
           retrieveSurveys();
         })
         .catch(function(error) {
-          commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+          commonFactory.toastMessage('Woops! Algo paso!', 'danger');
         });
     }
   }
