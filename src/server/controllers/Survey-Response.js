@@ -30,6 +30,22 @@ module.exports.readByClientId = function(req, res, next) {
     });
 }
 
+module.exports.readByClientIdAndSurveyId = function(req, res, next) {
+  SurveyResponse.findOne({
+      'surveyId': req.params.id,
+      'client._id': req.params.clientId
+    },
+    function(error, response) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
+      res.json(response);
+    });
+}
+
 module.exports.createMany = function(req, res, next) {
   SurveyResponse.insertMany(req.body, function(error, responses) {
     if (error) {

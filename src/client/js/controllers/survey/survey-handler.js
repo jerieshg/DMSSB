@@ -5,7 +5,19 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
   function initializeController() {
     $scope.activeSurvey = false;
     $scope.completeSurvey = {};
+    retrieveSurveyResponses();
     generateSurvey();
+
+  }
+
+  function retrieveSurveyResponses() {
+    $http.get(`/api/surveys/${$stateParams.id}/responses/client/${$rootScope.client._id}`)
+      .then(function(response) {
+        $scope.completed = (response.data) ? true : false;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function sendDataToServer(survey) {
@@ -98,11 +110,19 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
   }
 
   function buildSurvey(survey) {
-    $scope.activeSurvey = survey.active && !$stateParams.c;
-    if (!survey.active || ($stateParams.c && survey.uniqueResponses)) {
-      $scope.textNotFound = !survey.active ? "no esta activa!" : 'ya esta completada!';
+    $scope.activeSurvey = survey.active;
+
+    if (!survey.active) {
+      $scope.textNotFound = "no esta activa!";
       return;
     }
+
+    if (survey.uniqueResponses) {
+      $scope.activeSurvey = !$scope.completed;
+      $scope.textNotFound = 'ya esta completada';
+      return;
+    }
+
     //set each form type to type;
     survey.questions = survey.questions.map(question => {
       question.type = question.formType;
@@ -165,6 +185,8 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
     navigationButton: "btn  btn-primary"
   };
 }
+
+
 
 SurveyHandlerController.$inject = ['$rootScope', '$scope', '$http', '$stateParams', 'commonFactory'];
 angular.module('app').controller('surveyHandlerController', SurveyHandlerController);

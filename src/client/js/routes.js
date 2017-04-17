@@ -404,7 +404,7 @@ angular
         }
       })
       .state('app.surveys.handler', {
-        url: '/:id/client/:client/?c',
+        url: '/:id/client/:client/',
         templateUrl: 'views/components/survey/survey.html',
         //page title goes here
         ncyBreadcrumb: {

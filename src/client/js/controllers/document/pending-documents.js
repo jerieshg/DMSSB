@@ -7,8 +7,9 @@ function PendingApprovalDocumentController($rootScope, $scope, $http, commonFact
   }
 
   function retrievePendingDocuments() {
-    $http.get(`/api/documents/pending/${$rootScope.client._id}`)
+    $http.get(`/api/documents/pending/${$rootScope.client._id}/quality/true`)
       .then(function(response) {
+
         $scope.documents = response.data;
         console.log($scope.documents);
       })
