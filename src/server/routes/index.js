@@ -202,15 +202,16 @@ module.exports = function(router) {
   router.route('/api/documents/downloads/:path')
     .get(Document.downloadFile);
   router.route('/api/documents/:id')
-    .get(Document.find);
+    .get(Document.find)
+    .delete(Document.delete);
   router.route('/api/documents/search/')
     .post(Document.search);
   router.route('/api/documents/:name')
     .post(upload.any(), Document.create);
   router.route('/api/documents/clients/:id')
     .get(Document.findMyDocuments);
-  router.route('/api/documents/auths/:id')
-    .get(Document.findToAuthorizeDocuments);
+  router.route('/api/documents/pending/:id/quality/:q')
+    .get(Document.findPendingDocuments);
 
   //Document History ROUTES
   router.route('/api/documents-history/')

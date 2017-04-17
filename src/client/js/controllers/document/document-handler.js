@@ -5,7 +5,7 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
   $scope.saveDocument = function() {
     if ($scope.files && $scope.files.length) {
 
-      $scope.selectedDocument.status = "Pending";
+      $scope.selectedDocument.status = "Pendiente";
 
       delete $scope.selectedDocument.type["$$hashKey"];
 
