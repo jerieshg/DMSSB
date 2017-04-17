@@ -90,6 +90,8 @@ module.exports = function(router) {
     .delete(SurveyResponse.delete);
   router.route('/api/surveys/responses/client/:clientId')
     .get(SurveyResponse.readByClientId);
+  router.route('/api/surveys/:id/responses/client/:clientId')
+    .get(SurveyResponse.readByClientIdAndSurveyId);
 
 
   //BUSINESS ROUTES
