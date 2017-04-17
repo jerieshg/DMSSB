@@ -112,14 +112,12 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
   function buildSurvey(survey) {
     $scope.activeSurvey = survey.active;
 
-    if (!survey.active) {
-      $scope.textNotFound = "no esta activa!";
-      return;
-    }
-
     if (survey.uniqueResponses) {
       $scope.activeSurvey = !$scope.completed;
-      $scope.textNotFound = 'ya esta completada';
+    }
+
+    if (!$scope.activeSurvey) {
+      $scope.textNotFound = (!survey.active) ? "no esta activa!" : 'ya esta completada!';
       return;
     }
 
