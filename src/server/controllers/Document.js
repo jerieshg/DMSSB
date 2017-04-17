@@ -2,15 +2,15 @@ let Document = require('../models/Document');
 let path = require("path");
 let randomstring = require("randomstring");
 
-module.exports.readAll = function(req, res, next) {
-  Document.find({}, function(error, document) {
-    if (error) {
-      res.status(500);
-      next(error);
-      return res.send(error);
-    }
+module.exports.downloadFile = function(req, res, next) {
+  let file = unescape(req.params.path);
 
-    res.json(document);
+  let filename = path.basename(file);
+
+  res.download(file, filename, (err) => {
+    if (err) {
+      console.log("ERROR:", err);
+    }
   });
 }
 
@@ -31,7 +31,7 @@ module.exports.create = function(req, res, next) {
     charset: 'numeric'
   });
 
-  doc.code = `${doc.type.type.match(/\b(\w)/g).join('').toUpperCase()}-${randomNumber}`;
+  doc.code = `${doc.type.code}-${randomNumber}`;
 
   doc.save(function(error, doc) {
     if (error) {
@@ -112,39 +112,26 @@ module.exports.findMyDocuments = function(req, res, next) {
   });
 }
 
-module.exports.findToAuthorizeDocuments = function(req, res, next) {
+module.exports.findPendingDocuments = function(req, res, next) {
+
+  let qualityQuery = (req.params.quality) ? {} : null;
 
   Document.find({
-    'type.authorized': {
-      $elemMatch: {
-        _id: req.params.id
-      }
-    }
-  }, function(error, docs) {
-    if (error) {
-      res.status(500);
-      next(error);
-      return res.send(error);
-    }
-
-    res.json(docs);
-  });
-}
-
-module.exports.downloadFile = function(req, res, next) {
-  let file = unescape(req.params.path);
-
-  let filename = path.basename(file);
-
-  res.download(file, filename, (err) => {
-    if (err) {
-      console.log("ERROR:", err);
-    }
-  });
-}
-module.exports.findToAuthorizeDocuments = function(req, res, next) {
-
-  Document.find({},
+      $or: [{
+        'type.authorized': {
+          $elemMatch: {
+            _id: req.params.id
+          }
+        }
+      }, {
+        qualityQuery
+      }],
+      $and: [{
+        status: {
+          $ne: 'Publicado'
+        }
+      }]
+    },
     function(error, docs) {
       if (error) {
         res.status(500);

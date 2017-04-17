@@ -5,7 +5,7 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
   $scope.saveDocument = function() {
     if ($scope.files && $scope.files.length) {
 
-      $scope.selectedDocument.status = "Pending";
+      $scope.selectedDocument.status = "Pendiente";
 
       delete $scope.selectedDocument.type["$$hashKey"];
 
@@ -32,6 +32,8 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
       });
 
       //sends email
+    } else {
+      commonFactory.toastMessage("No se ha adjuntado un archivo!", "danger");
     }
   };
 

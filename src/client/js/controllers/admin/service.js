@@ -71,5 +71,5 @@ function ServiceController($rootScope, $scope, $http, commonFactory, service, de
   }
 }
 
-ServiceController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'service', 'department'];
+ServiceController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'service', 'departments'];
 angular.module('app').controller('serviceController', ServiceController);
