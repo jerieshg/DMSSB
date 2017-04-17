@@ -31,7 +31,7 @@ module.exports.create = function(req, res, next) {
     charset: 'numeric'
   });
 
-  doc.code = `${doc.type.type.match(/\b(\w)/g).join('').toUpperCase()}-${randomNumber}`;
+  doc.code = `${doc.type.code}-${randomNumber}`;
 
   doc.save(function(error, doc) {
     if (error) {

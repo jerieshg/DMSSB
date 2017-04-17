@@ -6,7 +6,7 @@
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.main"><i class="icon-speedometer"></i> Tablero de encuestas </a>
             </li>
             <li class="divider"></li>
-           <!--  <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.docs')}" >
+            <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.docs')}" >
                 <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.docs')}" href="#"><i class="fa fa-hdd-o"></i> Centro Documental</a>
                 <ul class="nav-dropdown-items">
                    <li class="nav-item" >
@@ -19,7 +19,7 @@
                     <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.search"><i class="fa fa-search"></i> Busqueda de documentos/registros</a>
                 </li>
             </ul>
-        </li> -->
+        </li>
         <li class="divider"></li>
         <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.admin')}" ng-show="client.role.level === 1 || client.role.level === 2">
             <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.admin')}" href="#"><i class="fa fa-cogs"></i> Administrador</a>

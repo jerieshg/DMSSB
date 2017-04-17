@@ -32,6 +32,8 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
       });
 
       //sends email
+    } else {
+      commonFactory.toastMessage("No se ha adjuntado un archivo!", "danger");
     }
   };
 
