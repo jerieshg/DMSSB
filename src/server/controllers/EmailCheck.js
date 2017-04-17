@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  emailCheck();
+  // emailCheck();
 
   function emailCheck() {
     //every 15 minutes
