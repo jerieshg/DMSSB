@@ -2,10 +2,7 @@
 var mongoose = require('mongoose');
 
 let schema = new mongoose.Schema({
-  service: {
-    type: String,
-    unique: true
-  },
+  service: String,
   department: String,
   created: Date
 })
