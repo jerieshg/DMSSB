@@ -23,8 +23,6 @@ function ServiceController($rootScope, $scope, $http, commonFactory, service, de
           retrieveService();
         });
     }
-
-
   }
 
   $scope.updateService = function(id) {
