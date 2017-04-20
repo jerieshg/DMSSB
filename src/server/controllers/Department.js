@@ -120,3 +120,17 @@ module.exports.find = function(req, res, next) {
     res.json(department);
   });
 }
+
+module.exports.findByName = function(req, res, next) {
+  Department.findOne({
+    department: req.params.name
+  }, function(error, department) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    res.json(department);
+  });
+}

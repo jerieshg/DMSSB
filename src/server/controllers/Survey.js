@@ -119,7 +119,8 @@
   }
 
   module.exports.findByClient = function(req, res, next) {
-    let client = req.params.client;
+    let client = new Buffer(req.params.client, 'binary').toString('utf8');
+
     Survey.find({
       $or: [{
         questions: {
@@ -139,7 +140,9 @@
 
       surveys.forEach(survey => {
         survey.questions = survey.questions
-          .filter(question => question.clients.includes(client))
+          .filter(question => {
+            return question.clients.includes(client)
+          })
           .map(question => {
             question.type = question.formType;
             return question;
@@ -152,6 +155,8 @@
   }
 
   module.exports.findbyClientAndId = function(req, res, next) {
+    let client = new Buffer(req.params.client, 'binary').toString('utf8');
+
     Survey.findOne({
       _id: req.params.id
     }, function(error, survey) {
@@ -162,19 +167,27 @@
       }
 
       if (!survey.general) {
-        survey.questions = survey.questions.filter(question => question.clients.includes(req.params.client));
+        survey.questions = survey.questions.filter(question => question.clients.includes(client));
       }
 
       res.json(survey);
     });
   }
 
-  module.exports.findByDepartment = function(req, res, next) {
+  module.exports.findByDepartmentAndClient = function(req, res, next) {
+    let client = new Buffer(req.params.client, 'binary').toString('utf8');
+
     Survey.find({
       $or: [{
         department: req.params.dept
       }, {
         general: true
+      }, {
+        questions: {
+          $elemMatch: {
+            clients: client
+          }
+        }
       }]
     }, function(error, survey) {
       if (error) {

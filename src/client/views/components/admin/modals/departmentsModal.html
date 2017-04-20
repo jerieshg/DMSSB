@@ -12,6 +12,15 @@
          <label for="department">Departamento:</label>
          <input type="text" id="department" class="form-control" ng-model="selectedDept.department" required>
          <br/>
+
+         <div class="checkbox-legend col-sm-12">
+           <label >
+            <strong for="docRevision">Encargado de revision de documentos:</strong>
+             <input type="checkbox" id="docRevision" class="form-control" ng-model="selectedDept.documentRevision" required>
+           </label>
+         </div>
+
+         <br/>
          <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
           <button  class="btn btn-success" type="submit">

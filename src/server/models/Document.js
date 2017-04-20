@@ -26,6 +26,7 @@ let schema = new mongoose.Schema({
   files: [],
   status: String,
   comments: String,
+  approvedByQuality: Boolean,
   createdBy: {
     _id: mongoose.Schema.Types.ObjectId,
     username: String

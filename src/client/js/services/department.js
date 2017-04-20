@@ -26,6 +26,18 @@
         });
     };
 
+    var findByName = function(name) {
+      return $http.get(`/api/departments/name/${name}`)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
+          return error;
+        });
+    };
+
     var _delete = function(id) {
       return $http.delete(`/api/departments/${id}`)
         .then((response) => {
@@ -73,9 +85,11 @@
         });
     };
 
+
     return {
       readAll: readAll,
       find: find,
+      findByName: findByName,
       delete: _delete,
       save: save,
       update: update

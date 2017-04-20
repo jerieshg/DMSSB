@@ -75,8 +75,8 @@ module.exports = function(router) {
     .get(Survey.findByClient);
   router.route('/api/surveys/:id/clients/:client/')
     .get(Survey.findbyClientAndId)
-  router.route('/api/surveys/department/:dept/')
-    .get(Survey.findByDepartment)
+  router.route('/api/surveys/department/:dept/clients/:client')
+    .get(Survey.findByDepartmentAndClient)
   router.route('/api/surveys/:id/department/:dept/')
     .get(Survey.findbyDeptAndId)
   router.route('/api/surveys/:id/track/')
@@ -113,6 +113,8 @@ module.exports = function(router) {
     .delete(Department.delete);
   router.route('/api/departments/:id')
     .get(Department.find);
+  router.route('/api/departments/name/:name')
+    .get(Department.findByName);
 
   //CLIENT ROUTES
   router.route('/api/clients/')
@@ -212,7 +214,7 @@ module.exports = function(router) {
     .post(upload.any(), Document.create);
   router.route('/api/documents/clients/:id')
     .get(Document.findMyDocuments);
-  router.route('/api/documents/pending/:id/quality/:q')
+  router.route('/api/documents/pending/:id/quality/:quality')
     .get(Document.findPendingDocuments);
 
   //Document History ROUTES

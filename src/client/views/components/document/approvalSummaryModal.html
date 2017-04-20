@@ -1,0 +1,40 @@
+<div class="modal fade" id="approvalSummaryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Resumen de aprobaciones</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+       <h4></h4>
+
+       <table class="table table-hover">
+        <thead>
+          <tr>
+            <td>#</td>
+            <td>Usuario</td>
+            <td>Aprobado</td>
+            <td>Comentario</td>
+            <td>Fecha</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="e in selectedDocument.authorized">
+           <td >{{$index + 1}}</td>
+            <td>{{e.user.username}}</td>
+            <td>{{e.approved}}</td>
+            <td>{{e.comment}}</td>
+            <td>{{e.created}}</td>
+         </tr>
+       </tbody>
+     </table>
+
+     <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    </div>
+  </div>
+</div>
+</div>

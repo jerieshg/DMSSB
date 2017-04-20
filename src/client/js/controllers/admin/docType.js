@@ -21,14 +21,14 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
 
       for (let [index, value] of $scope.selectedAuths.entries()) {
         $scope.selectedDocType.authorized[index] = {
-          _id: value._id,
+          user: value.user,
           priority: value.priority
         };
       }
 
       $scope.selectedDocType.bossPriority = false;
     }
-
+    
     if ($scope.selectedDocType.edit) {
       documentTypes.update($scope.selectedDocType)
         .then((data) => {
@@ -52,7 +52,7 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
     $scope.choices.number = $scope.selectedDocType.authorized.length;
     for (let [index, value] of $scope.selectedDocType.authorized.entries()) {
       $scope.selectedAuths[index] = {
-        _id: value._id,
+        user: value.user,
         priority: value.priority
       };
     }

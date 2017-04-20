@@ -1,6 +1,7 @@
 let Document = require('../models/Document');
 let path = require("path");
 let randomstring = require("randomstring");
+let fse = require("fs-extra");
 
 module.exports.downloadFile = function(req, res, next) {
   let file = unescape(req.params.path);
@@ -47,7 +48,7 @@ module.exports.create = function(req, res, next) {
 module.exports.update = function(req, res, next) {
   Document.findOne({
     _id: req.params.id
-  }, function(error, docType) {
+  }, function(error, doc) {
     if (error) {
       res.status(500);
       next(error);
@@ -55,10 +56,10 @@ module.exports.update = function(req, res, next) {
     }
 
     for (prop in req.body) {
-      docType[prop] = req.body[prop];
+      doc[prop] = req.body[prop];
     }
 
-    docType.save(function(error) {
+    doc.save(function(error) {
       if (error) {
         res.status(500);
         next(error);
@@ -71,16 +72,30 @@ module.exports.update = function(req, res, next) {
 }
 
 module.exports.delete = function(req, res, next) {
-  Document.remove({
+  Document.findOne({
     _id: req.params.id
-  }, function(error, docType) {
+  }, function(error, removeDoc) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    res.json(doc);
+    removeDoc.remove(function(error, doc) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
+      if (removeDoc.files.length > 0) {
+        //retrieves first folder path and deletes the whole folder
+        let folderPath = removeDoc.files[0].path.replace(removeDoc.files[0].fileName, "");
+        fse.removeSync(folderPath);
+      }
+
+      res.json(removeDoc);
+    });
   });
 }
 
@@ -114,33 +129,32 @@ module.exports.findMyDocuments = function(req, res, next) {
 
 module.exports.findPendingDocuments = function(req, res, next) {
 
-  let qualityQuery = (req.params.quality) ? {} : null;
+  let qualityQuery = (req.params.quality && req.params.quality === "true") ? true : false;
 
   Document.find({
-      $or: [{
-        'type.authorized': {
-          $elemMatch: {
-            _id: req.params.id
-          }
-        }
-      }, {
-        qualityQuery
-      }],
-      $and: [{
-        status: {
-          $ne: 'Publicado'
-        }
-      }]
+    status: {
+      $ne: 'Publicado'
     },
-    function(error, docs) {
-      if (error) {
-        res.status(500);
-        next(error);
-        return res.send(error);
-      }
+    approvedByQuality: false,
+  }, function(error, docs) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
 
-      res.json(docs);
-    });
+    if (!qualityQuery) {
+      docs = docs.filter((e) => {
+        if (e.type.authorized && e.type.authorized.length > 0) {
+          return e.type.authorized.map(a => a.user._id).includes(req.params.id);
+        }
+
+        return false;
+      });
+    }
+
+    res.json(docs);
+  });
 }
 
 module.exports.search = function(req, res, next) {

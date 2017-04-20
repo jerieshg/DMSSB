@@ -45,7 +45,7 @@
         </select>
       </div>
 
-      <div class="col-md-6 row-separator" ng-show="selectedClient.role.role === 'Sub-Admin'">
+      <div class="col-md-6 row-separator">
         <label for="role">Departamento:</label>
         <select class="form-control" ng-model="selectedClient.department" ng-options="item.department as item.department for item in departments">
           <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>

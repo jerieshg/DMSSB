@@ -1,6 +1,38 @@
-function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Upload, ObjectDiff, commonFactory) {
+function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Upload, ObjectDiff, commonFactory, departments) {
 
   initializeController();
+
+  $scope.saveApproved = function() {
+    $scope.selectedApproved.created = new Date();
+    $scope.selectedApproved.user = {
+      _id: $rootScope.client._id,
+      username: $rootScope.client.username
+    };
+
+
+    if ($scope.selectedDocument.type.blueprint) {
+
+    } else {
+
+    }
+    if ($scope.isQuality) {
+      $scope.selectedDocument.approvedByQuality = $scope.selectedApproved.approved;
+    }
+
+    console.log($scope.selectedApproved);
+
+    /*
+    if it's blueprint:
+      Check autorized list if everyone said to approved, 
+      if everyone approved the document, move to next status
+      else if there's one false, then change status to "denied " or something like this
+      else if there are missing approvals, remain in pending
+    */
+
+    /*
+    If document is not a blue print and the calidad user is aprobing a document move to next status (check if SGIA on, if it's on, change status)
+    */
+  }
 
   function updateDocumentHistory() {
     var diff = ObjectDiff.diffOwnProperties($scope.originalDocument, $scope.selectedDocument);
@@ -123,9 +155,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
   function initializeController() {
     $(".datepicker input").datepicker({});
-    $scope.selectedDocument = {
-      status: "Nuevo"
-    };
     $scope.priorities = ["Alta", "Normal", "Bajo"];
     retrieveDocument();
     retrieveDocumentHistory();
@@ -145,6 +174,13 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.expiredDate = commonFactory.formatDate(new Date($scope.selectedDocument.expiredDate));
 
         $scope.originalDocument = angular.copy($scope.selectedDocument);
+        departments.findByName($rootScope.client.department)
+          .then((data) => {
+            let documentRevision = (data && data.documentRevision);
+            $scope.isQuality = documentRevision;
+            let canAuth = ($scope.selectedDocument.type.authorized && $scope.selectedDocument.type.authorized.length > 0 && $scope.selectedDocument.type.authorized.map(e => e.user._id).includes($rootScope.client._id));
+            $scope.canApprove = documentRevision || canAuth;
+          });
       })
       .catch(function(error) {
         console.log(error);
@@ -188,9 +224,9 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 
   function retrieveDepartments() {
-    $http.get('/api/departments/')
-      .then(function(response) {
-        $scope.departments = response.data;
+    departments.readAll()
+      .then(function(data) {
+        $scope.departments = data;
       })
       .catch(function(error) {
         console.log(error);
@@ -218,5 +254,5 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 }
 
-UpdateDocumentController.$inject = ['$rootScope', '$scope', '$http', '$stateParams', 'Upload', 'ObjectDiff', 'commonFactory'];
+UpdateDocumentController.$inject = ['$rootScope', '$scope', '$http', '$stateParams', 'Upload', 'ObjectDiff', 'commonFactory', 'departments'];
 angular.module('app', ['ngFileUpload', 'ds.objectDiff']).controller('updateDocumentController', UpdateDocumentController);

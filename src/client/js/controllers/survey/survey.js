@@ -30,9 +30,9 @@ function SurveyController($rootScope, $scope, $http, commonFactory) {
     if ($rootScope.client.role.level === 1) {
       url = '/api/surveys/';
     } else if ($rootScope.client.role.level === 2) {
-      url = `/api/surveys/department/${$rootScope.client.department}`;
+      url = `/api/surveys/department/${$rootScope.client.department}/clients/${$rootScope.client.job}`;
     }
-
+    
     $http.get(url)
       .then(function(response) {
         $scope.surveys = response.data;

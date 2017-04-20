@@ -1,4 +1,4 @@
-function SearchDocumentController($rootScope, $scope, $http, commonFactory, departments) {
+function SearchDocumentController($rootScope, $scope, $http, commonFactory, departments, documents) {
 
   initializeController();
 
@@ -18,6 +18,13 @@ function SearchDocumentController($rootScope, $scope, $http, commonFactory, depa
     }
   }
 
+  $scope.deleteDocument = function(id) {
+    if (commonFactory.dialog("Esta seguro de borrar este documento?")) {
+      documents.delete(id)
+        .then((data) => {});
+    }
+  }
+
   function initializeController() {
     retrieveDepartments();
   }
@@ -34,5 +41,5 @@ function SearchDocumentController($rootScope, $scope, $http, commonFactory, depa
 
 }
 
-SearchDocumentController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'departments'];
+SearchDocumentController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'departments', 'documents'];
 angular.module('app').controller('searchDocumentController', SearchDocumentController);

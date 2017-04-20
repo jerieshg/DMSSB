@@ -1,6 +1,15 @@
-function DocumentController($rootScope, $scope, $http, commonFactory) {
+function DocumentController($rootScope, $scope, $http, commonFactory, documents) {
 
   initializeController();
+
+  $scope.deleteDocument = function(id) {
+    if (commonFactory.dialog("Esta seguro de borrar este documento?")) {
+      documents.delete(id)
+        .then((data) => {
+          retrieveMyDocuments();
+        });
+    }
+  }
 
   function initializeController() {
     retrieveMyDocuments();
@@ -17,5 +26,5 @@ function DocumentController($rootScope, $scope, $http, commonFactory) {
   }
 }
 
-DocumentController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory'];
+DocumentController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'documents'];
 angular.module('app').controller('documentController', DocumentController);

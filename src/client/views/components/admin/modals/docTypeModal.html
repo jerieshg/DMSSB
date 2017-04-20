@@ -45,7 +45,7 @@
     <div class="col-sm-12"  ng-show="selectedDocType.blueprint">
       <div ng-repeat="n in [] | range:choices.number" class="row row-separator">
         <div class="input-group">
-          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedAuths[$index]._id" name="option-$index" ng-options="item._id as item.username for item in clients" ng-required="selectedDocType.blueprint">
+          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedAuths[$index].user" name="option-$index" ng-options="item as item.username for item in clients track by item._id" ng-required="selectedDocType.blueprint">
             <option value="">Seleccione usuario {{optional ? '(optional)' : ''}}</option>
           </select>
           <span class="input-group-addon">-</span>

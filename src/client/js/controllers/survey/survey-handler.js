@@ -89,8 +89,6 @@ function SurveyHandlerController($rootScope, $scope, $http, $stateParams, common
 
     if ($rootScope.client.role.level === 1) {
       url = '/api/surveys/' + $stateParams.id;
-    } else if ($rootScope.client.role.level === 2) {
-      url = `/api/surveys/${$stateParams.id}/department/${$rootScope.client.department}`;
     }
 
     $http.get(url)

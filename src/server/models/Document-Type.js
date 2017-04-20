@@ -8,7 +8,10 @@ let schema = new mongoose.Schema({
   },
   code: String,
   authorized: [{
-    id: mongoose.Schema.Types.ObjectId,
+    user: {
+      _id: mongoose.Schema.Types.ObjectId,
+      username: String,
+    },
     priority: Number
   }],
   blueprint: Boolean,

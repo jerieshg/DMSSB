@@ -6,6 +6,7 @@ let schema = new mongoose.Schema({
     type: String,
     unique: true
   },
+  documentRevision: Boolean,
   created: Date
 })
 
