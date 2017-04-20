@@ -40,14 +40,14 @@
 
       <div class="col-md-6 row-separator" >
         <label for="role">Posicion de trabajo:</label>
-        <select class="form-control" ng-model="selectedClient.job" ng-options="item.job as item.job for item in jobs" required> 
+        <select class="form-control" ng-model="selectedClient.job" ng-options="item.job as item.job for item in jobs | orderBy:'job'" required> 
           <option value="">Seleccione una posicion de trabajo {{optional ? '(optional)' : ''}}</option>
         </select>
       </div>
 
       <div class="col-md-6 row-separator">
         <label for="role">Departamento:</label>
-        <select class="form-control" ng-model="selectedClient.department" ng-options="item.department as item.department for item in departments">
+        <select class="form-control" ng-model="selectedClient.department" ng-options="item.department as item.department for item in departments | orderBy: 'department'">
           <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
         </select>
       </div>

@@ -41,7 +41,7 @@
 
 <div class=" col-md-6">
   <label for="empresa">Empresa:</label>
-  <select id="empresa" name="business" class="form-control" ng-model="survey.business" ng-options="item.business as item.business for item in business" multiple required title="Si necesita seleccionar multiples empresas, utiliza la tecla control (CTRL) dejando presionado mientras hace click en las empresas">
+  <select id="empresa" name="business" class="form-control" ng-model="survey.business" ng-options="item.business as item.business for item in business | orderBy: 'business'" multiple required title="Si necesita seleccionar multiples empresas, utiliza la tecla control (CTRL) dejando presionado mientras hace click en las empresas">
   </select>
   <div ng-messages="surveyForm.business.$error" ng-show="surveyForm.business.$dirty && surveyForm.business.$invalid">
     <div ng-message="required" class="text-danger">* Este campo es requerido</div>
@@ -64,7 +64,7 @@
 <div class="row row-separator">
   <div class="col-md-6">
     <label for="dept">Departamento:</label>
-    <select id="dept" name="dept" class="form-control" ng-model="survey.department" ng-options="item.department as item.department for item in departments" required>
+    <select id="dept" name="dept" class="form-control" ng-model="survey.department" ng-options="item.department as item.department for item in departments | orderBy: 'department'" required>
       <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
     </select>
     <div ng-messages="surveyForm.dept.$error" ng-show="surveyForm.dept.$dirty && surveyForm.dept.$invalid">

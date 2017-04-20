@@ -30,12 +30,12 @@
      <td>{{$index + 1}}</td>
      <td>{{e.title}}</td>
      <td>
-       <select name="services" class="form-control" ng-model="e.service" ng-options="item.service as item.service for item in services" required>
+       <select name="services" class="form-control" ng-model="e.service" ng-options="item.service as item.service for item in services | orderBy: 'service'" required>
          <option value="">Seleccione un servicio {{optional ? '(optional)' : ''}}</option>
        </select>
      </td>
      <td style="width: 25%;">
-       <select  name="clients" class="form-control" ng-model="e.clients" ng-options="item.job as item.job for item in jobs" multiple required>
+       <select  name="clients" class="form-control" ng-model="e.clients" ng-options="item.job as item.job for item in jobs | orderBy: 'job'" multiple required>
        </select>
      </td>
    </tr>
