@@ -122,8 +122,10 @@ module.exports.find = function(req, res, next) {
 }
 
 module.exports.findByName = function(req, res, next) {
+  let dept = new Buffer(req.params.name, 'binary').toString('utf8');
+  
   Department.findOne({
-    department: req.params.name
+    department: dept
   }, function(error, department) {
     if (error) {
       res.status(500);

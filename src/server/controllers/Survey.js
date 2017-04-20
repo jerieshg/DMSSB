@@ -176,10 +176,10 @@
 
   module.exports.findByDepartmentAndClient = function(req, res, next) {
     let client = new Buffer(req.params.client, 'binary').toString('utf8');
-
+    let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
     Survey.find({
       $or: [{
-        department: req.params.dept
+        department: dept
       }, {
         general: true
       }, {
@@ -202,10 +202,12 @@
   }
 
   module.exports.findbyDeptAndId = function(req, res, next) {
+    let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
+
     Survey.findOne({
       $or: [{
         _id: req.params.id,
-        department: req.params.dept
+        department: dept
       }, {
         general: true
       }]
