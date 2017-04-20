@@ -199,7 +199,7 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
     let url = '/api/surveys/';
 
     if ($rootScope.client.role.level === 2) {
-      url = `/api/surveys/department/${$rootScope.client.department}`;
+      url = `/api/surveys/department/${$rootScope.client.department}/clients/${$rootScope.client.job}`;
     }
 
     $http.get(url)
