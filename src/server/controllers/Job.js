@@ -9,6 +9,10 @@ module.exports.readAll = function(req, res, next) {
       return res.send(error);
     }
 
+    jobs.sort((a, b) => {
+      return (a.job < b.job) ? -1 : (a.job > b.job) ? 1 : 0;
+    });
+
     res.json(jobs);
   });
 }

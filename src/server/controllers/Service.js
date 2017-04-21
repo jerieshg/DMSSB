@@ -8,6 +8,10 @@ module.exports.readAll = function(req, res, next) {
       return res.send(error);
     }
 
+    service.sort((a, b) => {
+      return (a.service < b.service) ? -1 : (a.service > b.service) ? 1 : 0;
+    });
+
     res.json(service);
   });
 }
@@ -89,6 +93,10 @@ module.exports.findByDepartment = function(req, res, next) {
       next(error);
       return res.send(error);
     }
+
+    services.sort((a, b) => {
+      return (a.service < b.service) ? -1 : (a.service > b.service) ? 1 : 0;
+    });
 
     res.json(services);
   });

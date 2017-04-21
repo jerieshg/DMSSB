@@ -10,6 +10,10 @@ module.exports.readAll = function(req, res, next) {
       return res.send(error);
     }
 
+    departments.sort((a, b) => {
+      return (a.department < b.department) ? -1 : (a.department > b.department) ? 1 : 0;
+    });
+
     res.json(departments);
   });
 }
@@ -123,7 +127,7 @@ module.exports.find = function(req, res, next) {
 
 module.exports.findByName = function(req, res, next) {
   let dept = new Buffer(req.params.name, 'binary').toString('utf8');
-  
+
   Department.findOne({
     department: dept
   }, function(error, department) {

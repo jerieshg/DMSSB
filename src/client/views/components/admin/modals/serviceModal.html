@@ -13,7 +13,7 @@
        <input type="text" id="service" class="form-control" ng-model="selectedService.service" placeholder="Servicio" required>
        <br/>
        <label for="dept">Departamento:</label>
-       <select id="dept" name="dept" class="form-control" ng-model="selectedService.department" ng-options="item.department as item.department for item in departments | orderBy: 'department'" required>
+       <select id="dept" name="dept" class="form-control" ng-model="selectedService.department" ng-options="item.department as item.department for item in departments" required>
         <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
       </select>
       <br/>
