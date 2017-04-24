@@ -214,8 +214,10 @@ module.exports = function(router) {
     .post(upload.any(), Document.create);
   router.route('/api/documents/clients/:id')
     .get(Document.findMyDocuments);
-  router.route('/api/documents/pending/:id/quality/:quality')
+  router.route('/api/documents/pending/:id/quality/:quality/SGIA/:SGIA')
     .get(Document.findPendingDocuments);
+  router.route('/api/documents/:id/approvals')
+    .put(Document.updateApprovals)
 
   //Document History ROUTES
   router.route('/api/documents-history/')

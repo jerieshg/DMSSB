@@ -5,7 +5,7 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
   $scope.saveDocument = function() {
     if ($scope.files && $scope.files.length) {
 
-      $scope.selectedDocument.status = "Pendiente";
+      $scope.selectedDocument.status = "En revision por Calidad";
 
       delete $scope.selectedDocument.type["$$hashKey"];
 
@@ -13,7 +13,7 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
         _id: $rootScope.client._id,
         username: $rootScope.client.username
       };
-
+      
       Upload.upload({
         url: `/api/documents/${$scope.selectedDocument.name}`,
         data: {

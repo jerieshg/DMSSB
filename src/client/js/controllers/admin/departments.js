@@ -2,6 +2,24 @@ function DepartmentController($scope, $http, commonFactory, departments) {
 
   initializeController();
 
+  $scope.disableDocRevision = function() {
+    if ($scope.selectedDept.isSGIA) {
+      $scope.selectedDept.documentRevision = false;
+      return true;
+    }
+
+    return false;
+  }
+  
+  $scope.disableSGIA = function() {
+    if ($scope.selectedDept.documentRevision) {
+      $scope.selectedDept.isSGIA = false;
+      return true;
+    }
+
+    return false;
+  }
+
   $scope.print = function() {
     commonFactory.printTable("adminTable");
   }

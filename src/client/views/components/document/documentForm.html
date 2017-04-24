@@ -9,7 +9,7 @@
       <a  class="btn btn-info"  data-toggle="modal"  data-target="#approvalSummaryModal" title="Ver resumen de aprobaciones" ng-show="selectedDocument._id" style="color:white;">
       <i class="fa fa-eye" aria-hidden="true"/>  Resumen de aprobaciones
       </a>
-      <a  class="btn btn-warning"  data-toggle="modal"  data-target="#approveDocumentModal" title="Aprobar o desaprobar documento" ng-show="canApprove" style="color:white;">
+      <a  class="btn btn-warning"  data-toggle="modal"  data-target="#approveDocumentModal" title="Aprobar o desaprobar documento" ng-show="canApprove" style="color:white;" ng-click="findApproval()">
       <i class="fa fa-check" aria-hidden="true"/>  Aprobar documento
       </a>
     </div>

@@ -17,7 +17,22 @@ let schema = new mongoose.Schema({
   requester: String,
   business: String,
   department: String,
-  type: {},
+  type: {
+    type: {
+      type: String
+    },
+    code: String,
+    authorized: [{
+      user: {
+        _id: String,
+        username: String,
+      },
+      priority: Number
+    }],
+    blueprint: Boolean,
+    bossPriorty: Boolean,
+    created: Date
+  },
   expiredDate: Date,
   active: Boolean,
   requiresSGIA: Boolean,
@@ -27,10 +42,19 @@ let schema = new mongoose.Schema({
   status: String,
   comments: String,
   approvedByQuality: Boolean,
+  approvedBySGIA: Boolean,
+  blueprintApproved: Boolean,
   createdBy: {
     _id: mongoose.Schema.Types.ObjectId,
     username: String
   },
+  approvals: [{
+    forBlueprint: Boolean,
+    approved: Boolean,
+    user: {},
+    comment: String,
+    created: Date
+  }],
   created: Date
 })
 

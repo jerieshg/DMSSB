@@ -33,19 +33,15 @@
         });
     };
 
-    var update = function(business) {
-      return $http.put(`/api/documents/${business._id}`, business)
+    var updateApprovals = function(doc) {
+      return $http.put(`/api/documents/${doc._id}/approvals/`, doc)
         .then((response) => {
-          commonFactory.toastMessage(`Empresa ${business.business} ' fue actualizado exitosamente!`, 'info');
+          // commonFactory.toastMessage(`Documento ${doc.name} ' fue actualizado exitosamente!`, 'info');
           return response.data;
         })
         .catch((error) => {
           console.log(error);
-          if (error.data.code === 11000) {
-            commonFactory.toastMessage(`La empresa ${$scope.selectedBusiness.business} ya existe.`, 'danger');
-          } else {
-            commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
-          }
+          commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
           return error;
         });
     };
@@ -53,7 +49,7 @@
     return {
       delete: _delete,
       save: save,
-      update: update
+      updateApprovals: updateApprovals
     };
   }
 

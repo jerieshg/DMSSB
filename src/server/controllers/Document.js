@@ -17,7 +17,6 @@ module.exports.downloadFile = function(req, res, next) {
 
 module.exports.create = function(req, res, next) {
   let doc = new Document(req.body.document);
-
   doc.created = new Date();
 
   req.files.forEach((e) => {
@@ -129,21 +128,58 @@ module.exports.findMyDocuments = function(req, res, next) {
 
 module.exports.findPendingDocuments = function(req, res, next) {
 
-  let qualityQuery = (req.params.quality && req.params.quality === "true") ? true : false;
+  let isQuality = (req.params.quality && req.params.quality === "true") ? true : false;
+  let isSGIA = (req.params.SGIA && req.params.SGIA === "true") ? true : false;
 
-  Document.find({
-    status: {
-      $ne: 'Publicado'
-    },
-    approvedByQuality: false,
-  }, function(error, docs) {
-    if (error) {
-      res.status(500);
-      next(error);
-      return res.send(error);
-    }
+  if (isSGIA) {
+    Document.find({
+      status: {
+        $ne: 'Publicado'
+      },
+      requiresSGIA: true,
+      approvedByQuality: true,
+    }, function(error, docs) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
 
-    if (!qualityQuery) {
+      res.json(docs);
+    });
+  } else if (isQuality) {
+    Document.find({
+      status: {
+        $ne: 'Publicado'
+      },
+      $or: [{
+        approvedBySGIA: true
+      }, {
+        approvedByQuality: false
+      }]
+    }, function(error, docs) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
+      res.json(docs);
+    });
+  } else {
+    Document.find({
+      status: {
+        $ne: 'Publicado'
+      },
+      'type.blueprint': true,
+      blueprintApproved: false
+    }, function(error, docs) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
       docs = docs.filter((e) => {
         if (e.type.authorized && e.type.authorized.length > 0) {
           return e.type.authorized.map(a => a.user._id).includes(req.params.id);
@@ -151,9 +187,36 @@ module.exports.findPendingDocuments = function(req, res, next) {
 
         return false;
       });
+
+      docs = docs.filter((e) => {
+        let approvals = e.approvals.filter((e) => e.forBlueprint && !e.approved);
+        return !approvals.map(a => a.user._id).includes(req.params.id);
+      });
+
+      res.json(docs);
+    });
+  }
+}
+
+module.exports.updateApprovals = function(req, res, next) {
+  Document.update({
+    _id: req.params.id
+  }, {
+    $set: {
+      approvals: req.body.approvals,
+      status: req.body.status,
+      approvedBySGIA: req.body.approvedBySGIA,
+      approvedByQuality: req.body.approvedByQuality
+    }
+  }, function(error, result) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
     }
 
-    res.json(docs);
+    console.log(result);
+    res.json(result);
   });
 }
 

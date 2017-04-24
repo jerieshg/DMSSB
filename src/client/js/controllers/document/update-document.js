@@ -1,6 +1,14 @@
-function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Upload, ObjectDiff, commonFactory, departments) {
+function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Upload, ObjectDiff, commonFactory, departments, documents) {
 
   initializeController();
+
+  $scope.findApproval = function() {
+    $scope.selectedApproved = $scope.selectedDocument.approvals.filter((e) => {
+      return e.user._id === $rootScope.client._id;
+    });
+
+    $scope.selectedApproved = $scope.selectedApproved ? $scope.selectedApproved[0] : {};
+  }
 
   $scope.saveApproved = function() {
     $scope.selectedApproved.created = new Date();
@@ -9,17 +17,62 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       username: $rootScope.client.username
     };
 
+    let added = false;
+
+    $scope.selectedApproved.forBlueprint = $scope.selectedDocument.type.blueprint && !$scope.isQuality && !$scope.isSGIA;
+    $scope.selectedDocument.approvals.forEach(function(item, i) {
+      if (item.user._id === $rootScope.client._id) {
+        $scope.selectedDocument.approvals[i] = $scope.selectedApproved;
+        added = true;
+      }
+    });
+
+    if (!added) {
+      $scope.selectedDocument.approvals.push(angular.copy($scope.selectedApproved));
+    }
 
     if ($scope.selectedDocument.type.blueprint) {
-
-    } else {
-
-    }
-    if ($scope.isQuality) {
+      //If everyone already approved the document
+      if (checkBlueprintCompletedApprovals()) {
+        //MOVE TO NEXT STATUS
+        //SI SE TIENE SGIA, MOVER A SGIA...ELSE MOVER A PREP FOR PRD
+        if ($scope.selectedDocument.requiresSGIA) {
+          $scope.selectedDocument.status = "En revision por SGIA";
+          //MOVE TO SGIA
+        } else {
+          $scope.selectedDocument.status = "Preparado para publicacion";
+          //MOVER A PRE PUBLICATION
+        }
+        $scope.selectedDocument.blueprintApproved = true;
+      } else if (!$scope.selectedApproved.approved) {
+        //ENVIAR CORREO QUE SE NEGO UNA APROBACION 
+      }
+    } else if ($scope.isQuality) {
       $scope.selectedDocument.approvedByQuality = $scope.selectedApproved.approved;
+      if ($scope.selectedApproved.approved) {
+        if ($scope.selectedDocument.requiresSGIA) {
+          $scope.selectedDocument.status = "En revision por SGIA";
+          //MOVE TO SGIA
+        } else {
+          $scope.selectedDocument.status = "Preparado para publicacion";
+          //MOVER A PRE PUBLICATION
+        }
+      } else {
+        $scope.selectedDocument.status = "Rechazado por Calidad";
+        //CHANGED TO DENEGADO POR CALIDAD
+        //SEND EMAIL TO DOC OWNER
+      }
+    } else if ($scope.isSGIA) {
+      $scope.selectedDocument.approvedBySGIA = $scope.selectedApproved.approved;
+      if ($scope.selectedApproved.approved) {
+        $scope.selectedDocument.status = "Preparado para publicacion";
+        //MOVE TO PREP FOR PRODUCTION
+      } else {
+        $scope.selectedDocument.status = "Rechazado por SGIA";
+        //CHANGED TO DENEGADO POR SGIA
+        //SEND EMAIL TO DOC OWNER
+      }
     }
-
-    console.log($scope.selectedApproved);
 
     /*
     if it's blueprint:
@@ -32,6 +85,13 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     /*
     If document is not a blue print and the calidad user is aprobing a document move to next status (check if SGIA on, if it's on, change status)
     */
+    documents.updateApprovals($scope.selectedDocument)
+      .then((data) => {
+        console.log(data);
+      });
+
+    updateDocumentHistory();
+    $scope.selectedApproved = {};
   }
 
   function updateDocumentHistory() {
@@ -156,6 +216,9 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   function initializeController() {
     $(".datepicker input").datepicker({});
     $scope.priorities = ["Alta", "Normal", "Bajo"];
+    $scope.isQuality = false;
+    $scope.isSGIA = false;
+    $scope.canApprove = false;
     retrieveDocument();
     retrieveDocumentHistory();
     retrieveBusiness();
@@ -174,17 +237,63 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.expiredDate = commonFactory.formatDate(new Date($scope.selectedDocument.expiredDate));
 
         $scope.originalDocument = angular.copy($scope.selectedDocument);
-        departments.findByName($rootScope.client.department)
-          .then((data) => {
-            let documentRevision = (data && data.documentRevision);
-            $scope.isQuality = documentRevision;
-            let canAuth = ($scope.selectedDocument.type.authorized && $scope.selectedDocument.type.authorized.length > 0 && $scope.selectedDocument.type.authorized.map(e => e.user._id).includes($rootScope.client._id));
-            $scope.canApprove = documentRevision || canAuth;
-          });
+        if ($scope.selectedDocument.status !== "Publicado") {
+          departments.findByName($rootScope.client.department)
+            .then((data) => {
+
+              let documentRevision = (data && data.documentRevision);
+              $scope.isQuality = documentRevision;
+
+              let isSGIA = (data && data.isSGIA);
+              $scope.isSGIA = isSGIA;
+
+              //Can approve only if client is a SGIA and already approved by Quality
+              //TODO: ADD CHECK IF EVERYONE HAS ALREADY AUTHORIZED THE DOCUMENT
+              if (isSGIA && $scope.selectedDocument.approvedByQuality && $scope.selectedDocument.requiresSGIA) {
+                $scope.canApprove = true;
+              }
+
+              //IF USER IS DOCUMENT REVISION AND HAVE NOT APPROVED THE DOCUMENT then can approve
+              if (documentRevision && !$scope.selectedDocument.approvedByQuality) {
+                $scope.canApprove = true;
+              }
+
+              //IF ITS A BLUEPRINT and I HAVE NOT YET AUTHORISED THE DOCUMENT THEN AUTH
+              if ($scope.selectedDocument.type.blueprint && !checkBlueprintCompletedApprovals()) {
+                $scope.canApprove = true;
+                // let foundAuth = $scope.selectedDocument.type.authorized.filter((auth) => {
+                //   return auth.user._id === $rootScope.client._id
+                // });
+
+                // if (foundAuth && foundAuth.length > 0) {
+                //   foundAuth = foundAuth[0];
+
+                // }
+              }
+            });
+        }
       })
       .catch(function(error) {
         console.log(error);
       });
+  }
+
+  function checkBlueprintCompletedApprovals() {
+    let approved = false;
+
+    if ($scope.selectedDocument.type.blueprint) {
+      let approvals = $scope.selectedDocument.approvals.filter((e) => e.forBlueprint);
+      console.log(approvals);
+      //If everyone already approved the document, check if someone denied it
+      if (approvals.length === $scope.selectedDocument.type.authorized.length) {
+        approved = approvals.every((approval) => {
+          return approval.approved;
+        });
+      }
+    }
+
+    console.log(approved);
+    return approved;
   }
 
   function retrieveBusiness() {
@@ -254,5 +363,5 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 }
 
-UpdateDocumentController.$inject = ['$rootScope', '$scope', '$http', '$stateParams', 'Upload', 'ObjectDiff', 'commonFactory', 'departments'];
+UpdateDocumentController.$inject = ['$rootScope', '$scope', '$http', '$stateParams', 'Upload', 'ObjectDiff', 'commonFactory', 'departments', 'documents'];
 angular.module('app', ['ngFileUpload', 'ds.objectDiff']).controller('updateDocumentController', UpdateDocumentController);
