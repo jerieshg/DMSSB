@@ -1,4 +1,4 @@
-# Document Management System with Survey Builder
+# Document Management System with Survey Builder (DMSSB)
 
 This a MEANJS project is about a centralized documents system with a module for doing surveys. 
 
