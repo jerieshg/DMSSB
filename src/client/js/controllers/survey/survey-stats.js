@@ -36,6 +36,85 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     $scope.totalResponses = 0;
   }
 
+  $scope.print = function() {
+    let doc = new jsPDF();
+    let canvasElements = [];
+
+    $('canvas').map((index, item) => {
+      canvasElements.push({
+        service: item.getAttribute('data-service'),
+        dataURL: item.toDataURL(),
+        question: item.getAttribute('data-question'),
+        result: item.getAttribute('data-result')
+      })
+    });
+
+    $scope.services.forEach((service) => {
+      service.charts.forEach((e) => {
+        if ($scope.showChartType(e.formType, 'text')) {
+
+          canvasElements.push({
+            service: service.service,
+            question: e.question,
+            answer: e.labels.join(",").replace(/,/g, "\n")
+          });
+        }
+      });
+    });
+
+    let groupedCanvas = commonFactory.groupBy(canvasElements, 'service');
+
+    Object.keys(groupedCanvas).map((service, serviceIndex) => {
+      doc.setFontSize(18)
+      let textTitle = (service && service !== "null") ? service : 'Resultado General';
+      doc.text(textTitle, 75, 15);
+
+      let position = 1
+      groupedCanvas[service].forEach((item, index) => {
+        let yImageCoord = 35;
+        let yTextCoord = 25;
+        let xSize = 170;
+        let ySize = 80;
+
+        if (position % 2 == 0) {
+          yTextCoord = 135;
+          yImageCoord = 145;
+        }
+
+        if (textTitle === 'Resultado General') {
+          xSize = 180;
+          ySize = 180;
+        }
+
+        if (item.question) {
+          doc.setFontSize(10)
+          let text = `${item.question} - ${item.result ? item.result : ''}`;
+          let splittedText = doc.splitTextToSize(text, doc.internal.pageSize.width - 25);
+          doc.text(splittedText, 15, yTextCoord);
+        }
+
+        if (!item.answer) {
+          doc.addImage(item.dataURL, 'JPEG', 15, yImageCoord, xSize, ySize);
+        } else {
+          let splitAnswer = doc.splitTextToSize(item.answer, doc.internal.pageSize.width - 25);
+          doc.text(splitAnswer, 15, yTextCoord + 10);
+        }
+
+        if (position % 2 == 0 && index + 1 !== groupedCanvas[service].length) {
+          doc.addPage();
+        }
+
+        position++;
+      });
+
+      if (Object.keys(groupedCanvas).length !== serviceIndex + 1) {
+        doc.addPage();
+      }
+    });
+
+    doc.save(`resumen_graficos_${new Date()}.pdf`);
+  }
+
   $scope.generateActionPlan = function() {
     $scope.services.forEach((service) => {
 
@@ -232,7 +311,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       chart.data = [...answers.values()];
       chart.compareAverages.push(chart.average);
     }
-
+    chart.average = isNaN(chart.average) ? 0.00 : chart.average;
     selectedQuestion.percentage = chart.average;
 
     return !found ? chart : null;
@@ -261,7 +340,8 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     if ($scope.isComparing) {
       $scope.radarGraph.series.push(seriesCurrentName);
     }
-    $scope.finalGrade = $scope.finalGrade / (data.length - 1);
+
+    $scope.finalGrade = $scope.finalGrade / (data.length);
     $scope.radarGraph.data.push(data);
   }
 
@@ -306,7 +386,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
           }
         }]
       },
-      tooltips: tooltip
+      tooltips: tooltip,
     };
 
     $scope.horizontalBarOptions = {

@@ -8901,8 +8901,10 @@ md-toast.md-danger-theme .md-toast-content {
     transform: rotate(360deg); } }
 
 .custom-chart-radar {
-  width: 90%;
-  margin-left: 4em; }
+  /*  width: 90%;
+  margin-left: 4em;*/
+  width: 60%;
+  margin-left: 23em; }
 
 .custom-md-toolbar {
   background-color: #263238;
