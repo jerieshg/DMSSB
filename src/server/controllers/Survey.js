@@ -232,10 +232,12 @@
         return res.send(error);
       }
 
+      console.log(surveyClients);
+
       SurveyResponse.aggregate(
         [{
           $match: {
-            surveyId: new ObjectId('58a47fd0df5a5e12ac438eb2')
+            surveyId: new ObjectId(req.params.id)
           }
         }, {
           $group: {
