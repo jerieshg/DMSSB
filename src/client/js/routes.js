@@ -174,7 +174,10 @@ angular
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
-              files: ['js/controllers/survey/survey-stats.js']
+              files: [
+                'js/controllers/survey/survey-stats.js',
+                'bower_components/jspdf/dist/jspdf.min.js'
+              ]
             });
           }]
         }
