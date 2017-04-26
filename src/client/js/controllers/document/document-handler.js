@@ -5,7 +5,22 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
   $scope.saveDocument = function() {
     if ($scope.files && $scope.files.length) {
 
-      $scope.selectedDocument.status = "En revision por Calidad";
+      if ($scope.selectedDocument.type.blueprint) {
+        $scope.selectedDocument.status = "Pendiente autorizaciones";
+      } else {
+        
+        if ($scope.selectedDocument.type.bossPriority && $rootScope.client.department.toUpperCase().includes('JEFE')) {
+          if ($scope.selectedDocument.requiresSGIA) {
+            $scope.selectedDocument.flow.revisionBySGIA = true;
+            $scope.selectedDocument.status = "En revision por SGIA";
+          } else {
+            $scope.selectedDocument.flow.prepForPublication = true;
+            $scope.selectedDocument.status = "Preparado para publicacion";
+          }
+        } else {
+          $scope.selectedDocument.status = "En revision por Calidad";
+        }
+      }
 
       delete $scope.selectedDocument.type["$$hashKey"];
 
@@ -13,7 +28,7 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
         _id: $rootScope.client._id,
         username: $rootScope.client.username
       };
-      
+
       Upload.upload({
         url: `/api/documents/${$scope.selectedDocument.name}`,
         data: {
@@ -50,7 +65,15 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
   function initializeController() {
     $(".datepicker input").datepicker({});
     $scope.selectedDocument = {
-      status: "Nuevo"
+      status: "Nuevo",
+      flow: {
+        approvedByQuality: false,
+        approvedBySGIA: false,
+        blueprintApproved: false,
+        revisionBySGIA: false,
+        prepForPublication: false,
+        published: false
+      }
     };
     $scope.priorities = ["Alta", "Normal", "Bajo"];
     retrieveBusiness();

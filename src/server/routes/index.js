@@ -214,7 +214,7 @@ module.exports = function(router) {
     .post(upload.any(), Document.create);
   router.route('/api/documents/clients/:id')
     .get(Document.findMyDocuments);
-  router.route('/api/documents/pending/:id/quality/:quality/SGIA/:SGIA')
+  router.route('/api/documents/pending/:id/quality/:quality/SGIA/:SGIA/dept/:dept/job/:job')
     .get(Document.findPendingDocuments);
   router.route('/api/documents/:id/approvals')
     .put(Document.updateApprovals)

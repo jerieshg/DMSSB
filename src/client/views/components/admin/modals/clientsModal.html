@@ -21,12 +21,12 @@
 
        <div class="col-md-6 row-separator">
         <label for="email">Correo electronico:</label>
-        <input type="text" id="email" class="form-control" ng-model="selectedClient.email" required>
+        <input type="text" id="email" class="form-control" ng-model="selectedClient.email">
       </div>
 
       <div class="col-md-6 row-separator">
       <label for="role">Empresa:</label>
-        <select class="form-control" ng-model="selectedClient.business" ng-options="item.business as item.business for item in business" required>
+        <select class="form-control" ng-model="selectedClient.business" ng-options="item.business as item.business for item in business">
           <option value="">Seleccione una empresa  {{optional ? '(optional)' : ''}}</option>
         </select>
       </div>

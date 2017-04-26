@@ -14,8 +14,9 @@ let schema = new mongoose.Schema({
     },
     priority: Number
   }],
+  hasProcessOwner: Boolean,
   blueprint: Boolean,
-  bossPriorty: Boolean,
+  bossPriority: Boolean,
   created: Date
 })
 

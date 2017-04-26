@@ -133,11 +133,11 @@ module.exports.findPendingDocuments = function(req, res, next) {
 
   if (isSGIA) {
     Document.find({
-      status: {
-        $ne: 'Publicado'
-      },
-      requiresSGIA: true,
-      approvedByQuality: true,
+      'requiresSGIA': true,
+      'flow.published': false,
+      'flow.revisionBySGIA': true,
+      'flow.approvedByQuality': true,
+      'flow.prepForPublication': false
     }, function(error, docs) {
       if (error) {
         res.status(500);
@@ -149,13 +149,14 @@ module.exports.findPendingDocuments = function(req, res, next) {
     });
   } else if (isQuality) {
     Document.find({
-      status: {
-        $ne: 'Publicado'
-      },
-      $or: [{
-        approvedBySGIA: true
+      $and: [{
+        'flow.published': false,
       }, {
-        approvedByQuality: false
+        $or: [{
+          'flow.prepForPublication': true
+        }, {
+          'flow.approvedByQuality': false
+        }]
       }]
     }, function(error, docs) {
       if (error) {
@@ -168,11 +169,9 @@ module.exports.findPendingDocuments = function(req, res, next) {
     });
   } else {
     Document.find({
-      status: {
-        $ne: 'Publicado'
-      },
-      'type.blueprint': true,
-      blueprintApproved: false
+      'flow.published': false,
+      // 'type.blueprint': true,
+      // 'flow.blueprintApproved': false
     }, function(error, docs) {
       if (error) {
         res.status(500);
@@ -180,12 +179,15 @@ module.exports.findPendingDocuments = function(req, res, next) {
         return res.send(error);
       }
 
-      docs = docs.filter((e) => {
-        if (e.type.authorized && e.type.authorized.length > 0) {
-          return e.type.authorized.map(a => a.user._id).includes(req.params.id);
-        }
+      let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
+      let job = new Buffer(req.params.job, 'binary').toString('utf8');
 
-        return false;
+      docs = docs.filter((e) => {
+        if (e.type.blueprint && !e.flow.blueprintApproved && e.type.authorized.length > 0) {
+          return e.type.authorized.map(a => a.user._id).includes(req.params.id);
+        }7
+
+        return (e.type.hasProcessOwner && e.department === dept && job.toUpperCase().includes('JEFE') && !e.approvedByProcessOwner);
       });
 
       docs = docs.filter((e) => {
@@ -205,8 +207,7 @@ module.exports.updateApprovals = function(req, res, next) {
     $set: {
       approvals: req.body.approvals,
       status: req.body.status,
-      approvedBySGIA: req.body.approvedBySGIA,
-      approvedByQuality: req.body.approvedByQuality
+      flow: req.body.flow
     }
   }, function(error, result) {
     if (error) {
@@ -215,7 +216,6 @@ module.exports.updateApprovals = function(req, res, next) {
       return res.send(error);
     }
 
-    console.log(result);
     res.json(result);
   });
 }

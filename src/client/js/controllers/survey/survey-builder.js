@@ -108,7 +108,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
       })
       $scope.newQuestion.choicesValue = $scope.selectedChoices;
     }
-    
+
     //for linear scale only
     if ($scope.newQuestion.formType === 'rating') {
       $scope.newQuestion.rateValues = commonFactory.generateNumberArray($scope.linearScale.selectedStart, $scope.linearScale.selectedEnd);

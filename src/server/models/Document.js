@@ -30,7 +30,8 @@ let schema = new mongoose.Schema({
       priority: Number
     }],
     blueprint: Boolean,
-    bossPriorty: Boolean,
+    hasProcessOwner: Boolean,
+    bossPriority: Boolean,
     created: Date
   },
   expiredDate: Date,
@@ -41,9 +42,6 @@ let schema = new mongoose.Schema({
   files: [],
   status: String,
   comments: String,
-  approvedByQuality: Boolean,
-  approvedBySGIA: Boolean,
-  blueprintApproved: Boolean,
   createdBy: {
     _id: mongoose.Schema.Types.ObjectId,
     username: String
@@ -55,6 +53,15 @@ let schema = new mongoose.Schema({
     comment: String,
     created: Date
   }],
+  flow: {
+    approvedByQuality: Boolean,
+    approvedBySGIA: Boolean,
+    blueprintApproved: Boolean,
+    revisionBySGIA: Boolean,
+    approvedByProcessOwner: Boolean,
+    prepForPublication: Boolean,
+    published: Boolean
+  },
   created: Date
 })
 

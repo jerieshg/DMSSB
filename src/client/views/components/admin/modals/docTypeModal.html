@@ -24,6 +24,12 @@
             Prioridad para jefe
           </label>
         </div>
+          <div class="checkbox-legend" ng-show="!selectedDocType.blueprint">
+            <label style="font-size:10px;">
+             <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.hasProcessOwner" title="Seleccione esta casilla si el documento ocupa la autorizacion del dueño del proceso">
+             Contiene dueño del proceso
+           </label>
+         </div>
       </div>
 
       <div class="col-md-9">

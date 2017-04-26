@@ -22,7 +22,7 @@ function PendingApprovalDocumentController($rootScope, $scope, $http, commonFact
         let isQuality = (data && data.documentRevision) ? data.documentRevision : false;
         let isSGIA = (data && data.isSGIA) ? data.isSGIA : false;
 
-        $http.get(`/api/documents/pending/${$rootScope.client._id}/quality/${isQuality}/SGIA/${isSGIA}`)
+        $http.get(`/api/documents/pending/${$rootScope.client._id}/quality/${isQuality}/SGIA/${isSGIA}/dept/${$rootScope.client.department}/job/${$rootScope.client.job}`)
           .then(function(response) {
             $scope.documents = response.data;
           })
