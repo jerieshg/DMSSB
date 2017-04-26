@@ -3,9 +3,6 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
   initalizeController();
 
   function initalizeController() {
-    // Chart.defaults.global.colors = ["rgb(159,204,0)", "rgb(250,109,33)", "rgb(154,154,154)"];
-    $scope.randomColors = ['#C0392B', '#1ABC9C', '#2980B9', '#8E44AD', '#27AE60', '#F1C40F', '#F39C12', '#7F8C8D', '#AAB7B8', '#9B59B6'];
-
     $scope.finalGrade = 0;
     $scope.isComparing = $state.includes('app.survey-builder.compare-stats');
     let seriesCurrentName = "";
@@ -232,14 +229,8 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
     if (!found) {
       chart.labels = [...answers.keys()];
-      chart.data.push([...answers.values()]);
+      chart.data = [...answers.values()];
       chart.compareAverages.push(chart.average);
-      if (!(selectedQuestion.formType === 'radiogroup' || selectedQuestion.formType === 'dropdown')) {
-        chart.colors = [$scope.randomColors[Math.floor(Math.random() * $scope.randomColors.length)]];
-      } else {
-        chart.colors = $scope.randomColors;
-      }
-
     }
 
     selectedQuestion.percentage = chart.average;
