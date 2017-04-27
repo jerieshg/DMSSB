@@ -185,7 +185,8 @@ module.exports.findPendingDocuments = function(req, res, next) {
       docs = docs.filter((e) => {
         if (e.type.blueprint && !e.flow.blueprintApproved && e.type.authorized.length > 0) {
           return e.type.authorized.map(a => a.user._id).includes(req.params.id);
-        }7
+        }
+        7
 
         return (e.type.hasProcessOwner && e.department === dept && job.toUpperCase().includes('JEFE') && !e.approvedByProcessOwner);
       });
@@ -253,6 +254,16 @@ module.exports.search = function(req, res, next) {
     if (req.body.department) {
       docs = docs.filter((doc) => {
         return doc.department === req.body.department;
+      })
+    }
+    if (req.body.business) {
+      docs = docs.filter((doc) => {
+        return doc.business === req.body.business;
+      })
+    }
+    if (req.body.docType) {
+      docs = docs.filter((doc) => {
+        return doc.type.type === req.body.docType;
       })
     }
 

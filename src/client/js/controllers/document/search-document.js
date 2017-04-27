@@ -1,4 +1,4 @@
-function SearchDocumentController($rootScope, $scope, $http, commonFactory, departments, documents) {
+function SearchDocumentController($rootScope, $scope, $http, commonFactory, departments, documents, documentTypes, business) {
 
   initializeController();
 
@@ -27,19 +27,32 @@ function SearchDocumentController($rootScope, $scope, $http, commonFactory, depa
 
   function initializeController() {
     retrieveDepartments();
+    retrieveBusiness();
+    retrieveDocTypes();
   }
 
   function retrieveDepartments() {
     departments.readAll()
       .then((data) => {
         $scope.departments = data;
+      });
+  }
+
+  function retrieveBusiness() {
+    business.readAll()
+      .then((data) => {
+        $scope.business = data;
       })
-      .catch(function(error) {
-        console.log(error);
+  }
+
+  function retrieveDocTypes() {
+    documentTypes.readAll()
+      .then((data) => {
+        $scope.docTypes = data;
       });
   }
 
 }
 
-SearchDocumentController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'departments', 'documents'];
+SearchDocumentController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'departments', 'documents', 'documentTypes', 'business'];
 angular.module('app').controller('searchDocumentController', SearchDocumentController);

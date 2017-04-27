@@ -13,15 +13,39 @@
       <label>Nombre:</label>
       <input type="text" placeholder="Nombre de documento o registro" class="form-control" ng-model="search.name"/>
     </div>
-    <div class="col-sm-5 row-separator">
+    <div class="col-sm-5">
       <label for="dept">Departamento:</label>
       <select name="dept" id="dept" class="form-control" ng-model="search.department" ng-options="item.department as item.department for item in departments">
-        <option value="">Seleccione una departamento  {{optional ? '(optional)' : ''}}</option>
+        <option value="">Seleccione un departamento  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+    <div class="col-sm-5 ">
+      <label for="dept">Planta :</label>
+      <select name="dept" id="dept" class="form-control" ng-model="search.business" ng-options="item.business as item.business for item in business">
+        <option value="">Seleccione una planta  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+    <div class="col-sm-5 row-separator">
+      <label for="dept">Tipo de Documento:</label>
+      <select name="dept" id="dept" class="form-control" ng-model="search.docType" ng-options="item.type as item.type for item in docTypes">
+        <option value="">Seleccione un tipo de documento  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
     <div class="col-sm-5">
       <label>Estado:</label>
-      <input type="text" placeholder="Estado de documento o registro" class="form-control" ng-model="search.status"/>
+        <select name="dept" id="dept" class="form-control" ng-model="search.status">
+        <option value="">Seleccione un estado  {{optional ? '(optional)' : ''}}</option>
+        <option value="Anulado">Anulado</option>
+        <option value="En revision por calidad">En revision por calidad</option>
+        <option value="Rechazado por calidad">Rechazado por calidad</option>
+        <option value="En revision por SGIA">En revision por SGIA</option>
+        <option value="Rechazado por SGIA">Rechazado por SGIA</option>
+        <option value="En revision por gerencia">En revision por gerencia</option>
+        <option value="Rechazado por gerencia">Rechazado por gerencia</option>
+        <option value="En revision por jefe de departmento">En revision por jefe de departmento</option>
+        <option value="Rechazado por jefe de departmento">Rechazado por jefe de departmento</option>
+        <option value="Publicado">Publicado</option>
+      </select>
     </div>
     <div class="col-sm-8">
       <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
