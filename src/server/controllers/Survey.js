@@ -232,8 +232,6 @@
         return res.send(error);
       }
 
-      console.log(surveyClients);
-
       SurveyResponse.aggregate(
         [{
           $match: {

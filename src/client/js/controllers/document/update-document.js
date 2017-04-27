@@ -47,6 +47,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.flow.prepForPublication = false;
         //SEND EMAIL TO DOC OWNER
       }
+
+      //CHANGE THIS
     } else if ($scope.selectedDocument.type.blueprint && !$scope.isQuality && !$scope.isSGIA) {
       //If everyone already approved the document
       if (checkBlueprintCompletedApprovals()) {

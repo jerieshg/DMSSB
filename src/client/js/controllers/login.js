@@ -10,7 +10,7 @@ function LoginController($scope, $state, commonFactory, authentication) {
             commonFactory.activateAlert(response.data.message, 'danger');
             break;
           case 200:
-            location.reload();
+            $state.go('app.main');
             break;
         }
       });

@@ -38,7 +38,7 @@
 
  <md-tab  ng-repeat="service in services" label="{{service.service}} - ({{service.charts.length}} preguntas)" >
   <md-content class="md-padding">
-    <div class="card" ng-repeat="e in service.charts">
+    <div class="card" style="width:50%" ng-repeat="e in service.charts">
 
       <div class="card-header">
         <i class="fa fa-asterisk icon-bg"></i>{{e.question}}<p ng-show="!isComparing">- <strong>{{e.average}}% ({{e.responses}} respuestas)</strong></p>

@@ -6,10 +6,9 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
     if ($scope.files && $scope.files.length) {
 
       if ($scope.selectedDocument.type.blueprint) {
-        $scope.selectedDocument.status = "Pendiente autorizaciones";
+        $scope.selectedDocument.status = "En revision por lista de autorizaciones";
       } else {
-        
-        if ($scope.selectedDocument.type.bossPriority && $rootScope.client.department.toUpperCase().includes('JEFE')) {
+        if (($scope.selectedDocument.type.bossPriority || $scope.selectedDocument.type.hasProcessOwner) && $rootScope.client.department.toUpperCase().includes('JEFE')) {
           if ($scope.selectedDocument.requiresSGIA) {
             $scope.selectedDocument.flow.revisionBySGIA = true;
             $scope.selectedDocument.status = "En revision por SGIA";
@@ -17,6 +16,8 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
             $scope.selectedDocument.flow.prepForPublication = true;
             $scope.selectedDocument.status = "Preparado para publicacion";
           }
+        } else if (($scope.selectedDocument.type.bossPriority || $scope.selectedDocument.type.hasProcessOwner)) {
+          $scope.selectedDocument.status = "En Revision por dueño del proceso";
         } else {
           $scope.selectedDocument.status = "En revision por Calidad";
         }
