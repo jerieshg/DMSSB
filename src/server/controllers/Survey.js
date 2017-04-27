@@ -273,12 +273,21 @@
               };
               let responsesCount = [];
               let totalCountHolder = [];
+              
               surveyResponses.forEach(e => {
                 responsesCount[e._id] = e.count;
               });
 
-              clients.forEach(e => {
+              clients.forEach((e, index) => {
                 totalCountHolder[e._id] = e.count;
+
+                if (surveyClients.length === 0) {
+                  data.responses.push({
+                    _id: e._id,
+                    current: responsesCount[e._id] ? responsesCount[e._id] : 0,
+                    total: e.count ? e.count : 0
+                  })
+                }
               });
 
               surveyClients.forEach(function(n) {

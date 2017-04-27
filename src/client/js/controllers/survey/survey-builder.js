@@ -7,6 +7,10 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
   }
 
   $scope.copyQuestion = function() {
+    if (!$scope.newQuestion.update) {
+      $scope.addQuestionToList(true);
+    }
+
     $scope.questionCopy = angular.copy($scope.newQuestion);
   }
 
@@ -97,7 +101,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
   }
 
   //SURVEY JS - QUESTION INFORMATION - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  $scope.addQuestionToList = function() {
+  $scope.addQuestionToList = function(copy) {
     // For dropdown, checkbox, multiple choice, radio buttons
     if ($scope.newQuestion.showChoices && $scope.selectedChoices) {
       $scope.newQuestion.choices = $scope.selectedChoices.map(e => {
@@ -117,15 +121,16 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
     }
 
     //Cannot save 'type' in mongodb
-    $scope.newQuestion.type = $scope.newQuestion.formType;
-    if ($scope.newQuestion.update) {
-      updateQuestionInArray();
-    } else {
-      $scope.newQuestion.name = $scope.newQuestion.title;
-      $scope.survey.questions.push(angular.copy($scope.newQuestion));
+    if (!copy) {
+      $scope.newQuestion.type = $scope.newQuestion.formType;
+      if ($scope.newQuestion.update) {
+        updateQuestionInArray();
+      } else {
+        $scope.newQuestion.name = $scope.newQuestion.title;
+        $scope.survey.questions.push(angular.copy($scope.newQuestion));
+      }
+      $scope.clearQuestion();
     }
-
-    $scope.clearQuestion();
   };
 
   $scope.onQuestionTypeChange = function() {

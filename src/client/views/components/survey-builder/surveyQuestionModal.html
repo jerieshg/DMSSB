@@ -1,7 +1,7 @@
 <div class="modal fade" id="surveyQuestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form name="questionsForm" ng-submit="addQuestionToList()" class="col-sm-12">
+      <form name="questionsForm" ng-submit="addQuestionToList(false)" class="col-sm-12">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLongTitle">Pregunta #{{newQuestion.update ? updateText : survey.questions.length+1}}</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
