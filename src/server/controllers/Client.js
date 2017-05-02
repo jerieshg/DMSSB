@@ -8,6 +8,11 @@ module.exports.readAll = function(req, res, next) {
       return res.send(error);
     }
 
+    clients.sort((a, b) => {
+      return (a.username < b.username) ? -1 : (a.username > b.username) ? 1 : 0;
+    });
+
+
     res.json(clients);
   });
 }

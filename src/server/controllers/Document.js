@@ -1,4 +1,5 @@
 let Document = require('../models/Document');
+let Client = require('../models/Client');
 let path = require("path");
 let randomstring = require("randomstring");
 let fse = require("fs-extra");
@@ -127,51 +128,18 @@ module.exports.findMyDocuments = function(req, res, next) {
 }
 
 module.exports.findPendingDocuments = function(req, res, next) {
+  Client.findOne({
+    _id: req.params.id
+  }, function(error, client) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
 
-  let isQuality = (req.params.quality && req.params.quality === "true") ? true : false;
-  let isSGIA = (req.params.SGIA && req.params.SGIA === "true") ? true : false;
-
-  if (isSGIA) {
-    Document.find({
-      'requiresSGIA': true,
-      'flow.published': false,
-      'flow.revisionBySGIA': true,
-      'flow.approvedByQuality': true,
-      'flow.prepForPublication': false
-    }, function(error, docs) {
-      if (error) {
-        res.status(500);
-        next(error);
-        return res.send(error);
-      }
-
-      res.json(docs);
-    });
-  } else if (isQuality) {
-    Document.find({
-      $and: [{
-        'flow.published': false,
-      }, {
-        $or: [{
-          'flow.prepForPublication': true
-        }, {
-          'flow.approvedByQuality': false
-        }]
-      }]
-    }, function(error, docs) {
-      if (error) {
-        res.status(500);
-        next(error);
-        return res.send(error);
-      }
-
-      res.json(docs);
-    });
-  } else {
     Document.find({
       'flow.published': false,
-      // 'type.blueprint': true,
-      // 'flow.blueprintApproved': false
+      business: client.business
     }, function(error, docs) {
       if (error) {
         res.status(500);
@@ -179,26 +147,95 @@ module.exports.findPendingDocuments = function(req, res, next) {
         return res.send(error);
       }
 
-      let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
-      let job = new Buffer(req.params.job, 'binary').toString('utf8');
+      docs.filter((doc) => {
+        if (doc.type.blueprint && !e.flow.blueprintApproved) {
+          return e.implication.authorized.map(a => a.user._id).includes(req.params.id);
+        } else if (doc.type.isProcessOrManual) {
 
-      docs = docs.filter((e) => {
-        if (e.type.blueprint && !e.flow.blueprintApproved && e.type.authorized.length > 0) {
-          return e.type.authorized.map(a => a.user._id).includes(req.params.id);
+        } else {
+
         }
-        7
-
-        return (e.type.hasProcessOwner && e.department === dept && job.toUpperCase().includes('JEFE') && !e.approvedByProcessOwner);
-      });
-
-      docs = docs.filter((e) => {
-        let approvals = e.approvals.filter((e) => e.forBlueprint && !e.approved);
-        return !approvals.map(a => a.user._id).includes(req.params.id);
-      });
+      })
 
       res.json(docs);
     });
-  }
+
+
+  });
+  //Get USer ID
+  //Get Department
+  // Load documents as per type.flow and if that person already approved it or not
+  // let isQuality = (req.params.quality && req.params.quality === "true") ? true : false;
+  // let isSGIA = (req.params.SGIA && req.params.SGIA === "true") ? true : false;
+
+  // if (isSGIA) {
+  //   Document.find({
+  //     'requiresSGIA': true,
+  //     'flow.published': false,
+  //     'flow.revisionBySGIA': true,
+  //     'flow.approvedByQuality': true,
+  //     'flow.prepForPublication': false
+  //   }, function(error, docs) {
+  //     if (error) {
+  //       res.status(500);
+  //       next(error);
+  //       return res.send(error);
+  //     }
+
+  //     res.json(docs);
+  //   });
+  // } else if (isQuality) {
+  //   Document.find({
+  //     $and: [{
+  //       'flow.published': false,
+  //     }, {
+  //       $or: [{
+  //         'flow.prepForPublication': true
+  //       }, {
+  //         'flow.approvedByQuality': false
+  //       }]
+  //     }]
+  //   }, function(error, docs) {
+  //     if (error) {
+  //       res.status(500);
+  //       next(error);
+  //       return res.send(error);
+  //     }
+
+  //     res.json(docs);
+  //   });
+  // } else {
+  //   Document.find({
+  //     'flow.published': false,
+  //     // 'type.blueprint': true,
+  //     // 'flow.blueprintApproved': false
+  //   }, function(error, docs) {
+  //     if (error) {
+  //       res.status(500);
+  //       next(error);
+  //       return res.send(error);
+  //     }
+
+  //     let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
+  //     let job = new Buffer(req.params.job, 'binary').toString('utf8');
+
+  //     docs = docs.filter((e) => {
+  //       if (e.type.blueprint && !e.flow.blueprintApproved && e.type.authorized.length > 0) {
+  //         return e.type.authorized.map(a => a.user._id).includes(req.params.id);
+  //       }
+  //       7
+
+  //       return (e.type.hasProcessOwner && e.department === dept && job.toUpperCase().includes('JEFE') && !e.approvedByProcessOwner);
+  //     });
+
+  //     docs = docs.filter((e) => {
+  //       let approvals = e.approvals.filter((e) => e.forBlueprint && !e.approved);
+  //       return !approvals.map(a => a.user._id).includes(req.params.id);
+  //     });
+
+  //     res.json(docs);
+  //   });
+  // }
 }
 
 module.exports.updateApprovals = function(req, res, next) {

@@ -1,4 +1,4 @@
-function DocTypesController($scope, $http, commonFactory, documentTypes, clients) {
+function DocTypesController($scope, $http, commonFactory, documentTypes, clients, business, departments) {
 
   initializeController();
 
@@ -8,54 +8,59 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
     commonFactory.printTable("adminTable");
   }
 
+  $scope.loadBusinessFlow = function() {
+    if ($scope.selectedBusiness.name) {
+      // $scope.selectedFlow = $scope.selectedDocType.flow.find((e) => e.business === $scope.selectedBusiness.name);
+      let selectedFlow = $scope.selectedDocType.flow[$scope.selectedBusiness.name];
+
+      if (!selectedFlow) {
+        $scope.selectedDocType.flow[$scope.selectedBusiness.name] = {};
+        $scope.selectedDocType.flow[$scope.selectedBusiness.name].approvals = {
+          deptBoss: {},
+          sgia: [],
+          qa: [],
+          management: [],
+        }
+      }
+
+      console.log($scope.selectedDocType);
+    }
+  }
+
   $scope.newDocType = function() {
     $scope.selectedDocType = {
-      authorized: []
+      flow: {}
     };
-    $scope.selectedAuths = [{}];
+    $scope.selectedBusiness = {};
     $scope.choices.number = 0;
   }
 
   $scope.saveDocType = function() {
-    if ($scope.selectedDocType.blueprint) {
-
-      for (let [index, value] of $scope.selectedAuths.entries()) {
-        $scope.selectedDocType.authorized[index] = {
-          user: value.user,
-          priority: value.priority
-        };
-      }
-
-      $scope.selectedDocType.bossPriority = false;
-    }
-    
     if ($scope.selectedDocType.edit) {
       documentTypes.update($scope.selectedDocType)
         .then((data) => {
-          $scope.selectedDocType = {};
           retrieveDocTypes();
+          $scope.selectedBusiness = {};
         });
     } else {
       $scope.selectedDocType.created = new Date();
       documentTypes.save($scope.selectedDocType)
         .then((data) => {
-          $scope.selectedDocType = {};
           retrieveDocTypes();
+          $scope.selectedBusiness = {};
         });
     }
+  }
+
+  $scope.clear = function() {
+    $scope.selectedDocType = {};
+    $scope.selectedBusiness = {};
   }
 
   $scope.updateDocType = function(docType) {
     $scope.selectedDocType = angular.copy(docType);
     $scope.selectedDocType.edit = true;
-
-    $scope.choices.number = $scope.selectedDocType.authorized.length;
-    for (let [index, value] of $scope.selectedDocType.authorized.entries()) {
-      $scope.selectedAuths[index] = {
-        user: value.user,
-        priority: value.priority
-      };
-    }
+    $scope.selectedBusiness = {};
   }
 
   $scope.deleteDocType = function(id) {
@@ -71,10 +76,16 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
   function initializeController() {
     retrieveDocTypes();
     retrieveClients();
+    retrieveBusiness();
+    retrieveDepartment();
     $scope.choiceOptions = commonFactory.generateNumberArray(1, 20);
     $scope.priorityLevels = commonFactory.generateNumberArray(1, 3);
     $scope.selectedAuths = [{}];
     $scope.choices = {};
+    $scope.selectedBusiness = {};
+    $scope.filter = {
+      deptBoss: ''
+    }
   }
 
   function retrieveDocTypes() {
@@ -90,7 +101,21 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
         $scope.clients = data;
       });
   }
+
+  function retrieveDepartment() {
+    departments.readAll()
+      .then((data) => {
+        $scope.departments = data;
+      });
+  }
+
+  function retrieveBusiness() {
+    business.readAll()
+      .then((data) => {
+        $scope.business = data;
+      });
+  }
 }
 
-DocTypesController.$inject = ['$scope', '$http', 'commonFactory', 'documentTypes', 'clients'];
+DocTypesController.$inject = ['$scope', '$http', 'commonFactory', 'documentTypes', 'clients', 'business', 'departments'];
 angular.module('app').controller('docTypesController', DocTypesController);

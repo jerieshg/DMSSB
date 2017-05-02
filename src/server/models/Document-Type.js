@@ -7,15 +7,10 @@ let schema = new mongoose.Schema({
     unique: true
   },
   code: String,
-  authorized: [{
-    user: {
-      _id: mongoose.Schema.Types.ObjectId,
-      username: String,
-    },
-    priority: Number
-  }],
-  hasProcessOwner: Boolean,
+  flow: {},
   blueprint: Boolean,
+  isProcessOrManual: Boolean,
+  requiresSGIA: Boolean,
   bossPriority: Boolean,
   created: Date
 })

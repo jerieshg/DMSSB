@@ -75,6 +75,8 @@ module.exports = function(router) {
     .get(Survey.findByClient);
   router.route('/api/surveys/:id/clients/:client/')
     .get(Survey.findbyClientAndId)
+  router.route('/api/surveys/department/:dept/')
+    .get(Survey.findByDepartments)
   router.route('/api/surveys/department/:dept/clients/:client')
     .get(Survey.findByDepartmentAndClient)
   router.route('/api/surveys/:id/department/:dept/')
@@ -214,7 +216,7 @@ module.exports = function(router) {
     .post(upload.any(), Document.create);
   router.route('/api/documents/clients/:id')
     .get(Document.findMyDocuments);
-  router.route('/api/documents/pending/:id/quality/:quality/SGIA/:SGIA/dept/:dept/job/:job')
+  router.route('/api/documents/pending/:id/')
     .get(Document.findPendingDocuments);
   router.route('/api/documents/:id/approvals')
     .put(Document.updateApprovals)

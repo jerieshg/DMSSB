@@ -15,7 +15,10 @@
     <div class="input-group-addon"><i class="fa fa-search"></i></div>
     <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
   </div> 
-  <table class="table table-hover table-responsive" style="margin-top:10px;">
+  <div ng-show="surveys.length < 1">
+    <h5>No tiene encuestas asignadas o disponibles!</h5>
+  </div>
+  <table class="table table-hover table-responsive" ng-show="surveys.length > 0" style="margin-top:10px;">
     <thead>
       <tr>
         <td></td>

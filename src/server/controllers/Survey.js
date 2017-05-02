@@ -201,6 +201,23 @@
     });
   }
 
+  module.exports.findByDepartments = function(req, res, next) {
+    let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
+
+    Survey.find({
+      department: dept
+    }, function(error, surveys) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
+
+      res.json(surveys);
+    });
+  }
+
   module.exports.findbyDeptAndId = function(req, res, next) {
     let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
 
@@ -273,7 +290,7 @@
               };
               let responsesCount = [];
               let totalCountHolder = [];
-              
+
               surveyResponses.forEach(e => {
                 responsesCount[e._id] = e.count;
               });

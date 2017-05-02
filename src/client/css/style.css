@@ -8734,7 +8734,7 @@ md-toast.md-danger-theme .md-toast-content {
   margin-bottom: 1.5%; }
 
 .form-divider {
-  height: 1px;
+  height: 2px;
   margin: 9px 1px;
   overflow: hidden;
   background-color: #e5e5e5;
@@ -9137,6 +9137,19 @@ hr:after {
   height: 2.9em;
   background: white;
   border: 1px solid rgba(0, 0, 0, 0.15); }
+
+.approvalSection {
+  border-top: 1px solid #dee4e7;
+  margin-top: 4.4em;
+  padding: 1em 0 2em 0; }
+
+.doc-type-separator {
+  padding-bottom: 5%;
+  border-bottom: 1px solid #a9c0ca;
+  margin-bottom: 4%; }
+
+.doc-type-separator select {
+  margin-bottom: 2%; }
 
 /*!
  * surveyjs - Survey JavaScript library v0.11.0

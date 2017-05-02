@@ -12,60 +12,111 @@
 
           <div class="col-md-3 modal-legend" >
            <strong>Opciones: </strong>
-           <div class="checkbox-legend">
+           <div class="checkbox-legend" ng-show="!selectedDocType.isProcessOrManual">
             <label style="font-size:10px;">
              <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.blueprint" title="Seleccione esta casilla si el documento es un plano.">
              Plano
            </label>
          </div>
          <div class="checkbox-legend" ng-show="!selectedDocType.blueprint">
-           <label style="font-size:10px;">
-            <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.bossPriority" title="Seleccione esta casilla para que cuando el documento o registro sea enviado por un jefe, automaticamente pasa al siguiente paso del flujo designado. Opcion habilitada cuando el documento NO es un plano.">
-            Prioridad para jefe
-          </label>
-        </div>
-          <div class="checkbox-legend" ng-show="!selectedDocType.blueprint">
-            <label style="font-size:10px;">
-             <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.hasProcessOwner" title="Seleccione esta casilla si el documento ocupa la autorizacion del dueño del proceso">
-             Contiene dueño del proceso
-           </label>
-         </div>
-      </div>
-
-      <div class="col-md-9">
-       <label for="type">Tipo de documento:</label>
-       <input type="text" id="type" class="form-control" ng-model="selectedDocType.type" required>
-       <br/>
-       <label for="code">Codigo:</label>
-       <input type="text" id="code" class="form-control" ng-model="selectedDocType.code" required>
-       <br/>
-       <div ng-show="selectedDocType.blueprint">
-        <label for="auths">Autorizados:</label>
-        <div class="row-separator">
-         <select id="choicesSelect" class="form-control" ng-model="choices.number" ng-options="item for item in choiceOptions" name="choicesNumber" ng-required="selectedDocType.blueprint">
-          <option value=""># de autorizados {{optional ? '(optional)' : ''}}</option>
-        </select>
-      </div>
-    </div>
-    <!-- Blueprints section -->
-    <div class="col-sm-12"  ng-show="selectedDocType.blueprint">
-      <div ng-repeat="n in [] | range:choices.number" class="row row-separator">
-        <div class="input-group">
-          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedAuths[$index].user" name="option-$index" ng-options="item as item.username for item in clients track by item._id" ng-required="selectedDocType.blueprint">
-            <option value="">Seleccione usuario {{optional ? '(optional)' : ''}}</option>
-          </select>
-          <span class="input-group-addon">-</span>
-          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedAuths[$index].priority" name="option-$index" ng-options="item for item in priorityLevels" ng-required="selectedDocType.blueprint">
-           <option value="">Seleccione prioridad {{optional ? '(optional)' : ''}}</option>
-         </select>
+          <label style="font-size:10px;">
+           <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.isProcessOrManual" title="Seleccione esta casilla si el documento es un proceso o manual">
+           Proceso o Manual
+         </label>
        </div>
+       <div class="checkbox-legend">
+        <label style="font-size:10px;">
+         <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.requiresSGIA" title="Seleccione esta casilla si el documento ocupa SGIA">
+         Requiere SGIA
+       </label>
      </div>
-   </div>
-   <!-- end plueprint section -->
+     <div class="checkbox-legend" ng-show="!selectedDocType.blueprint">
+       <label style="font-size:10px;">
+        <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.bossPriority" title="Seleccione esta casilla para que cuando el documento o registro sea enviado por un jefe, automaticamente pasa al siguiente paso del flujo designado. Opcion habilitada cuando el documento NO es un plano.">
+        Prioridad para jefe
+      </label>
+    </div>
+  </div>
+
+  <div class="col-md-9">
+   <label for="type">Tipo de documento:</label>
+   <input type="text" id="type" class="form-control" ng-model="selectedDocType.type" required>
+   <br/>
+   <label for="code">Codigo:</label>
+   <input type="text" id="code" class="form-control" ng-model="selectedDocType.code" required>
    <br/>
  </div>
- <div class="modal-footer">
+
+ <div class="col-sm-12 approvalSection">
+  <h5>Encargados de aprobaciones</h5>
+
+  <div class="col-sm-12">
+    <strong>Empresa:</strong>
+    <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedBusiness.name" ng-change="loadBusinessFlow()" ng-options="item.business as item.business for item in business track by item._id">
+      <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
+    </select>
+  </div>
+
+  <div class="form-divider"></div>
+
+  <div ng-show="selectedDocType.flow[selectedBusiness.name]">
+  <div class="col-sm-12 doc-type-separator" ng-show="!selectedDocType.blueprint">
+    <h6>Jefe del departamento:</h6>
+    <strong class="small" style="font-weight: bold;">Seleccione departamento:</strong>
+    <select class="form-control" ng-model="filter.deptBoss" ng-options="item.department as item.department for item in departments">
+      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+    </select>
+
+    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
+    <select class="form-control"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['deptBoss'][filter.deptBoss]" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.deptBoss } track by item._id" multiple >
+    </select>
+
+  </div>
+
+  <div class="col-sm-12 doc-type-separator" ng-show="!selectedDocType.blueprint">
+    <h6>Calidad:</h6>
+    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
+    <select class="form-control row-separator"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['qa']" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.qa } track by item._id" multiple >
+    </select>
+
+    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
+    <select class="form-control" ng-model="filter.qa" ng-options="item.department as item.department for item in departments">
+      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+    </select>
+  </div>
+
+  <div class="col-sm-12 doc-type-separator" ng-show="selectedDocType.requiresSGIA">
+    <h6>SGIA:</h6>
+    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
+    <select class="form-control row-separator"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['sgia']" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.sgia } track by item._id" multiple >
+    </select>
+
+    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
+    <select class="form-control" ng-model="filter.sgia" ng-options="item.department as item.department for item in departments">
+      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+    </select>
+  </div>
+
+  <div class="col-sm-12 doc-type-separator" ng-show="selectedDocType.isProcessOrManual || selectedDocType.blueprint">
+   <h6>Gerencia:</h6>
+   <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
+   <select class="form-control row-separator"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['management']" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.management } track by item._id" multiple >
+   </select>
+
+   <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
+   <select class="form-control" ng-model="filter.management" ng-options="item.department as item.department for item in departments">
+    <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+  </select>
+</div>
+</div>
+
+</div>
+<div class="modal-footer">
+
   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+  <button type="button" class="btn btn-danger" ng-click="clear()">
+    <i class="fa fa-ban" aria-hidden="true"/>Limpiar formulario
+  </button>
   <button  class="btn btn-success" type="submit">
    <i class="fa fa-save" aria-hidden="true"/>  Guardar Tipo de documento
  </button>

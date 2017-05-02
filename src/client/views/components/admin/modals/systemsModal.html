@@ -12,9 +12,18 @@
        <label for="system">Sistema:</label>
        <input type="text" id="system" class="form-control" ng-model="selectedSystem.system" required>
        <br/>
-         <label for="implication">Implicacion:</label>
-       <select id="implication" name="implication" class="form-control" ng-model="selectedSystem.implications" ng-options="item.implication as item.implication for item in implications" required multiple>
-      </select>
+       <label for="implication">Implicacion:</label>
+       <select id="implication" name="implication" class="form-control" ng-model="selectedSystem.implications" ng-options="item as item.implication for item in implications track by item._id" required multiple>
+       </select>
+       <br/>
+
+    <h5>Lista de autorizaciones por implicacion</h5>
+
+       <div ng-repeat="item in selectedSystem.implications" class="row-separator">
+         <strong>{{item.implication}}</strong>
+          <select type="text" class="form-control" ng-model="selectedSystem.implications[$index].authorization" name="option-$index" ng-options="item as item.username for item in clients track by item._id" multiple required>
+          </select>
+       </div>
        <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
         <button  class="btn btn-success" type="submit">

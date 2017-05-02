@@ -6,7 +6,13 @@ let schema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  implications: [],
+  implications: [{
+    implication: String,
+    authorization: [{
+      _id: mongoose.Schema.Types.ObjectId,
+      username: String
+    }]
+  }],
   created: Date
 })
 

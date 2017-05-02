@@ -16,19 +16,12 @@ function PendingApprovalDocumentController($rootScope, $scope, $http, commonFact
   }
 
   function retrievePendingDocuments() {
-    departments.findByName($rootScope.client.department)
-      .then((data) => {
-
-        let isQuality = (data && data.documentRevision) ? data.documentRevision : false;
-        let isSGIA = (data && data.isSGIA) ? data.isSGIA : false;
-
-        $http.get(`/api/documents/pending/${$rootScope.client._id}/quality/${isQuality}/SGIA/${isSGIA}/dept/${$rootScope.client.department}/job/${$rootScope.client.job}`)
-          .then(function(response) {
-            $scope.documents = response.data;
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
+    $http.get(`/api/documents/pending/${$rootScope.client._id}/`)
+      .then(function(response) {
+        $scope.documents = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
       });
   }
 }

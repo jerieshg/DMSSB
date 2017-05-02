@@ -18,27 +18,20 @@ let schema = new mongoose.Schema({
   business: String,
   department: String,
   type: {
-    type: {
-      type: String
-    },
+    type: String,
     code: String,
-    authorized: [{
-      user: {
-        _id: String,
-        username: String,
-      },
-      priority: Number
-    }],
+    flow: {},
     blueprint: Boolean,
-    hasProcessOwner: Boolean,
+    isProcessOrManual: Boolean,
+    requiresSGIA: Boolean,
     bossPriority: Boolean,
     created: Date
   },
   expiredDate: Date,
   active: Boolean,
-  requiresSGIA: Boolean,
+  requiresSafetyEnv: Boolean,
   system: String,
-  implication: String,
+  implication: {},
   files: [],
   status: String,
   comments: String,
