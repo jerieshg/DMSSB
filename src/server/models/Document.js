@@ -18,13 +18,15 @@ let schema = new mongoose.Schema({
   business: String,
   department: String,
   type: {
-    type: String,
+    type: {
+      type: String,
+      unique: true
+    },
     code: String,
     flow: {},
     blueprint: Boolean,
     isProcessOrManual: Boolean,
     requiresSGIA: Boolean,
-    bossPriority: Boolean,
     created: Date
   },
   expiredDate: Date,
@@ -47,11 +49,11 @@ let schema = new mongoose.Schema({
     created: Date
   }],
   flow: {
-    approvedByQuality: Boolean,
+    revisionBySGIA: Boolean,
+    approvedByQA: Boolean,
     approvedBySGIA: Boolean,
     blueprintApproved: Boolean,
-    revisionBySGIA: Boolean,
-    approvedByProcessOwner: Boolean,
+    approvedByBoss: Boolean,
     prepForPublication: Boolean,
     published: Boolean
   },

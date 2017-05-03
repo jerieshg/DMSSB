@@ -8,7 +8,7 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
       if ($scope.selectedDocument.type.blueprint) {
         $scope.selectedDocument.status = "En revision por lista de autorizaciones";
       } else {
-        if (($scope.selectedDocument.type.bossPriority || $scope.selectedDocument.type.hasProcessOwner) && $rootScope.client.department.toUpperCase().includes('JEFE')) {
+        if ($rootScope.client.department.toUpperCase().includes('JEFE') && !$scope.selectedDocument.type.isProcessOrManual && !$scope.selectedDocument.type.blueprint) {
           if ($scope.selectedDocument.requiresSGIA) {
             $scope.selectedDocument.flow.revisionBySGIA = true;
             $scope.selectedDocument.status = "En revision por SGIA";
@@ -16,8 +16,8 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
             $scope.selectedDocument.flow.prepForPublication = true;
             $scope.selectedDocument.status = "Preparado para publicacion";
           }
-        } else if (($scope.selectedDocument.type.bossPriority || $scope.selectedDocument.type.hasProcessOwner)) {
-          $scope.selectedDocument.status = "En Revision por dueño del proceso";
+        } else if (!$scope.selectedDocument.type.isProcessOrManual && !$scope.selectedDocument.type.blueprint) {
+          $scope.selectedDocument.status = "En revision por jefe de departamento";
         } else {
           $scope.selectedDocument.status = "En revision por Calidad";
         }
@@ -29,6 +29,8 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
         _id: $rootScope.client._id,
         username: $rootScope.client.username
       };
+
+      console.log($scope.selectedDocument);
 
       Upload.upload({
         url: `/api/documents/${$scope.selectedDocument.name}`,

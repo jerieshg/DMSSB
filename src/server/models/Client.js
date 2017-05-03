@@ -37,7 +37,7 @@ clientSchema.methods.generateJwt = function() {
     _id: this._id,
     username: this.username,
     email: this.email,
-    business: this.buisness,
+    business: this.business,
     role: this.role,
     department: this.department,
     job: this.job,

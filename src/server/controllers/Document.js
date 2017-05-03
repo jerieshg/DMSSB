@@ -20,6 +20,8 @@ module.exports.create = function(req, res, next) {
   let doc = new Document(req.body.document);
   doc.created = new Date();
 
+
+
   req.files.forEach((e) => {
     doc.files.push({
       fileName: e.filename,
@@ -148,13 +150,33 @@ module.exports.findPendingDocuments = function(req, res, next) {
       }
 
       docs.filter((doc) => {
-        if (doc.type.blueprint && !e.flow.blueprintApproved) {
-          return e.implication.authorized.map(a => a.user._id).includes(req.params.id);
-        } else if (doc.type.isProcessOrManual) {
-
-        } else {
-
+        if (doc.type.blueprint && !doc.flow.blueprintApproved) {
+          return doc.implication.authorized.map(a => a.user._id).includes(req.params.id);
         }
+
+        let selectedFlow = doc.type.flow[client.business];
+
+        if (selectedFlow) {
+          let deptBoss = selectedFlow.approvals.deptBoss[client.department].filter((e) => {
+            return e._id === client._id;
+          });
+
+          let management = (selectedFlow.approvals.management) ? selectedFlow.approvals.management.filter((e) => {
+            return e._id === client._id;
+          }) : [];
+
+          let qa = (selectedFlow.approvals.qa) ? selectedFlow.approvals.qa.filter((e) => {
+            return e._id === client._id;
+          }) : [];
+
+          let sgia = (selectedFlow.approvals.sgia) ? selectedFlow.approvals.sgia.filter((e) => {
+            return e._id === client._id;
+          }) : [];
+
+          return (deptBoss && deptBoss.length > 0 && !doc.flow.approvedByBoss) || (management && management.length > 0 && !doc.flow.approvedByManagement) || (qa && qa.length > 0 && (!doc.flow.approvedByQA && !doc.flow.prepForPublication)) || (sgia && sgia.length > 0 && !doc.approvedBySGIA && doc.type.requiresSGIA);
+        }
+
+        return false;
       })
 
       res.json(docs);

@@ -25,7 +25,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
     let added = false;
 
-    $scope.selectedApproved.forBlueprint = $scope.selectedDocument.type.blueprint && !$scope.isQuality && !$scope.isSGIA;
+    $scope.selectedApproved.forBlueprint = $scope.selectedDocument.type.blueprint && !$scope.isQA && !$scope.isSGIA;
     $scope.selectedDocument.approvals.forEach(function(item, i) {
       if (item.user._id === $rootScope.client._id) {
         $scope.selectedDocument.approvals[i] = $scope.selectedApproved;
@@ -49,7 +49,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       }
 
       //CHANGE THIS
-    } else if ($scope.selectedDocument.type.blueprint && !$scope.isQuality && !$scope.isSGIA) {
+    } else if ($scope.selectedDocument.type.blueprint && !$scope.isQA && !$scope.isSGIA) {
       //If everyone already approved the document
       if (checkBlueprintCompletedApprovals()) {
         //SI SE TIENE SGIA, MOVER A SGIA...ELSE MOVER A PREP FOR PRD
@@ -67,7 +67,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.flow.prepForPublication = false;
         $scope.selectedDocument.flow.revisionBySGIA = false;
       }
-    } else if ($scope.isQuality) {
+    } else if ($scope.isQA) {
       //If it's approved and it is not in prep for Publication
       if ($scope.selectedApproved.approved && !$scope.selectedDocument.flow.prepForPublication) {
         $scope.selectedDocument.flow.approvedByQuality = $scope.selectedApproved.approved;
@@ -244,7 +244,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   function initializeController() {
     $(".datepicker input").datepicker({});
     $scope.priorities = ["Alta", "Normal", "Bajo"];
-    $scope.isQuality = false;
+    $scope.isQA = false;
     $scope.isSGIA = false;
     $scope.canApprove = false;
     retrieveDocument();
@@ -266,46 +266,71 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
         $scope.originalDocument = angular.copy($scope.selectedDocument);
         if (!$scope.selectedDocument.flow.published) {
-          departments.findByName($rootScope.client.department)
-            .then((data) => {
 
-              let documentRevision = (data && data.documentRevision);
-              $scope.isQuality = documentRevision;
+          //     Can approve only if client is a SGIA and already approved by Quality
+          //     TODO: ADD CHECK IF EVERYONE HAS ALREADY AUTHORIZED THE DOCUMENT
+          let sgia = $scope.selectedDocument.type.flow[$rootScope.client.business].approvals.sgia;
+          $scope.isSGIA = (sgia) ? sgia.map(e => e._id).includes($rootScope.client._id) : false;
 
-              let isSGIA = (data && data.isSGIA);
-              $scope.isSGIA = isSGIA;
+          let qa = $scope.selectedDocument.type.flow[$rootScope.client.business].approvals.qa;
+          $scope.isQA = (qa) ? qa.map(e => e._id).includes($rootScope.client._id) : false;
 
-              $scope.isProcessOwner = $scope.selectedDocument.type.hasProcessOwner && $scope.selectedDocument.department === dept && job.toUpperCase().includes('JEFE');
+          let deptBoss = $scope.selectedDocument.type.flow[$rootScope.client.business].approvals.deptBoss[$rootScope.client.department];
+          $scope.isDepartmentBoss = (deptBoss) ? deptBoss.map((e) => e._id).includes($rootScope.client._id) : false;
 
-              //Can approve only if client is a SGIA and already approved by Quality
-              //TODO: ADD CHECK IF EVERYONE HAS ALREADY AUTHORIZED THE DOCUMENT
-              if (isSGIA && $scope.selectedDocument.flow.approvedByQuality && $scope.selectedDocument.requiresSGIA && !$scope.selectedDocument.flow.prepForPublication) {
-                $scope.canApprove = true;
-              }
+          console.log($scope.isSGIA, $scope.isQA, $scope.isDepartmentBoss);
 
-              //IF USER IS DOCUMENT REVISION AND HAVE NOT APPROVED THE DOCUMENT then can approve
-              if (documentRevision && (!$scope.selectedDocument.flow.approvedByQuality || $scope.selectedDocument.flow.prepForPublication)) {
-                $scope.canApprove = true;
-              }
+          //Check if already approved... by comparing to the documents approvals list
 
-              //IF ITS A BLUEPRINT and I HAVE NOT YET AUTHORISED THE DOCUMENT THEN AUTH
-              if ($scope.selectedDocument.type.blueprint && !checkBlueprintCompletedApprovals()) {
-                $scope.canApprove = true;
-                // let foundAuth = $scope.selectedDocument.type.authorized.filter((auth) => {
-                //   return auth.user._id === $rootScope.client._id
-                // });
+          if ($scope.isDepartmentBoss && !$scope.selectedDocument.flow.prepForPublication) {
+            $scope.canApprove = true;
+          }
 
-                // if (foundAuth && foundAuth.length > 0) {
-                //   foundAuth = foundAuth[0];
+          if ($scope.selectedDocument.requiresSGIA && $scope.isSGIA && $scope.selectedDocument.flow.approvedByQuality && !$scope.selectedDocument.flow.prepForPublication) {
+            $scope.canApprove = true;
+          }
 
-                // }
-              }
 
-              //IF I AM A PROCESS OWNER THEN I CAN AUTHORISE THE DOCUMENT
-              if ($scope.isProcessOwner && !$scope.selectedDocument.flow.prepForPublication) {
-                $scope.canApprove = true;
-              }
-            });
+          // departments.findByName($rootScope.client.department)
+          //   .then((data) => {
+
+          //     let documentRevision = (data && data.documentRevision);
+          //     $scope.isQA = documentRevision;
+
+          //     let isSGIA = (data && data.isSGIA);
+          //     $scope.isSGIA = isSGIA;
+
+          //     $scope.isProcessOwner = $scope.selectedDocument.type.hasProcessOwner && $scope.selectedDocument.department === dept && job.toUpperCase().includes('JEFE');
+
+          //     //Can approve only if client is a SGIA and already approved by Quality
+          //     //TODO: ADD CHECK IF EVERYONE HAS ALREADY AUTHORIZED THE DOCUMENT
+          //     if (isSGIA && $scope.selectedDocument.flow.approvedByQuality && $scope.selectedDocument.requiresSGIA && !$scope.selectedDocument.flow.prepForPublication) {
+          //       $scope.canApprove = true;
+          //     }
+
+          //     //IF USER IS DOCUMENT REVISION AND HAVE NOT APPROVED THE DOCUMENT then can approve
+          //     if (documentRevision && (!$scope.selectedDocument.flow.approvedByQuality || $scope.selectedDocument.flow.prepForPublication)) {
+          //       $scope.canApprove = true;
+          //     }
+
+          //     //IF ITS A BLUEPRINT and I HAVE NOT YET AUTHORISED THE DOCUMENT THEN AUTH
+          //     if ($scope.selectedDocument.type.blueprint && !checkBlueprintCompletedApprovals()) {
+          //       $scope.canApprove = true;
+          //       // let foundAuth = $scope.selectedDocument.type.authorized.filter((auth) => {
+          //       //   return auth.user._id === $rootScope.client._id
+          //       // });
+
+          //       // if (foundAuth && foundAuth.length > 0) {
+          //       //   foundAuth = foundAuth[0];
+
+          //       // }
+          //     }
+
+          //     //IF I AM A PROCESS OWNER THEN I CAN AUTHORISE THE DOCUMENT
+          //     if ($scope.isProcessOwner && !$scope.selectedDocument.flow.prepForPublication) {
+          //       $scope.canApprove = true;
+          //     }
+          //   });
         }
       })
       .catch(function(error) {

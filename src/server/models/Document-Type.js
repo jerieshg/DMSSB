@@ -11,7 +11,6 @@ let schema = new mongoose.Schema({
   blueprint: Boolean,
   isProcessOrManual: Boolean,
   requiresSGIA: Boolean,
-  bossPriority: Boolean,
   created: Date
 })
 
