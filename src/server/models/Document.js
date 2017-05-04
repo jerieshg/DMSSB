@@ -19,8 +19,7 @@ let schema = new mongoose.Schema({
   department: String,
   type: {
     type: {
-      type: String,
-      unique: true
+      type: String
     },
     code: String,
     flow: {},
@@ -50,10 +49,12 @@ let schema = new mongoose.Schema({
   }],
   flow: {
     revisionBySGIA: Boolean,
+    approvedByBoss: Boolean,
     approvedByQA: Boolean,
     approvedBySGIA: Boolean,
+    approvedByManagement: Boolean,
+    approvedByPrepForPublish: Boolean,
     blueprintApproved: Boolean,
-    approvedByBoss: Boolean,
     prepForPublication: Boolean,
     published: Boolean
   },

@@ -10,7 +10,7 @@ let clientSchema = new mongoose.Schema({
     unique: true
   },
   email: String,
-  business: String,
+  business: [String],
   role: {},
   job: String,
   department: String,

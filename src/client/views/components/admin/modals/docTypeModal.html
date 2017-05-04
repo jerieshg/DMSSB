@@ -102,6 +102,18 @@
     <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
   </select>
 </div>
+
+  <div class="col-sm-12 doc-type-separator" >
+    <h6>Preparacion para publicacion:</h6>
+    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
+    <select class="form-control row-separator"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['prepForPublication']" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.prepForPublication } track by item._id" multiple >
+    </select>
+
+    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
+    <select class="form-control" ng-model="filter.prepForPublication" ng-options="item.department as item.department for item in departments">
+      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+    </select>
+  </div>
 </div>
 
 </div>

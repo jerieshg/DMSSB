@@ -8,18 +8,11 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
       if ($scope.selectedDocument.type.blueprint) {
         $scope.selectedDocument.status = "En revision por lista de autorizaciones";
       } else {
-        if ($rootScope.client.department.toUpperCase().includes('JEFE') && !$scope.selectedDocument.type.isProcessOrManual && !$scope.selectedDocument.type.blueprint) {
-          if ($scope.selectedDocument.requiresSGIA) {
-            $scope.selectedDocument.flow.revisionBySGIA = true;
-            $scope.selectedDocument.status = "En revision por SGIA";
-          } else {
-            $scope.selectedDocument.flow.prepForPublication = true;
-            $scope.selectedDocument.status = "Preparado para publicacion";
-          }
-        } else if (!$scope.selectedDocument.type.isProcessOrManual && !$scope.selectedDocument.type.blueprint) {
-          $scope.selectedDocument.status = "En revision por jefe de departamento";
-        } else {
+        if ($rootScope.client.department.toUpperCase().includes('JEFE') && !$scope.selectedDocument.type.isProcessOrManual) {
           $scope.selectedDocument.status = "En revision por Calidad";
+          $scope.selectedDocument.approvedByBoss = true;
+        } else {
+          $scope.selectedDocument.status = "En revision por jefe de departamento";
         }
       }
 
@@ -70,12 +63,15 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
     $scope.selectedDocument = {
       status: "Nuevo",
       flow: {
-        approvedByQuality: false,
-        approvedBySGIA: false,
-        blueprintApproved: false,
         revisionBySGIA: false,
+        approvedByBoss: false,
+        approvedByQA: false,
+        approvedBySGIA: false,
+        approvedByManagement: false,
+        blueprintApproved: false,
         prepForPublication: false,
-        published: false
+        published: false,
+        approvedByPrepForPublish: false
       }
     };
     $scope.priorities = ["Alta", "Normal", "Bajo"];

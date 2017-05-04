@@ -22,8 +22,6 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
           management: [],
         }
       }
-
-      console.log($scope.selectedDocType);
     }
   }
 
@@ -40,14 +38,12 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
       documentTypes.update($scope.selectedDocType)
         .then((data) => {
           retrieveDocTypes();
-          $scope.selectedBusiness = {};
         });
     } else {
       $scope.selectedDocType.created = new Date();
       documentTypes.save($scope.selectedDocType)
         .then((data) => {
           retrieveDocTypes();
-          $scope.selectedBusiness = {};
         });
     }
   }

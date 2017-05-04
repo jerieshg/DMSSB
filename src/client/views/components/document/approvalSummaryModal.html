@@ -9,8 +9,6 @@
       </div>
       <div class="modal-body">
 
-       <h4></h4>
-
        <table class="table table-hover table-responsive">
         <thead>
           <tr>
@@ -19,19 +17,15 @@
             <td>Aprobado</td>
             <td>Comentario</td>
             <td>Fecha</td>
-            <td></td>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="e in selectedDocument.approvals">
            <td >{{$index + 1}}</td>
             <td>{{e.user.username}}</td>
-            <td>{{e.approved}}</td>
+            <td>{{e.approved? 'Si' : 'No'}}</td>
             <td>{{e.comment}}</td>
             <td>{{e.created | date: 'dd-MM-yyyy'}}</td>
-            <td>
-               <i ng-show="e.user._id === client._id" class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;"  data-toggle="modal"  data-target="#approveDocumentModal"  ng-click="findApproval(e)"></i>
-            </td>
          </tr>
        </tbody>
      </table>

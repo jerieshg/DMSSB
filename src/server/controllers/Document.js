@@ -140,8 +140,10 @@ module.exports.findPendingDocuments = function(req, res, next) {
     }
 
     Document.find({
-      'flow.published': false,
-      business: client.business
+      "flow.published": false,
+      business: {
+        $in: client.business
+      }
     }, function(error, docs) {
       if (error) {
         res.status(500);
@@ -149,31 +151,47 @@ module.exports.findPendingDocuments = function(req, res, next) {
         return res.send(error);
       }
 
-      docs.filter((doc) => {
+      docs = docs.filter((doc) => {
         if (doc.type.blueprint && !doc.flow.blueprintApproved) {
           return doc.implication.authorized.map(a => a.user._id).includes(req.params.id);
         }
 
-        let selectedFlow = doc.type.flow[client.business];
+        let selectedFlow = doc.type.flow[doc.business];
+
+        console.log(selectedFlow);
 
         if (selectedFlow) {
-          let deptBoss = selectedFlow.approvals.deptBoss[client.department].filter((e) => {
-            return e._id === client._id;
-          });
+          let sgia = selectedFlow.approvals.sgia;
+          sgia = (sgia) ? sgia.map(e => e._id).includes(client._id.toString()) : false;
 
-          let management = (selectedFlow.approvals.management) ? selectedFlow.approvals.management.filter((e) => {
-            return e._id === client._id;
-          }) : [];
+          let qa = selectedFlow.approvals.qa;
+          qa = (qa) ? qa.map(e => e._id).includes(client._id.toString()) : false;
 
-          let qa = (selectedFlow.approvals.qa) ? selectedFlow.approvals.qa.filter((e) => {
-            return e._id === client._id;
-          }) : [];
+          let deptBoss = selectedFlow.approvals.deptBoss[client.department];
+          console.log(client.department);
+          deptBoss = (deptBoss) ? deptBoss.map((e) => e._id).includes(client._id.toString()) : false;
 
-          let sgia = (selectedFlow.approvals.sgia) ? selectedFlow.approvals.sgia.filter((e) => {
-            return e._id === client._id;
-          }) : [];
+          let management = selectedFlow.approvals.management;
+          management = (management) ? management.map(e => e._id).includes(client._id.toString()) : false;
 
-          return (deptBoss && deptBoss.length > 0 && !doc.flow.approvedByBoss) || (management && management.length > 0 && !doc.flow.approvedByManagement) || (qa && qa.length > 0 && (!doc.flow.approvedByQA && !doc.flow.prepForPublication)) || (sgia && sgia.length > 0 && !doc.approvedBySGIA && doc.type.requiresSGIA);
+          let prepForPublication = selectedFlow.approvals.prepForPublication;
+          prepForPublication = (prepForPublication) ? prepForPublication.map(e => e._id).includes(client._id.toString()) : false;
+
+          console.log(deptBoss);
+
+          if (deptBoss && !doc.flow.approvedByBoss) {
+            return true;
+          } else if (management && !doc.flow.approvedByManagement) {
+            return true;
+          } else if (qa && !doc.flow.approvedByQA && (!doc.flow.prepForPublication || doc.flowapprovedByBoss)) {
+            return true;
+          } else if (doc.type.requiresSGIA && sgia && !doc.flow.approvedBySGIA && doc.flow.approvedByQA) {
+            return true;
+          } else if (prepForPublication && doc.flow.prepForPublication) {
+            return true;
+          } else {
+            return false;
+          }
         }
 
         return false;

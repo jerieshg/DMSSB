@@ -265,7 +265,9 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
           }
         });
 
-        answers = new Map([...answers.entries()].sort());
+        answers = new Map([...answers.entries()].sort((a, b) => {
+          return a[0] - b[0];
+        }));
         maxValue = e.rates[e.rates.length - 1];
 
         selectedQuestion.rating = true;
