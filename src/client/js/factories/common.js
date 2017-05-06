@@ -85,6 +85,29 @@ angular.module('app').factory('commonFactory', function($mdToast) {
       }
 
       return true;
+    },
+
+    removeDuplicates: function(arr, prop) {
+      let uniqueArray = [];
+      let lookup = {};
+
+      arr.forEach((e) => {
+        lookup[this.deepValue(e, prop)] = e;
+      });
+
+      Object.keys(lookup).forEach(function(key) {
+        uniqueArray.push(lookup[key]);
+      });
+
+      return uniqueArray;
+    },
+
+    deepValue: function(obj, path) {
+      for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
+        obj = obj[path[i]];
+      };
+
+      return obj;
     }
   }
 

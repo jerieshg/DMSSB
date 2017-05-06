@@ -33,6 +33,7 @@
         });
     };
 
+
     var updateApprovals = function(doc) {
       return $http.put(`/api/documents/${doc._id}/approvals/`, doc)
         .then((response) => {
@@ -46,10 +47,24 @@
         });
     };
 
+    var deleteFile = function(id, name) {
+      return $http.delete(`/api/documents/${id}/file/${name}`)
+        .then((response) => {
+          commonFactory.toastMessage(`Archivo borrado exitosamente!`, 'info');
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
+          return error;
+        });
+    };
+
     return {
       delete: _delete,
       save: save,
-      updateApprovals: updateApprovals
+      updateApprovals: updateApprovals,
+      deleteFile: deleteFile
     };
   }
 

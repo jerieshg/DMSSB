@@ -4,18 +4,24 @@
   <div class="row">
     <div class="col-sm-12">
       <a  class="btn btn-primary"  ui-sref-active="active" ui-sref="app.docs.history({id: selectedDocument._id})" title="Ver historial del documento" ng-show="selectedDocument._id">
-      <i class="fa fa-eye" aria-hidden="true"/>  Ver Historial
+        <i class="fa fa-eye" aria-hidden="true"/>  Ver Historial
       </a>
       <a  class="btn btn-info"  data-toggle="modal"  data-target="#approvalSummaryModal" title="Ver resumen de aprobaciones" ng-show="selectedDocument._id" style="color:white;">
-      <i class="fa fa-eye" aria-hidden="true"/>  Resumen de aprobaciones
+        <i class="fa fa-eye" aria-hidden="true"/>  Resumen de aprobaciones
       </a>
       <a  class="btn btn-warning"  data-toggle="modal"  data-target="#approveDocumentModal" title="Aprobar o desaprobar documento" ng-show="canApprove" style="color:white;" ng-click="findApproval(e)">
-      <i class="fa fa-check" aria-hidden="true"/>  Aprobar documento
+        <i class="fa fa-check" aria-hidden="true"/>  Aprobar documento
+      </a>
+
+       <a  class="btn btn-secondary" ng-click="triggerEdit()" title="Ver historial del documento" ng-show="selectedDocument._id">
+        <i class="fa fa-pencil" aria-hidden="true"/>  Editar
       </a>
     </div>
   </div>
   <form name="documentForm" class="row" enctype="multipart/form-data" ng-submit="saveDocument()">
+
     <div class="form-divider"></div>
+
     <div class="col-sm-12">
       <input type="submit" style="display: none;" id="documentFormBtn"/>
       <div class="col-sm-12">
@@ -23,89 +29,91 @@
         <h5>{{selectedDocument.status}}</h5>
       </div>
     </div>
+
     <div class="form-divider"></div>
+
     <div class="col-sm-7">
       <label for="docName">Nombre de documento o registro:</label>
-      <input name="docName" type="text" class="form-control" placeholder="Nombre del documento o registro" ng-model="selectedDocument.name" required>
+      <input name="docName" type="text" class="form-control" placeholder="Nombre del documento o registro" ng-model="selectedDocument.name" required ng-disabled="!edit">
     </div>
     <div class="col-sm-2">
       <label for="verison">Version vigente:</label>
-      <input name="verison" type="text" class="form-control" placeholder="Version vigente" ng-model="selectedDocument.version" required>
+      <input name="verison" type="text" class="form-control" placeholder="Version vigente" ng-model="selectedDocument.version" required ng-disabled="!edit">
     </div>
     <div class="col-sm-3">
       <label for="priority">Prioridad:</label>
-      <select name="priority" id="priority" class="form-control" ng-model="selectedDocument.priority" ng-options="item for item in priorities" required>
+      <select name="priority" id="priority" class="form-control" ng-model="selectedDocument.priority" ng-options="item for item in priorities" required ng-disabled="!edit">
         <option value="">Seleccione una prioridad  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
     <div class="form-divider"></div>
     <div class="col-sm-4">
       <label for="tipo">Tipo:</label>
-      <select name="tipo" id="tipo" class="form-control" ng-model="selectedDocument.type" ng-options="item as item.type for item in docTypes track by item.type" required>
+      <select name="tipo" id="tipo" class="form-control" ng-model="selectedDocument.type" ng-options="item as item.type for item in docTypes track by item.type" required ng-disabled="!edit">
         <option value="">Seleccione un tipo  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
     <div class="col-sm-4" ng-show="selectedDocument.type.blueprint">
       <label for="system">Sistema:</label>
-      <select name="system" id="system" class="form-control" ng-model="selectedDocument.system" ng-options="item.system as item.system for item in systems" ng-change="updateImplication()">
+      <select name="system" id="system" class="form-control" ng-model="selectedDocument.system" ng-options="item.system as item.system for item in systems" ng-change="updateImplication()" ng-disabled="!edit">
         <option value="">Seleccione un sistema  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
-    <div class="col-sm-4" ng-show="selectedDocument.type.blueprint && selectedDocument.system">
+    <div class="col-sm-4" ng-show="selectedDocument.type.blueprint && selectedDocument.system" ng-disabled="!edit">
       <label for="implication">Implicacion:</label>
-      <select name="implication" id="implication" class="form-control"  ng-model="selectedDocument.implication" ng-options="item for item in retrieveImplications()">
+      <select name="implication" id="implication" class="form-control"  ng-model="selectedDocument.implication" ng-options="item as item.implication for item in retrieveImplications() track by item.implication" ng-disabled="!edit">
         <option value="">Seleccione una implicacion  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
     <div class="form-divider"></div>
     <div class="col-sm-4">
       <label for="requester">Solicitante:</label>
-      <select name="requester" id="requester" class="form-control" ng-model="selectedDocument.requester" ng-options="item.username as item.username for item in clients" required>
+      <select name="requester" id="requester" class="form-control" ng-model="selectedDocument.requester" ng-options="item.username as item.username for item in clients" required ng-disabled="!edit">
         <option value="">Seleccione un usuario  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
     <div class="col-sm-4">
       <label for="dept">Departamento:</label>
-      <select name="dept" id="dept" class="form-control" ng-model="selectedDocument.department" ng-options="item.department as item.department for item in departments" required>
+      <select name="dept" id="dept" class="form-control" ng-model="selectedDocument.department" ng-options="item.department as item.department for item in departments" required ng-disabled="!edit">
         <option value="">Seleccione una departamento  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
     <div class="col-sm-4">
       <label for="business">Planta:</label>
-      <select name="business" id="business" class="form-control" ng-model="selectedDocument.business" ng-options="item.business as item.business for item in business" required>
+      <select name="business" id="business" class="form-control" ng-model="selectedDocument.business" ng-options="item.business as item.business for item in business" required ng-disabled="!edit">
         <option value="">Seleccione una planta  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
     <div class="form-divider"></div>
     <div class="col-sm-3 datepicker" style="padding-left:1em;">
       <label for="requestedDate">Fecha solicitud:</label>
-      <input name="requestedDate" type="text" class="form-control" placeholder="Fecha solicitud" ng-model="selectedDocument.requestedDate" required>
+      <input name="requestedDate" type="text" class="form-control" placeholder="Fecha solicitud" ng-model="selectedDocument.requestedDate" required ng-disabled="!edit">
     </div>
     <div class="col-sm-3 datepicker" style="padding-left:1em;">
       <label for="requiredDate">Fecha requerida:</label>
-      <input name="requiredDate" type="text" class="form-control" placeholder="Fecha requerida" ng-model="selectedDocument.requiredDate" required>
+      <input name="requiredDate" type="text" class="form-control" placeholder="Fecha requerida" ng-model="selectedDocument.requiredDate" required ng-disabled="!edit">
     </div>
     <div class="col-sm-3 datepicker" style="padding-left:1em;">
       <label for="requiredDate">Fecha Vencimiento:</label>
-      <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate">
+      <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate" ng-disabled="!edit">
     </div>
     <div class="col-sm-3">
-      <label for="reqSGIA" style="font-weight: bold;">Requiere Revision SGIA:
-      <input name="reqSGIA" type="checkbox" class="form-control" ng-model="selectedDocument.requiresSGIA">
+      <label for="reqSGIA" style="font-weight: bold;">Requiere revision de seguridad de medioambiente:
+        <input name="reqSGIA" type="checkbox" class="form-control" ng-model="selectedDocument.requiresSafetyEnv" ng-disabled="!edit">
       </label>
     </div>
     <div class="form-divider"></div>
-    <div class="col-sm-4">
+    <div class="col-sm-4" ng-show="!selectedDocument._id">
       <label for="file">Adjuntar archivo: </label>
-      <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple>
+      <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple ng-disabled="!edit">
     </div>
     <div class="col-sm-12 row-separator">
       <label for="comments">Comentario:</label>
-      <textarea name="comments" id="comments" rows="5" class="form-control" ng-model="selectedDocument.comments"></textarea>
+      <textarea name="comments" id="comments" rows="5" class="form-control" ng-model="selectedDocument.comments" ng-disabled="!edit"></textarea>
     </div>
     <div class="col-sm-12">
-      <button  class="btn btn-success" type="submit">
-      <i class="fa fa-save" aria-hidden="true"/>  Guardar Documento
+      <button  class="btn btn-success" type="submit" ng-show="edit">
+        <i class="fa fa-save" aria-hidden="true"/>  Guardar Documento
       </button>
     </div>
   </form>
@@ -126,9 +134,24 @@
         <tr ng-repeat="file in selectedDocument.files">
           <td >{{$index + 1}}</td>
           <td>{{file.fileName}}</td>
-          <td><a href="#" ng-click="download(file.fileName,file.path)">Descarga</a></td>
+          <td>
+            <a href="#" ng-click="download(file.fileName,file.path)">Descarga</a>
+            <label>|</label>
+            <i class="fa fa-trash" aria-hidden="true" ng-click="deleteFile(file.fileName)"></i>
+          </td>
+
         </tr>
       </tbody>
     </table>
+
+    <div class="row row-separator" ng-show="selectedDocument._id && !selectedDocument.flow.published" >
+    <div class="col-sm-5">
+      <label for="file">Adjuntar archivo: </label>
+      <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple>
+       <button  class="btn btn-info" type="submit" ng-click="uploadFiles()" ng-disabled="!files || files.length < 1">
+        <i class="fa fa-upload" aria-hidden="true"/>  Subir Archivos
+      </button>
+    </div>
   </div>
+</div>
 </div>

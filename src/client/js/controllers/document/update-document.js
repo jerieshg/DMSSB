@@ -2,6 +2,34 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
   initializeController();
 
+  $scope.triggerEdit = function() {
+    $scope.edit = !$scope.edit;
+  }
+
+  $scope.uploadFiles = function() {
+    if ($scope.files && $scope.files.length) {
+      Upload.upload({
+        method: 'PUT',
+        url: `/api/documents/${$scope.selectedDocument.name}/`,
+        data: {
+          files: $scope.files,
+          document: $scope.selectedDocument
+        }
+      }).then(function(response) {
+        console.log(response);
+        $scope.selectedDocument.files = response.data.files;
+        updateDocumentHistory();
+      }, function(response) {
+        if (response.status > 0) {
+          $scope.errorMsg = response.status + ': ' + response.data;
+        }
+      }, function(evt) {
+        $scope.progress =
+          Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+      });
+    }
+  }
+
   $scope.saveApproved = function() {
     $scope.selectedApproved.created = new Date();
     $scope.selectedApproved.user = {
@@ -9,10 +37,12 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       username: $rootScope.client.username
     };
 
+
+    $scope.selectedApproved.forBlueprint = $scope.selectedDocument.type.blueprint && !$scope.isManagement;
     $scope.selectedDocument.approvals.push(angular.copy($scope.selectedApproved));
 
     //If the document is a blueprint and I am not from management, then I am authorizing the document
-    if ($scope.isManagement) {
+    if (($scope.isManagement && !$scope.selectedDocument.type.blueprint) || ($scope.selectedDocument.type.blueprint && $scope.selectedDocument.flow.blueprintApproved && $scope.isManagement)) {
       console.log("GERENCIA");
       $scope.selectedDocument.flow.approvedByManagement = $scope.selectedApproved.approved;
       if ($scope.selectedApproved.approved) {
@@ -47,17 +77,12 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       }
     } else if ($scope.selectedDocument.type.blueprint && !$scope.isManagement) {
       console.log("LISTA DE AUTH");
+      $scope.selectedApproved.forBlueprint = true;
       //If everyone already approved the document
       if (checkBlueprintCompletedApprovals()) {
         //SI SE TIENE SGIA, MOVER A SGIA...ELSE MOVER A PREP FOR PRD
         $scope.selectedDocument.flow.blueprintApproved = true;
-        if ($scope.selectedDocument.requiresSGIA) {
-          $scope.selectedDocument.flow.revisionBySGIA = true;
-          $scope.selectedDocument.status = "En revision por SGIA";
-        } else {
-          $scope.selectedDocument.flow.prepForPublication = true;
-          $scope.selectedDocument.status = "Preparado para publicacion";
-        }
+        $scope.selectedDocument.status = "En revision por gerencia";
       } else if (!$scope.selectedApproved.approved) {
         //ENVIAR CORREO QUE SE NEGO UNA APROBACION 
         $scope.selectedDocument.flow.blueprintApproved = false;
@@ -241,8 +266,19 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     return null;
   }
 
+  $scope.deleteFile = function(name) {
+    if (confirm("Esta seguro de borrar este archivo?")) {
+      documents.deleteFile($stateParams.id, name)
+        .then((data) => {
+          $scope.selectedDocument.files = data.files;
+          updateDocumentHistory();
+        });
+    }
+  }
+
   function initializeController() {
     $(".datepicker input").datepicker({});
+    $scope.edit = false;
     $scope.priorities = ["Alta", "Normal", "Bajo"];
     $scope.isQA = false;
     $scope.isSGIA = false;
@@ -263,10 +299,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.requestedDate = commonFactory.formatDate(new Date($scope.selectedDocument.requestedDate));
         $scope.selectedDocument.requiredDate = commonFactory.formatDate(new Date($scope.selectedDocument.requiredDate));
         $scope.selectedDocument.expiredDate = commonFactory.formatDate(new Date($scope.selectedDocument.expiredDate));
-
         $scope.originalDocument = angular.copy($scope.selectedDocument);
         if (!$scope.selectedDocument.flow.published) {
-
 
           let approvals = $scope.selectedDocument.approvals;
 
@@ -281,39 +315,39 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
           if (!foundApproval || !foundApproval.approved) {
             if ($scope.selectedDocument.type.blueprint && !$scope.selectedDocument.flow.blueprintApproved) {
-              return $scope.selectedDocument.implication.authorized.map(a => a.user._id).includes(req.params.id);
-            }
+              $scope.canApprove = $scope.selectedDocument.implication.authorization.map(a => a._id).includes($rootScope.client._id);
+            } else {
+              let business = $rootScope.client.business[$rootScope.client.business.indexOf($scope.selectedDocument.business)];
 
-            let business = $rootScope.client.business[$rootScope.client.business.indexOf($scope.selectedDocument.business)];
+              let selectedFlow = $scope.selectedDocument.type.flow[(business) ? business : $rootScope.client.business];
 
-            let selectedFlow = $scope.selectedDocument.type.flow[(business) ? business : $rootScope.client.business];
+              if (selectedFlow) {
+                let sgia = selectedFlow.approvals.sgia;
+                $scope.isSGIA = (sgia) ? sgia.map(e => e._id).includes($rootScope.client._id.toString()) : false;
 
-            if (selectedFlow) {
-              let sgia = selectedFlow.approvals.sgia;
-              $scope.isSGIA = (sgia) ? sgia.map(e => e._id).includes($rootScope.client._id.toString()) : false;
+                let qa = selectedFlow.approvals.qa;
+                $scope.isQA = (qa) ? qa.map(e => e._id).includes($rootScope.client._id.toString()) : false;
 
-              let qa = selectedFlow.approvals.qa;
-              $scope.isQA = (qa) ? qa.map(e => e._id).includes($rootScope.client._id.toString()) : false;
+                let deptBoss = (selectedFlow.approvals.deptBoss) ? selectedFlow.approvals.deptBoss[$rootScope.client.department] : false;
+                $scope.isDeptBoss = (deptBoss) ? deptBoss.map((e) => e._id).includes($rootScope.client._id.toString()) : false;
 
-              let deptBoss = selectedFlow.approvals.deptBoss[$rootScope.client.department];
-              $scope.isDeptBoss = (deptBoss) ? deptBoss.map((e) => e._id).includes($rootScope.client._id.toString()) : false;
+                let management = selectedFlow.approvals.management;
+                $scope.isManagement = (management) ? management.map(e => e._id).includes($rootScope.client._id.toString()) : false;
 
-              let management = selectedFlow.approvals.management;
-              $scope.isManagement = (management) ? management.map(e => e._id).includes($rootScope.client._id.toString()) : false;
+                let prepForPublication = selectedFlow.approvals.prepForPublication;
+                $scope.isPrepForPublication = (prepForPublication) ? prepForPublication.map(e => e._id).includes($rootScope.client._id.toString()) : false;
 
-              let prepForPublication = selectedFlow.approvals.prepForPublication;
-              $scope.isPrepForPublication = (prepForPublication) ? prepForPublication.map(e => e._id).includes($rootScope.client._id.toString()) : false;
-
-              if ($scope.isDeptBoss && !$scope.selectedDocument.flow.approvedByBoss) {
-                $scope.canApprove = true;
-              } else if ($scope.isManagement && !$scope.selectedDocument.flow.approvedByManagement) {
-                $scope.canApprove = true;
-              } else if ($scope.isQA && !$scope.selectedDocument.flow.approvedByQA && (!$scope.selectedDocument.flow.prepForPublication || $scope.selectedDocument.flow.approvedByBoss)) {
-                $scope.canApprove = true;
-              } else if ($scope.isSGIA && $scope.selectedDocument.type.requiresSGIA && !$scope.selectedDocument.flow.approvedBySGIA && $scope.selectedDocument.flow.approvedByQA) {
-                $scope.canApprove = true;
-              } else if ($scope.isPrepForPublication && $scope.selectedDocument.flow.prepForPublication) {
-                $scope.canApprove = true;
+                if ($scope.isDeptBoss && !$scope.selectedDocument.flow.approvedByBoss) {
+                  $scope.canApprove = true;
+                } else if ($scope.isManagement && !$scope.selectedDocument.flow.approvedByManagement) {
+                  $scope.canApprove = true;
+                } else if ($scope.isQA && !$scope.selectedDocument.flow.approvedByQA && (!$scope.selectedDocument.flow.prepForPublication || $scope.selectedDocument.flow.approvedByBoss)) {
+                  $scope.canApprove = true;
+                } else if ($scope.isSGIA && $scope.selectedDocument.type.requiresSGIA && !$scope.selectedDocument.flow.approvedBySGIA && $scope.selectedDocument.flow.approvedByQA) {
+                  $scope.canApprove = true;
+                } else if ($scope.isPrepForPublication && $scope.selectedDocument.flow.prepForPublication) {
+                  $scope.canApprove = true;
+                }
               }
             }
           }
@@ -328,17 +362,27 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     let approved = false;
 
     if ($scope.selectedDocument.type.blueprint) {
+      let sortedApprovals = [];
+      let unsortedApprovals =
+        $scope.selectedDocument.approvals
+        .filter((e) => e.forBlueprint)
+        .reduce(function(rv, x) {
+          (rv[x.user._id] = rv[x.user._id] || []).push(x);
+          return rv;
+        }, {});
 
-      let approvals = $scope.selectedDocument.approvals.filter((e) => e.forBlueprint);
+      Object.keys(
+        unsortedApprovals
+      ).forEach((key) => {
+        sortedApprovals.push(unsortedApprovals[key]
+          .sort((a, b) => {
+            return new Date(b.created).getTime() - new Date(a.created).getTime()
+          })[0]);
+      })
 
-      approvals.sort(function(a, b) {
-        return new Date(b.created).getTime() - new Date(a.created).getTime()
-      });
-
-      console.log(approvals);
       //If everyone already approved the document, check if someone denied it
-      if (approvals.length >= $scope.selectedDocument.implication.authorization.length) {
-        approved = approvals.every((approval) => {
+      if (sortedApprovals.length >= $scope.selectedDocument.implication.authorization.length) {
+        approved = sortedApprovals.every((approval) => {
           return approval.approved;
         });
       }

@@ -1,6 +1,9 @@
 md-toast{
   z-index:1200 !important;
 }
+.md-toast-content{
+  position: fixed;
+}
 md-toast.md-success-theme {
     .md-toast-content {
         background-color: green;

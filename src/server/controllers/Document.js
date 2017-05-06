@@ -2,6 +2,7 @@ let Document = require('../models/Document');
 let Client = require('../models/Client');
 let path = require("path");
 let randomstring = require("randomstring");
+let fs = require("fs");
 let fse = require("fs-extra");
 
 module.exports.downloadFile = function(req, res, next) {
@@ -16,11 +17,41 @@ module.exports.downloadFile = function(req, res, next) {
   });
 }
 
+
+module.exports.updateFiles = function(req, res, next) {
+  let doc = new Document(req.body.document);
+
+  req.files.forEach((e) => {
+    doc.files.push({
+      fileName: e.filename,
+      path: e.path
+    });
+  });
+
+  doc.files.forEach((e) => {
+    delete e["$hashKey"];
+  });
+
+  Document.update({
+    _id: doc._id
+  }, {
+    $set: {
+      files: doc.files
+    }
+  }, function(error, result) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    res.json(doc);
+  });
+}
+
 module.exports.create = function(req, res, next) {
   let doc = new Document(req.body.document);
   doc.created = new Date();
-
-
 
   req.files.forEach((e) => {
     doc.files.push({
@@ -73,6 +104,46 @@ module.exports.update = function(req, res, next) {
   });
 }
 
+module.exports.deleteFile = function(req, res, next) {
+  Document.findOne({
+    _id: req.params.id
+  }, function(error, doc) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    for (let i = 0; i < doc.files.length; i++) {
+      if (doc.files[i].fileName === req.params.name) {
+        let deletedFiles = doc.files.splice(i, 1);
+
+        deletedFiles.forEach((file) => {
+          if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+          }
+        });
+      }
+    }
+
+    Document.update({
+      _id: doc._id
+    }, {
+      $set: {
+        files: doc.files
+      }
+    }, function(error, result) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
+      res.json(doc);
+    });
+  });
+}
+
 module.exports.delete = function(req, res, next) {
   Document.findOne({
     _id: req.params.id
@@ -82,6 +153,8 @@ module.exports.delete = function(req, res, next) {
       next(error);
       return res.send(error);
     }
+
+    removeDoc.status = "Anulado"
 
     removeDoc.remove(function(error, doc) {
       if (error) {
@@ -153,12 +226,10 @@ module.exports.findPendingDocuments = function(req, res, next) {
 
       docs = docs.filter((doc) => {
         if (doc.type.blueprint && !doc.flow.blueprintApproved) {
-          return doc.implication.authorized.map(a => a.user._id).includes(req.params.id);
+          return doc.implication.authorization.map(a => a._id).includes(req.params.id);
         }
 
         let selectedFlow = doc.type.flow[doc.business];
-
-        console.log(selectedFlow);
 
         if (selectedFlow) {
           let sgia = selectedFlow.approvals.sgia;
@@ -167,8 +238,7 @@ module.exports.findPendingDocuments = function(req, res, next) {
           let qa = selectedFlow.approvals.qa;
           qa = (qa) ? qa.map(e => e._id).includes(client._id.toString()) : false;
 
-          let deptBoss = selectedFlow.approvals.deptBoss[client.department];
-          console.log(client.department);
+          let deptBoss = (selectedFlow.approvals.deptBoss) ? selectedFlow.approvals.deptBoss[client.department] : false;
           deptBoss = (deptBoss) ? deptBoss.map((e) => e._id).includes(client._id.toString()) : false;
 
           let management = selectedFlow.approvals.management;
@@ -176,8 +246,6 @@ module.exports.findPendingDocuments = function(req, res, next) {
 
           let prepForPublication = selectedFlow.approvals.prepForPublication;
           prepForPublication = (prepForPublication) ? prepForPublication.map(e => e._id).includes(client._id.toString()) : false;
-
-          console.log(deptBoss);
 
           if (deptBoss && !doc.flow.approvedByBoss) {
             return true;

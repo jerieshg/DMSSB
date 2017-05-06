@@ -3,6 +3,7 @@ module.exports = function(router) {
   let multiparty = require('connect-multiparty');
   let multipartyMiddleware = multiparty();
   let fse = require('fs-extra');
+  let fs = require('fs');
 
   let multer = require('multer');
   let storage = multer.diskStorage({
@@ -12,7 +13,17 @@ module.exports = function(router) {
       cb(null, completePath);
     },
     filename: function(req, file, cb) {
-      cb(null, file.originalname);
+      let completePath = path.join(__dirname, `/../../../uploads/${req.params.name}/`);
+
+      fs.exists(completePath + file.originalname, function(exists) {
+        let uploadedFileName = '';
+        if (exists) {
+          uploadedFileName = Date.now() + '-' + file.originalname;
+        } else {
+          uploadedFileName = file.originalname;
+        }
+        cb(null, uploadedFileName)
+      });
     }
   });
   let upload = multer({
@@ -205,15 +216,19 @@ module.exports = function(router) {
     .get(Implication.find);
 
   //Upload Documents
+
   router.route('/api/documents/downloads/:path')
     .get(Document.downloadFile);
   router.route('/api/documents/:id')
     .get(Document.find)
     .delete(Document.delete);
+  router.route('/api/documents/:id/file/:name')
+    .delete(Document.deleteFile);
   router.route('/api/documents/search/')
     .post(Document.search);
   router.route('/api/documents/:name')
-    .post(upload.any(), Document.create);
+    .post(upload.any(), Document.create)
+    .put(upload.any(), Document.updateFiles);
   router.route('/api/documents/clients/:id')
     .get(Document.findMyDocuments);
   router.route('/api/documents/pending/:id/')

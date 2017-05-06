@@ -55,7 +55,7 @@ function DocumentHistoryController($rootScope, $scope, $http, $stateParams, Uplo
       return 'Comentario';
     }
     if (field === 'files') {
-      return 'archivo';
+      return 'archivo(s)';
     }
 
     return field;
@@ -63,7 +63,7 @@ function DocumentHistoryController($rootScope, $scope, $http, $stateParams, Uplo
 
   $scope.retrieveValue = function(object) {
     if (object.list && object.value) {
-      return (object.value > 0) ? 'agregado' : 'eliminado';
+      return (object.value > 0) ? 'agregado' : ' eliminado';
     }
 
     return '';

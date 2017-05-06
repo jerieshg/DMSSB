@@ -75,6 +75,7 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
       }
     };
     $scope.priorities = ["Alta", "Normal", "Bajo"];
+    $scope.edit = true;
     retrieveBusiness();
     retrieveClients();
     retrieveDepartments();
