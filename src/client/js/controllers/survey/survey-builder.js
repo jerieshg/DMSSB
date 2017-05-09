@@ -32,6 +32,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
 
   //SAVE
   $scope.saveSurvey = function(valid) {
+    console.log($scope.surveyForm);
     if (valid) {
       if (!$scope.survey.update) {
         $scope.survey.created = new Date();
