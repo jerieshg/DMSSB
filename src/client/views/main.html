@@ -35,7 +35,7 @@
       </tr>
     </thead>
     <tbody>
-     <tr ng:repeat="e in surveys | filter:search" >
+     <tr ng:repeat="e in surveys | filter:search | orderBy: ['active', 'created'] : true" >
       <td>
         <div class="checkbox">
         <label><input type="checkbox" ng-model="compSurveyChkbox"  ng-change="addToCompareSurvey(compSurveyChkbox, e)"></label>
@@ -55,7 +55,7 @@
        <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.edit({id: e._id})"></i>
        <i class="fa fa-bar-chart" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.stats({id: e._id})" title="Mostrar estadisticas de la encuesta"></i>
        <i class="fa fa-clone" aria-hidden="true" style="margin-left:10px;"  ng-click="duplicateSurvey(e)" title="Duplicar encuesta"></i>
-       <i class="fa fa-users" aria-hidden="true" style="margin-left:10px;" data-toggle="modal"  data-target="#trackSurveyResponse" ng-click="trackSurvey(e._id)" title="Monitoreo de encuesta"></i>
+       <i class="fa fa-users" aria-hidden="true" style="margin-left:10px;" data-toggle="modal"  data-target="#trackSurveyResponse" ng-click="trackSurvey(e)" title="Monitoreo de encuesta"></i>
      </td>
    </tr>
  </tbody>

@@ -119,39 +119,68 @@
   }
 
   module.exports.findByClient = function(req, res, next) {
-    let client = new Buffer(req.params.client, 'binary').toString('utf8');
-
-    Survey.find({
-      $or: [{
-        questions: {
-          $elemMatch: {
-            clients: client
-          }
-        }
-      }, {
-        general: true
-      }]
-    }, function(error, surveys) {
+    Client.findOne({
+      _id: req.params.id
+    }, function(error, client) {
       if (error) {
         res.status(500);
         next(error);
         return res.send(error);
       }
 
-      surveys.forEach(survey => {
-        survey.questions = survey.questions
-          .filter(question => {
-            return question.clients.includes(client)
-          })
-          .map(question => {
-            question.type = question.formType;
-            return question;
-          });
+      Survey.find({
+        $or: [{
+          questions: {
+            $elemMatch: {
+              clients: client.job
+            }
+          }
+        }, {
+          general: true
+        }, {
+          $or: [{
+            "client.role.level": 2
+          }, {
+            department: client.department
+          }]
+        }]
+      }, function(error, surveys) {
+        if (error) {
+          res.status(500);
+          next(error);
+          return res.send(error);
+        }
+
+        surveys = surveys.filter(survey => {
+          let valid = true;
+
+          //not filtering for subadmin's surveys
+          if (!(client.role.level === 2 && survey.department === client.department)) {
+            if (survey.general) {
+              valid = survey.business.filter(e => client.business.includes(e)).length > 0;
+            }
+
+
+            survey.questions = survey.questions
+              .filter(question => {
+                return question.clients.includes(client)
+              })
+              .map(question => {
+                question.type = question.formType;
+                return question;
+              });
+
+            if (!survey.general) {
+              valid = survey.questions.length > 0;
+            }
+          }
+
+          return valid;
+        });
+
+        res.json(surveys);
       });
-
-      res.json(surveys);
     });
-
   }
 
   module.exports.findbyClientAndId = function(req, res, next) {
@@ -175,6 +204,7 @@
   }
 
   module.exports.findByDepartmentAndClient = function(req, res, next) {
+
     let client = new Buffer(req.params.client, 'binary').toString('utf8');
     let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
     Survey.find({
@@ -269,56 +299,76 @@
             return res.send(error);
           }
 
-          Client.aggregate(
-            [{
-              $group: {
-                _id: '$job',
-                count: {
-                  $sum: 1
+          Survey.findOne({
+            _id: req.params.id
+          }, function(error, survey) {
+            if (error) {
+              res.status(500);
+              next(error);
+              return res.send(error);
+            }
+
+            Client.aggregate(
+              [{
+                $group: {
+                  _id: {
+                    job: '$job',
+                    business: '$business'
+                  },
+                  count: {
+                    $sum: 1
+                  }
                 }
-              }
-            }],
-            function(error, clients) {
-              if (error) {
-                res.status(500);
-                next(error);
-                return res.send(error);
-              }
-
-              let data = {
-                responses: []
-              };
-              let responsesCount = [];
-              let totalCountHolder = [];
-
-              surveyResponses.forEach(e => {
-                responsesCount[e._id] = e.count;
-              });
-
-              clients.forEach((e, index) => {
-                totalCountHolder[e._id] = e.count;
-
-                if (surveyClients.length === 0) {
-                  data.responses.push({
-                    _id: e._id,
-                    current: responsesCount[e._id] ? responsesCount[e._id] : 0,
-                    total: e.count ? e.count : 0
-                  })
+              }],
+              function(error, clients) {
+                if (error) {
+                  res.status(500);
+                  next(error);
+                  return res.send(error);
                 }
-              });
 
-              surveyClients.forEach(function(n) {
-                data.responses.push({
-                  _id: n,
-                  current: responsesCount[n] ? responsesCount[n] : 0,
-                  total: totalCountHolder[n] ? totalCountHolder[n] : 0
-                })
-              });
+                let data = {
+                  responses: []
+                };
+                let responsesCount = [];
+                let totalCountHolder = [];
 
-              data.currentTotal = data.responses.map(e => e.current).reduce((a, b) => a + b, 0);
-              data.total = data.responses.map(e => e.total).reduce((a, b) => a + b, 0);
-              res.json(data);
-            });
+                surveyResponses.forEach(e => {
+                  let id = new Buffer(e._id, 'binary').toString('utf8');
+                  responsesCount[id] = e.count;
+                });
+
+                clients.forEach((e, index) => {
+                  let id = new Buffer(e._id.job, 'binary').toString('utf8');
+                  totalCountHolder[id] = e.count;
+
+                  if (survey.general && e._id.business && survey.business.filter(sv => e._id.business.includes(sv)).length > 0) {
+                    data.responses.push({
+                      _id: e._id.job,
+                      current: responsesCount[id] ? responsesCount[id] : 0,
+                      total: e.count ? e.count : 0
+                    })
+                  }
+                });
+
+                if (!survey.general) {
+                  surveyClients.forEach(function(n) {
+                    data.responses.push({
+                      _id: n,
+                      current: responsesCount[n] ? responsesCount[n] : 0,
+                      total: totalCountHolder[n] ? totalCountHolder[n] : 0
+                    })
+                  });
+                }
+
+
+                data.currentTotal = data.responses.map(e => e.current).reduce((a, b) => a + b, 0);
+                data.total = data.responses.map(e => e.total).reduce((a, b) => a + b, 0);
+                res.json(data);
+              });
+          });
+
+
         });
 
     });

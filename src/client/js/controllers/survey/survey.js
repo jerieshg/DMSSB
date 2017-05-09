@@ -25,14 +25,12 @@ function SurveyController($rootScope, $scope, $http, commonFactory) {
 
   function retrieveSurveys() {
 
-    let url = `/api/surveys/clients/${$rootScope.client.job}`;
+    let url = `/api/surveys/clients/${$rootScope.client._id}`;
 
     if ($rootScope.client.role.level === 1) {
       url = '/api/surveys/';
-    } else if ($rootScope.client.role.level === 2) {
-      url = `/api/surveys/department/${$rootScope.client.department}/clients/${$rootScope.client.job}`;
     }
-    
+
     $http.get(url)
       .then(function(response) {
         $scope.surveys = response.data;

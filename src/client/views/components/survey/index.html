@@ -25,7 +25,7 @@
      </tr>
      </thead>
      <tbody>
-     <tr ng:repeat="e in surveys | filter:search" ng-class="{'danger' : !e.active, 'success' : e.active, 'completed' : respondedSurvey(e)}">
+     <tr ng:repeat="e in surveys | filter:search | orderBy:['!active', 'completed']" ng-class="{'danger' : !e.active, 'success' : e.active, 'completed' : respondedSurvey(e)}">
        <td >{{$index + 1}}</td>
        <td>{{e.surveyName}}</td>
        <td>{{e.department}}</td>

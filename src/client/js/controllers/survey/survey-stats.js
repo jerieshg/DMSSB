@@ -119,12 +119,16 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     $scope.services.forEach((service) => {
 
       service.charts.forEach((e) => {
-        if (e.average <= $scope.actionPlan.percentage) {
+        let isText = e.formType === 'text' || e.formType === 'comment';
+        if (e.average <= $scope.actionPlan.percentage || isText) {
+
           let item = {
+            formType: e.formType,
             service: service.service,
             question: e.question,
             percentage: e.average,
-            responses: e.responses
+            responses: e.responses,
+            textResponse: e.labels.join(", \n")
           };
           $scope.actionPlan.items.push(item);
         }
@@ -293,16 +297,24 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     let found = false;
     if ($scope.isComparing) {
       chart.series.push(seriesCurrentName);
+
       //if comparing search for the existing service
       $scope.services.forEach((service) => {
-        let foundService = service.charts.find((s) => {
-          return s.question.replace(/[^a-zA-Z]/g, "") === chart.question.replace(/[^a-zA-Z]/g, "");
+        let foundIndex = 0;
+        let foundService = service.charts.find((s, index) => {
+          let equal = s.question.replace(/[^a-zA-Z]/g, "") === chart.question.replace(/[^a-zA-Z]/g, "");
+          if (equal) {
+            foundIndex = index;
+          }
+
+          return equal;
         });
 
         if (foundService) {
           foundService.data.push([...answers.values()])
           foundService.series.push(seriesCurrentName);
           foundService.compareAverages.push(chart.average);
+          service.charts[foundIndex] = foundService;
           found = true;
         }
       });
@@ -310,7 +322,12 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
 
     if (!found) {
       chart.labels = [...answers.keys()];
-      chart.data = [...answers.values()];
+      if (!$scope.isComparing) {
+        chart.data = [...answers.values()];
+      } else {
+        chart.data.push([...answers.values()]);
+      }
+
       chart.compareAverages.push(chart.average);
     }
     chart.average = isNaN(chart.average) ? 0.00 : chart.average;

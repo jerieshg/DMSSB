@@ -204,11 +204,14 @@ module.exports.exportToExcelBatch = function(req, res) {
   for (var keys = Object.keys(actionPlan.items), i = 0; i < keys.length; i++) {
     var key = keys[i];
 
+
+
     actionPlan.items[key].forEach((e) => {
+      let isText = e.formType === 'text' || e.formType === 'comment';
       let data = {};
       data["Dimension"] = key;
       data["Preguntas"] = e.question;
-      data["Nota Final"] = `${e.percentage}%`;
+      data["Nota Final"] = isText ? e.textResponse : `${e.percentage}%`;
       data["# de respuestas"] = e.responses;
       data["Plan de Acción/Actividades"] = "";
       data["Fecha Cierre"] = "";

@@ -43,8 +43,8 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
     }
   }
 
-  $scope.trackSurvey = function(id) {
-    $http.get(`/api/surveys/${id}/track/`)
+  $scope.trackSurvey = function(survey) {
+    $http.get(`/api/surveys/${survey._id}/track/general/${survey.general}`)
       .then((response) => {
         $scope.trackUsers = response.data;
       })

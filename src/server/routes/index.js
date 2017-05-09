@@ -82,7 +82,7 @@ module.exports = function(router) {
     .delete(Survey.delete);
   router.route('/api/surveys/:id/')
     .get(Survey.find);
-  router.route('/api/surveys/clients/:client/')
+  router.route('/api/surveys/clients/:id/')
     .get(Survey.findByClient);
   router.route('/api/surveys/:id/clients/:client/')
     .get(Survey.findbyClientAndId)
@@ -92,7 +92,7 @@ module.exports = function(router) {
     .get(Survey.findByDepartmentAndClient)
   router.route('/api/surveys/:id/department/:dept/')
     .get(Survey.findbyDeptAndId)
-  router.route('/api/surveys/:id/track/')
+  router.route('/api/surveys/:id/track/general/:general')
     .get(Survey.trackResponses)
   router.route('/api/surveys/:id/grades/')
     .post(Survey.updateFinalGrade)
