@@ -145,33 +145,49 @@ module.exports.deleteFile = function(req, res, next) {
 }
 
 module.exports.delete = function(req, res, next) {
-  Document.findOne({
+  Document.update({
     _id: req.params.id
-  }, function(error, removeDoc) {
+  }, {
+    $set: {
+      status: 'Anulado'
+    }
+  }, function(error, result) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    removeDoc.status = "Anulado"
-
-    removeDoc.remove(function(error, doc) {
-      if (error) {
-        res.status(500);
-        next(error);
-        return res.send(error);
-      }
-
-      if (removeDoc.files.length > 0) {
-        //retrieves first folder path and deletes the whole folder
-        let folderPath = removeDoc.files[0].path.replace(removeDoc.files[0].fileName, "");
-        fse.removeSync(folderPath);
-      }
-
-      res.json(removeDoc);
-    });
+    res.json(result);
   });
+
+  // Document.findOne({
+  //   _id: req.params.id
+  // }, function(error, removeDoc) {
+  //   if (error) {
+  //     res.status(500);
+  //     next(error);
+  //     return res.send(error);
+  //   }
+
+  //   removeDoc.status = "Anulado";
+
+  //   removeDoc.remove(function(error, doc) {
+  //     if (error) {
+  //       res.status(500);
+  //       next(error);
+  //       return res.send(error);
+  //     }
+
+  //     if (removeDoc.files.length > 0) {
+  //       //retrieves first folder path and deletes the whole folder
+  //       let folderPath = removeDoc.files[0].path.replace(removeDoc.files[0].fileName, "");
+  //       fse.removeSync(folderPath);
+  //     }
+
+  //     res.json(removeDoc);
+  //   });
+  // });
 }
 
 module.exports.find = function(req, res, next) {
@@ -214,6 +230,9 @@ module.exports.findPendingDocuments = function(req, res, next) {
 
     Document.find({
       "flow.published": false,
+      "status": {
+        $ne: "Anulado"
+      },
       business: {
         $in: client.business
       }

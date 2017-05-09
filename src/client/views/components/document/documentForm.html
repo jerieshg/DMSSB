@@ -13,7 +13,7 @@
         <i class="fa fa-check" aria-hidden="true"/>  Aprobar documento
       </a>
 
-       <a  class="btn btn-secondary" ng-click="triggerEdit()" title="Ver historial del documento" ng-show="selectedDocument._id">
+       <a  class="btn btn-secondary" ng-click="triggerEdit()" title="Ver historial del documento" ng-show="selectedDocument._id && selectedDocument.status !== 'Anulado'">
         <i class="fa fa-pencil" aria-hidden="true"/>  Editar
       </a>
     </div>

@@ -38,12 +38,11 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
 
     $scope.selectedApproved.forBlueprint = $scope.selectedDocument.type.blueprint && !$scope.isManagement;
-    $scope.selectedDocument.approvals.push(angular.copy($scope.selectedApproved));
-
     //If the document is a blueprint and I am not from management, then I am authorizing the document
     if (!$scope.selectedDocument.flow.approvedByManagement && ($scope.isManagement && !$scope.selectedDocument.type.blueprint) || ($scope.selectedDocument.type.blueprint && $scope.selectedDocument.flow.blueprintApproved && $scope.isManagement)) {
       console.log("GERENCIA");
       $scope.selectedDocument.flow.approvedByManagement = $scope.selectedApproved.approved;
+      $scope.selectedApproved.step = "Management";
       if ($scope.selectedApproved.approved) {
         $scope.selectedDocument.flow.prepForPublication = true;
         $scope.selectedDocument.status = "Preparado para publicacion";
@@ -54,6 +53,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     } else if ($scope.isSGIA && $scope.selectedDocument.type.requiresSGIA && !$scope.selectedDocument.flow.approvedBySGIA && $scope.selectedDocument.flow.approvedByQA) {
       console.log("SGIA");
       $scope.selectedDocument.flow.approvedBySGIA = $scope.selectedApproved.approved;
+      $scope.selectedApproved.step = "SGIA";
       if ($scope.selectedApproved.approved) {
         $scope.selectedDocument.status = "Preparado para publicacion";
         $scope.selectedDocument.flow.prepForPublication = true;
@@ -64,6 +64,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     } else if ($scope.isDeptBoss && !$scope.selectedDocument.flow.approvedByBoss && !$scope.selectedDocument.flow.approvedByQA && !$scope.selectedDocument.flow.approvedByManagement) {
       console.log("JEFE");
       $scope.selectedDocument.flow.approvedByBoss = $scope.selectedApproved.approved;
+      $scope.selectedApproved.step = "boss";
       if ($scope.selectedApproved.approved) {
         if ($scope.selectedDocument.type.isProcessOrManual) {
           $scope.selectedDocument.status = "En revision por gerencia";
@@ -76,6 +77,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       }
     } else if (!$scope.selectedDocument.flow.blueprintApproved && $scope.selectedDocument.type.blueprint && !$scope.isManagement) {
       console.log("LISTA DE AUTH");
+      $scope.selectedApproved.step = "authList";
       $scope.selectedApproved.forBlueprint = true;
       //If everyone already approved the document
       if (checkBlueprintCompletedApprovals()) {
@@ -89,6 +91,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       //If it's a dept Boss and document has not already been approved by QA and Management, then I will be able to approve it
     } else if ($scope.isQA && !$scope.selectedDocument.flow.approvedByQA) {
       console.log("QA");
+      $scope.selectedApproved.step = "QA";
       //If it's approved and it is not in prep for Publication
       if ($scope.selectedApproved.approved) {
         $scope.selectedDocument.flow.approvedByQA = $scope.selectedApproved.approved;
@@ -105,6 +108,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       }
     } else if ($scope.isPrepForPublication && $scope.selectedDocument.flow.prepForPublication && !$scope.selectedDocument.flow.approvedByPrepForPublish) {
       console.log("Preparacion para publicacion");
+      $scope.selectedApproved.step = "p2p";
       $scope.selectedDocument.flow.approvedByPrepForPublish = $scope.selectedApproved.approved;
       if ($scope.selectedApproved.approved) {
         $scope.selectedDocument.status = "Publicado";
@@ -114,9 +118,12 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       }
     }
 
+    $scope.selectedDocument.approvals.push(angular.copy($scope.selectedApproved));
+
     documents.updateApprovals($scope.selectedDocument)
       .then((data) => {
         console.log(data);
+        commonFactory.toastMessage(`Este documento fue ${$scope.selectedApproved.approved ? 'aprobado' : 'rechazado'}`, 'success');
       });
 
     updateDocumentHistory();
@@ -208,6 +215,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       }
     }
 
+    commonFactory.toastMessage(`Este documento fue actualizado exitosamente!`, 'success');
+
     //sends email
 
     //   if ($scope.files && $scope.files.length) {
@@ -249,6 +258,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         anchor.href = objectUrl;
         anchor.click();
         anchor.remove();
+
+        commonFactory.toastMessage(`Archivo descargado exitosamente!`, 'success');
       })
       .catch(function(error) {
         console.log(error);
@@ -271,6 +282,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         .then((data) => {
           $scope.selectedDocument.files = data.files;
           updateDocumentHistory();
+          commonFactory.toastMessage(`Archivo ${name} fue borrado!`, 'info');
         });
     }
   }
@@ -312,7 +324,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
             return e.user._id === $rootScope.client._id
           });
 
-          if ($scope.selectedDocument.type.blueprint && !$scope.selectedDocument.flow.blueprintApproved) {
+          if ($scope.selectedDocument.type.blueprint && !$scope.selectedDocument.flow.blueprintApproved && !(foundApproval && foundApproval.step === "authList" && foundApproval.approved)) {
             $scope.canApprove = $scope.selectedDocument.implication.authorization.map(a => a._id).includes($rootScope.client._id);
           } else {
             let business = $rootScope.client.business[$rootScope.client.business.indexOf($scope.selectedDocument.business)];
@@ -335,17 +347,15 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
               let prepForPublication = selectedFlow.approvals.prepForPublication;
               $scope.isPrepForPublication = (prepForPublication) ? prepForPublication.map(e => e._id).includes($rootScope.client._id.toString()) : false;
 
-              console.log(qa, deptBoss);
-
-              if ($scope.isDeptBoss && !$scope.selectedDocument.flow.approvedByBoss) {
+              if ($scope.isDeptBoss && !$scope.selectedDocument.flow.approvedByBoss && !(foundApproval && foundApproval.step === "boss" && foundApproval.approved)) {
                 $scope.canApprove = true;
-              } else if ($scope.isManagement && !$scope.selectedDocument.flow.approvedByManagement) {
+              } else if ($scope.isManagement && !$scope.selectedDocument.flow.approvedByManagement && !(foundApproval && foundApproval.step === "management" && foundApproval.approved)) {
                 $scope.canApprove = true;
-              } else if ($scope.isQA && !$scope.selectedDocument.flow.approvedByQA && (!$scope.selectedDocument.flow.prepForPublication || $scope.selectedDocument.flow.approvedByBoss)) {
+              } else if ($scope.isQA && !$scope.selectedDocument.flow.approvedByQA && !(foundApproval && foundApproval.step === "QA" && foundApproval.approved)) {
                 $scope.canApprove = true;
-              } else if ($scope.isSGIA && $scope.selectedDocument.type.requiresSGIA && !$scope.selectedDocument.flow.approvedBySGIA && $scope.selectedDocument.flow.approvedByQA) {
+              } else if ($scope.isSGIA && $scope.selectedDocument.type.requiresSGIA && !$scope.selectedDocument.flow.approvedBySGIA && $scope.selectedDocument.flow.approvedByQA && !(foundApproval && foundApproval.step === "SGIA" && foundApproval.approved)) {
                 $scope.canApprove = true;
-              } else if ($scope.isPrepForPublication && $scope.selectedDocument.flow.prepForPublication) {
+              } else if ($scope.isPrepForPublication && $scope.selectedDocument.flow.prepForPublication && !$scope.selectedDocument.flow.approvedByPrepForPublish && !(foundApproval && foundApproval.step === "p2p" && foundApproval.approved)) {
                 $scope.canApprove = true;
               }
             }

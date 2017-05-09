@@ -42,6 +42,7 @@ let schema = new mongoose.Schema({
   },
   approvals: [{
     forBlueprint: Boolean,
+    step: String,
     approved: Boolean,
     user: {},
     comment: String,
@@ -56,7 +57,8 @@ let schema = new mongoose.Schema({
     approvedByPrepForPublish: Boolean,
     blueprintApproved: Boolean,
     prepForPublication: Boolean,
-    published: Boolean
+    published: Boolean,
+    deleted: Boolean
   },
   created: Date
 })

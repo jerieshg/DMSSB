@@ -1,4 +1,4 @@
-function LoginController($scope, $state, commonFactory, authentication) {
+function LoginController($scope, $state, $window, commonFactory, authentication) {
 
   $scope.credentials = {};
 
@@ -10,12 +10,18 @@ function LoginController($scope, $state, commonFactory, authentication) {
             commonFactory.activateAlert(response.data.message, 'danger');
             break;
           case 200:
-            $state.go('app.main');
+            var ua = navigator.userAgent;
+
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(ua)) {
+              $state.go('app.main');
+            } else {
+              $window.location.reload();
+            }
             break;
         }
       });
   }
 }
 
-LoginController.$inject = ['$scope', '$state', 'commonFactory', 'authentication'];
+LoginController.$inject = ['$scope', '$state', '$window', 'commonFactory', 'authentication'];
 angular.module('app').controller('loginController', LoginController);

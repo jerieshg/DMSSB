@@ -1,4 +1,4 @@
-function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFactory) {
+function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, commonFactory) {
 
   initializeController();
 
@@ -23,8 +23,6 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
         username: $rootScope.client.username
       };
 
-      console.log($scope.selectedDocument);
-
       Upload.upload({
         url: `/api/documents/${$scope.selectedDocument.name}`,
         data: {
@@ -32,7 +30,10 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
           document: $scope.selectedDocument
         }
       }).then(function(response) {
-        console.log(response);
+        if (response.status === 200) {
+          commonFactory.toastMessage('Documento creado exitosamente!', 'success');
+          $state.go('app.docs.main');
+        }
       }, function(response) {
         if (response.status > 0) {
           $scope.errorMsg = response.status + ': ' + response.data;
@@ -134,5 +135,5 @@ function DocumentHandlerController($rootScope, $scope, $http, Upload, commonFact
   }
 }
 
-DocumentHandlerController.$inject = ['$rootScope', '$scope', '$http', 'Upload', 'commonFactory'];
+DocumentHandlerController.$inject = ['$rootScope', '$scope', '$http', '$state', 'Upload', 'commonFactory'];
 angular.module('app', ['ngFileUpload']).controller('documentHandlerController', DocumentHandlerController);

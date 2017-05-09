@@ -9,8 +9,11 @@
     <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
   </div> 
 
+   <div ng-show="documents.length < 1">
+    <h5>No tiene documentos pendientes!</h5>
+  </div>
 
-  <table class="table table-hover table-responsive">
+  <table class="table table-hover table-responsive" ng-show="documents.length > 0">
     <thead>
       <tr>
        <td><strong>Codigo</strong></td>

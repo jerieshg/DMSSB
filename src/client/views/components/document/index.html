@@ -11,17 +11,21 @@
 
   <button ui-sref-active="active" ui-sref="app.docs.create" class="btn btn-success row-separator" style="margin-right:1em">Nuevo documento</button>
 
-  <table class="table table-hover table-responsive">
+    <div class="col-sm-12" ng-show="documents.length < 1">
+    <h5>No tiene documentos creados!</h5>
+  </div>
+
+  <table class="table table-hover table-responsive" ng-show="documents.length > 0">
     <thead>
       <tr>
        <td><strong>#</strong></td>
        <td><strong>Nombre</strong></td>
+       <td><strong>Estado</strong></td>
        <td><strong>Tipo</strong></td>
        <td><strong>Planta</strong></td>
        <td><strong>Departamento</strong></td>
        <td><strong>Prioridad</strong></td>
        <td><strong>Solicitante</strong></td>
-       <td><strong>Fecha Solicitada</strong></td>
        <td><strong>Fecha Requerida</strong></td>
        <td><strong>Fecha Vencimiento</strong></td>
        <td><strong>Fecha Creada</strong></td>
@@ -29,15 +33,15 @@
      </tr>
    </thead>
    <tbody>
-     <tr ng:repeat="e in documents | filter:search" >
+     <tr ng:repeat="e in documents | filter:search | orderBy: 'status' : true" ng-class="{'danger' : e.status === 'Anulado'}">
        <td >{{e.code}}</td>
        <td>{{e.name}}</td>
+       <td>{{e.status}}</td>
        <td>{{e.type.type}}</td>
        <td>{{e.business}}</td>
        <td>{{e.department}}</td>
        <td>{{e.priority}}</td>
        <td>{{e.requester}}</td>
-       <td>{{e.requestedDate | date: yyyy-mm-dd}}</td>
        <td>{{e.requiredDate | date: yyyy-mm-dd}}</td>
        <td>{{e.expiredDate | date: yyyy-mm-dd}}</td>
        <td>{{e.created | date: yyyy-mm-dd}}</td>
