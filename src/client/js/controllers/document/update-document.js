@@ -1,4 +1,4 @@
-function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Upload, ObjectDiff, commonFactory, departments, documents) {
+function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Upload, ObjectDiff, commonFactory, departments, documents, email) {
 
   initializeController();
 
@@ -36,6 +36,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       username: $rootScope.client.username
     };
 
+    let rejected = false;
 
     $scope.selectedApproved.forBlueprint = $scope.selectedDocument.type.blueprint && !$scope.isManagement;
     //If the document is a blueprint and I am not from management, then I am authorizing the document
@@ -48,7 +49,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.status = "Preparado para publicacion";
       } else {
         $scope.selectedDocument.status = "Rechazado por la gerencia";
-        //SEND EMAIL TO DOC OWNER
+        rejected = true;
       }
     } else if ($scope.isSGIA && $scope.selectedDocument.type.requiresSGIA && !$scope.selectedDocument.flow.approvedBySGIA && $scope.selectedDocument.flow.approvedByQA) {
       console.log("SGIA");
@@ -59,7 +60,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.flow.prepForPublication = true;
       } else {
         $scope.selectedDocument.status = "Rechazado por SGIA";
-        //SEND EMAIL TO DOC OWNER
+        rejected = true;
       }
     } else if ($scope.isDeptBoss && !$scope.selectedDocument.flow.approvedByBoss && !$scope.selectedDocument.flow.approvedByQA && !$scope.selectedDocument.flow.approvedByManagement) {
       console.log("JEFE");
@@ -73,7 +74,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         }
       } else {
         $scope.selectedDocument.status = "Rechazado por jefe de departamento";
-        //SEND EMAIL TO DOC OWNER
+        rejected = true;
       }
     } else if (!$scope.selectedDocument.flow.blueprintApproved && $scope.selectedDocument.type.blueprint && !$scope.isManagement) {
       console.log("LISTA DE AUTH");
@@ -87,6 +88,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       } else if (!$scope.selectedApproved.approved) {
         //ENVIAR CORREO QUE SE NEGO UNA APROBACION 
         $scope.selectedDocument.flow.blueprintApproved = false;
+        rejected = true;
       }
       //If it's a dept Boss and document has not already been approved by QA and Management, then I will be able to approve it
     } else if ($scope.isQA && !$scope.selectedDocument.flow.approvedByQA) {
@@ -104,7 +106,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         }
       } else {
         $scope.selectedDocument.status = "Rechazado por Calidad";
-        //SEND EMAIL TO DOC OWNER
+        rejected = true;
       }
     } else if ($scope.isPrepForPublication && $scope.selectedDocument.flow.prepForPublication && !$scope.selectedDocument.flow.approvedByPrepForPublish) {
       console.log("Preparacion para publicacion");
@@ -115,7 +117,15 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.flow.published = true;
       } else {
         $scope.selectedDocument.status = "Rechazado por encargado de publicar el documento";
+        rejected = true;
       }
+    }
+
+    if (rejected) {
+      email.sendRejectedEmail($rootScope.client.username, $scope.selectedDocument._id)
+        .then((response) => {
+          console.log(response);
+        })
     }
 
     $scope.selectedDocument.approvals.push(angular.copy($scope.selectedApproved));
@@ -129,15 +139,19 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     updateDocumentHistory();
     $('#approveDocumentModal').modal('toggle');
     $scope.canApprove = !$scope.selectedApproved.approved;
+    $scope.selectedApproved = {};
   }
 
   function updateDocumentHistory() {
+    let changed = [];
+
     var diff = ObjectDiff.diffOwnProperties($scope.originalDocument, $scope.selectedDocument);
     //something has changed in the document
     if (diff.changed !== 'equal') {
       $scope.documentHistory.docId = $scope.selectedDocument._id;
       for (let [key, value] of Object.entries(diff.value)) {
         if (value.added) {
+          changed.push(key);
           $scope.documentHistory.history.push({
             user: $rootScope.client.username,
             field: key,
@@ -158,6 +172,24 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           value: filesResult,
           created: new Date()
         });
+      }
+
+      let approvalsResult = $scope.selectedDocument.approvals.length - $scope.originalDocument.approvals.length;
+
+      if (approvalsResult !== 0) {
+        if (approvalsResult > 0) {
+          for (let i = 0; i < approvalsResult; i++) {
+            let missingElement = $scope.selectedDocument.approvals[$scope.selectedDocument.approvals.length - (i + 1)];
+
+            $scope.documentHistory.history.push({
+              user: $rootScope.client.username,
+              field: 'approvals',
+              value: missingElement.approved,
+              customText: missingElement.comment,
+              created: new Date()
+            });
+          }
+        }
       }
 
       if ($scope.selectedDocument.type.type !== $scope.originalDocument.type.type) {
@@ -186,61 +218,56 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           commonFactory.toastMessage('Woops! Algo paso!', 'danger');
         });
     }
+
+    return changed;
   }
 
   $scope.saveDocument = function() {
-    //updates document history
-    updateDocumentHistory();
-    //updates document
-    $scope.selectedDocument.flow = {
-      revisionBySGIA: false,
-      approvedByBoss: false,
-      approvedByQA: false,
-      approvedBySGIA: false,
-      approvedByManagement: false,
-      approvedByPrepForPublish: false,
-      blueprintApproved: false,
-      prepForPublication: false,
-      published: false
-    };
+    if (commonFactory.dialog("Esta seguro de guardar el documento? El documento volvera a un estado inicial en donde se reinicara el flujo de documentos.")) {
 
-    if ($scope.selectedDocument.type.blueprint) {
-      $scope.selectedDocument.status = "En revision por lista de autorizaciones";
-    } else {
-      if ($rootScope.client.department.toUpperCase().includes('JEFE') && !$scope.selectedDocument.type.isProcessOrManual) {
-        $scope.selectedDocument.status = "En revision por Calidad";
-        $scope.selectedDocument.approvedByBoss = true;
-      } else {
-        $scope.selectedDocument.status = "En revision por jefe de departamento";
+      //updates document history
+      let changed = updateDocumentHistory();
+
+      let versionOrCommentOnly = changed.every((value) => {
+        return value === 'version' || value === 'comment';
+      })
+
+      if (!versionOrCommentOnly) {
+        //updates document
+        $scope.selectedDocument.flow = {
+          revisionBySGIA: false,
+          approvedByBoss: false,
+          approvedByQA: false,
+          approvedBySGIA: false,
+          approvedByManagement: false,
+          approvedByPrepForPublish: false,
+          blueprintApproved: false,
+          prepForPublication: false,
+          published: false
+        };
+
+        $scope.selectedDocument.approvals = [];
+
+        if ($scope.selectedDocument.type.blueprint) {
+          $scope.selectedDocument.status = "En revision por lista de autorizaciones";
+        } else {
+          if ($rootScope.client.department.toUpperCase().includes('JEFE') && !$scope.selectedDocument.type.isProcessOrManual) {
+            $scope.selectedDocument.status = "En revision por Calidad";
+            $scope.selectedDocument.approvedByBoss = true;
+          } else {
+            $scope.selectedDocument.status = "En revision por jefe de departamento";
+          }
+        }
       }
+
+      documents.update($scope.selectedDocument)
+        .then((response) => {
+          console.log(response);
+
+        });
+
+      $scope.edit = false;
     }
-
-    commonFactory.toastMessage(`Este documento fue actualizado exitosamente!`, 'success');
-
-    //sends email
-
-    //   if ($scope.files && $scope.files.length) {
-
-
-    //     delete $scope.selectedDocument.type["$$hashKey"];
-
-    //     Upload.upload({
-    //       url: `/api/documents/${$scope.selectedDocument.name}`,
-    //       data: {
-    //         files: $scope.files,
-    //         document: $scope.selectedDocument
-    //       }
-    //     }).then(function(response) {
-    //       console.log(response);
-    //     }, function(response) {
-    //       if (response.status > 0) {
-    //         $scope.errorMsg = response.status + ': ' + response.data;
-    //       }
-    //     }, function(evt) {
-    //       $scope.progress =
-    //         Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-    //     });
-    //   }
   };
 
   $scope.download = function(fileName, filePath) {
@@ -277,7 +304,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 
   $scope.deleteFile = function(name) {
-    if (confirm("Esta seguro de borrar este archivo?")) {
+    if (commonFacotry.dialog("Esta seguro de borrar este archivo?")) {
       documents.deleteFile($stateParams.id, name)
         .then((data) => {
           $scope.selectedDocument.files = data.files;
@@ -307,9 +334,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     $http.get(`/api/documents/${$stateParams.id}`)
       .then(function(response) {
         $scope.selectedDocument = response.data;
-        $scope.selectedDocument.requestedDate = commonFactory.formatDate(new Date($scope.selectedDocument.requestedDate));
-        $scope.selectedDocument.requiredDate = commonFactory.formatDate(new Date($scope.selectedDocument.requiredDate));
-        $scope.selectedDocument.expiredDate = commonFactory.formatDate(new Date($scope.selectedDocument.expiredDate));
         $scope.originalDocument = angular.copy($scope.selectedDocument);
         if (!$scope.selectedDocument.flow.published) {
 
@@ -467,5 +491,5 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 }
 
-UpdateDocumentController.$inject = ['$rootScope', '$scope', '$http', '$stateParams', 'Upload', 'ObjectDiff', 'commonFactory', 'departments', 'documents'];
+UpdateDocumentController.$inject = ['$rootScope', '$scope', '$http', '$stateParams', 'Upload', 'ObjectDiff', 'commonFactory', 'departments', 'documents', 'email'];
 angular.module('app', ['ngFileUpload', 'ds.objectDiff']).controller('updateDocumentController', UpdateDocumentController);

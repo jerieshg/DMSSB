@@ -1,15 +1,11 @@
-(function() {
-  'use strict';
-  // emailCheck();
+'use strict';
 
-  function emailCheck() {
-    //every 15 minutes
-    var interval = 15 * 60 * 1000;
+module.exports.emailExpirationCheck = (function() {
 
-    setInterval(function() {
-      console.log("I am doing my 15 minutes check");
-      // do your stuff here
-    }, interval);
-  }
+  let Email = require('./Email');
+  let schedule = require('node-schedule');
 
+  var cron = schedule.scheduleJob('0 0 1 * *', () => {
+    Email.expiredDocumentCheck();
+  });
 });

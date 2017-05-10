@@ -9,6 +9,7 @@ let schema = new mongoose.Schema({
     added: String,
     removed: String,
     list: Boolean,
+    customText: String,
     value: String,
     created: Date
   }],

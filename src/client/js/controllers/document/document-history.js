@@ -57,6 +57,9 @@ function DocumentHistoryController($rootScope, $scope, $http, $stateParams, Uplo
     if (field === 'files') {
       return 'archivo(s)';
     }
+    if (field === 'approvals') {
+      return 'aprobacion';
+    }
 
     return field;
   }

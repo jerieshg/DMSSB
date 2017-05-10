@@ -13,8 +13,9 @@
   </div>
   <div class="card-block">
     <h4 class="card-title"></h4>
-    <p class="card-text" ng-show='!e.list && !e.value'> <strong>{{translateField(e.field)}}</strong> de <strong>{{e.removed}}</strong> a <strong>{{e.added}}</strong></p>
-    <p class="card-text" ng-show='e.list && e.value'> Se han <strong>{{retrieveValue(e)}}</strong> un(os) <strong>{{translateField(e.field)}}</strong> </p>
+    <p class="card-text" ng-show='!e.list && !e.value  && e.field !== "approvals"'> <strong>{{translateField(e.field)}}</strong> de <strong>{{e.removed}}</strong> a <strong>{{e.added}}</strong></p>
+    <p class="card-text" ng-show='e.list && e.value && e.field !== "approvals"'> Se han <strong>{{retrieveValue(e)}}</strong> un(os) <strong>{{translateField(e.field)}}</strong> </p>
+    <p class="card-text" ng-show='e.field === "approvals"'> Se ha <strong>{{(e.value && e.value==="true") ? 'aprobado' : 'rechazado'}}</strong> el documento. Comentario: <strong>{{e.customText}}</strong></p>
     <ul class="list-group list-group-flush">
       <li class="list-group-item small">Cambiado el {{e.created |  date: 'yyyy-MM-dd hh:mm:ss a'}} por {{e.user}}</li>
     </ul>

@@ -224,16 +224,19 @@ module.exports = function(router) {
     .delete(Document.delete);
   router.route('/api/documents/:id/file/:name')
     .delete(Document.deleteFile);
+
   router.route('/api/documents/search/')
     .post(Document.search);
-  router.route('/api/documents/:name')
+  router.route('/api/documents/:id/update/')
+    .put(Document.update);
+  router.route('/api/documents/:name/')
     .post(upload.any(), Document.create)
     .put(upload.any(), Document.updateFiles);
-  router.route('/api/documents/clients/:id')
+  router.route('/api/documents/clients/:id/')
     .get(Document.findMyDocuments);
   router.route('/api/documents/pending/:id/')
     .get(Document.findPendingDocuments);
-  router.route('/api/documents/:id/approvals')
+  router.route('/api/documents/:id/approvals/')
     .put(Document.updateApprovals)
 
   //Document History ROUTES
@@ -247,12 +250,10 @@ module.exports = function(router) {
     .get(DocumentHistory.find);
 
   //Email Routers
-  router.route('/api/email/:email/new')
-    .get(Email.newDocument);
-  router.route('/api/email/:email/update')
-    .get(Email.updatedDocument);
   router.route('/api/email/:email/expired')
     .get(Email.expiredDocumentCheck);
+  router.route('/api/email/clients/:clientName/documents/:docId')
+    .get(Email.sendRejectedDocument);
 
   // router to handle all angular requests
   router.get('*', function(req, res) {

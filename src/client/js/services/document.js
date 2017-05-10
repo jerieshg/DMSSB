@@ -15,16 +15,34 @@
         });
     };
 
-    var save = function(business) {
-      return $http.post('/api/documents/', business)
+    var save = function(doc) {
+      return $http.post('/api/documents/', doc)
         .then((response) => {
-          commonFactory.toastMessage(`Empresa ${business.business} ' fue guardado exitosamente!`, 'success');
+          commonFactory.toastMessage(`Documento ${doc.name} fue guardado exitosamente!`, 'success');
           return response.data;
         })
         .catch((error) => {
           console.log(error);
           if (error.data.code === 11000) {
-            commonFactory.toastMessage(`La empresa ${$scope.selectedBusiness.business} ya existe.`, 'danger');
+            commonFactory.toastMessage(`Documento ${doc.name} ya existe.`, 'danger');
+          } else {
+            commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
+          }
+
+          return error;
+        });
+    };
+
+    var update = function(doc) {
+      return $http.put(`/api/documents/${doc._id}/update/`, doc)
+        .then((response) => {
+          commonFactory.toastMessage(`Documento ${doc.name} fue actualizado exitosamente!`, 'success');
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.data.code === 11000) {
+            commonFactory.toastMessage(`Documento ${doc.name} ya existe.`, 'danger');
           } else {
             commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
           }
@@ -63,6 +81,7 @@
     return {
       delete: _delete,
       save: save,
+      update: update,
       updateApprovals: updateApprovals,
       deleteFile: deleteFile
     };
