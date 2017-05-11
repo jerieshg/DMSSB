@@ -8905,7 +8905,7 @@ md-toast.md-danger-theme .md-toast-content {
 
 .custom-chart-radar {
   /*  width: 90%;
-  margin-left: 4em;*/
+margin-left: 4em;*/
   width: 60%;
   margin-left: 23em; }
 
@@ -9153,6 +9153,12 @@ hr:after {
 
 .doc-type-separator select {
   margin-bottom: 2%; }
+
+#datepicker input {
+  width: 100%; }
+
+#datepicker .input-group-addon {
+  min-width: 60px; }
 
 /*!
  * surveyjs - Survey JavaScript library v0.11.0

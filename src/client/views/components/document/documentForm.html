@@ -13,7 +13,7 @@
         <i class="fa fa-check" aria-hidden="true"/>  Aprobar documento
       </a>
 
-       <a  class="btn btn-secondary" ng-click="triggerEdit()" title="Ver historial del documento" ng-show="selectedDocument._id && selectedDocument.status !== 'Anulado'">
+      <a  class="btn btn-secondary" ng-click="triggerEdit()" title="Ver historial del documento" ng-show="selectedDocument._id && selectedDocument.status !== 'Anulado'">
         <i class="fa fa-pencil" aria-hidden="true"/>  Editar
       </a>
     </div>
@@ -87,15 +87,21 @@
     <div class="form-divider"></div>
     <div class="col-sm-3 datepicker" style="padding-left:1em;">
       <label for="requestedDate">Fecha solicitud:</label>
-      <input name="requestedDate" type="text" class="form-control" placeholder="Fecha solicitud" ng-model="selectedDocument.requestedDate" required ng-disabled="!edit">
+      <datepicker date-format="yyyy-MM-dd">
+        <input name="requestedDate" type="text" class="form-control" placeholder="Fecha solicitud" ng-model="selectedDocument.requestedDate" required ng-disabled="!edit">
+      </datepicker>
     </div>
     <div class="col-sm-3 datepicker" style="padding-left:1em;">
       <label for="requiredDate">Fecha requerida:</label>
-      <input name="requiredDate" type="text" class="form-control" placeholder="Fecha requerida" ng-model="selectedDocument.requiredDate" required ng-disabled="!edit">
+      <datepicker date-format="yyyy-MM-dd">
+        <input name="requiredDate" type="text" class="form-control" placeholder="Fecha requerida" ng-model="selectedDocument.requiredDate" required ng-disabled="!edit">
+      </datepicker>
     </div>
     <div class="col-sm-3 datepicker" style="padding-left:1em;">
       <label for="requiredDate">Fecha Vencimiento:</label>
-      <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate" ng-disabled="!edit">
+      <datepicker date-format="yyyy-MM-dd">
+        <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate" ng-disabled="!edit">
+      </datepicker>
     </div>
     <div class="col-sm-3">
       <label for="reqSGIA" style="font-weight: bold;">Requiere revision de seguridad de medioambiente:
@@ -145,13 +151,13 @@
     </table>
 
     <div class="row row-separator" ng-show="selectedDocument._id && !selectedDocument.flow.published" >
-    <div class="col-sm-5">
-      <label for="file">Adjuntar archivo: </label>
-      <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple>
-       <button  class="btn btn-info" type="submit" ng-click="uploadFiles()" ng-disabled="!files || files.length < 1">
-        <i class="fa fa-upload" aria-hidden="true"/>  Subir Archivos
-      </button>
+      <div class="col-sm-5">
+        <label for="file">Adjuntar archivo: </label>
+        <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple>
+        <button  class="btn btn-info" type="submit" ng-click="uploadFiles()" ng-disabled="!files || files.length < 1">
+          <i class="fa fa-upload" aria-hidden="true"/>  Subir Archivos
+        </button>
+      </div>
     </div>
   </div>
-</div>
 </div>

@@ -315,7 +315,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 
   function initializeController() {
-    $(".datepicker input").datepicker({});
     $scope.edit = false;
     $scope.priorities = ["Alta", "Normal", "Bajo"];
     $scope.isQA = false;

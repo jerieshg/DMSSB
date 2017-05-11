@@ -35,6 +35,10 @@ angular
               serie: true,
               name: 'Simple Line Icons',
               files: ['css/simple-line-icons.css']
+            }, {
+              serie: true,
+              name: 'Datepicker',
+              files: ['bower_components/angularjs-datepicker/dist/angular-datepicker.min.css']
             }]);
           }],
           loadPlugin: ['$ocLazyLoad', function($ocLazyLoad) {
@@ -84,14 +88,6 @@ angular
           label: 'Encuesta'
         },
         resolve: {
-          loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load CSS files
-            return $ocLazyLoad.load([{
-              serie: true,
-              name: 'bootstrap-date-picker',
-              files: ['bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css']
-            }]);
-          }],
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
@@ -488,14 +484,6 @@ angular
         },
         controller: 'documentHandlerController',
         resolve: {
-          loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load CSS files
-            return $ocLazyLoad.load([{
-              serie: true,
-              name: 'bootstrap-date-picker',
-              files: ['bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css']
-            }]);
-          }],
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
@@ -519,14 +507,6 @@ angular
         },
         controller: 'updateDocumentController',
         resolve: {
-          loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load CSS files
-            return $ocLazyLoad.load([{
-              serie: true,
-              name: 'bootstrap-date-picker',
-              files: ['bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css']
-            }]);
-          }],
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({
@@ -548,14 +528,6 @@ angular
         },
         controller: 'searchDocumentController',
         resolve: {
-          loadCSS: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load CSS files
-            return $ocLazyLoad.load([{
-              serie: true,
-              name: 'bootstrap-date-picker',
-              files: ['bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css']
-            }]);
-          }],
           loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
             // you can lazy load controllers
             return $ocLazyLoad.load({

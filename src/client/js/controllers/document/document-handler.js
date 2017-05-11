@@ -60,7 +60,6 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
   }
 
   function initializeController() {
-    $(".datepicker input").datepicker({});
     $scope.selectedDocument = {
       status: "Nuevo",
       flow: {
