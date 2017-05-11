@@ -163,7 +163,7 @@
 
             survey.questions = survey.questions
               .filter(question => {
-                return question.clients.includes(client)
+                return question.clients.includes(client.job)
               })
               .map(question => {
                 question.type = question.formType;
