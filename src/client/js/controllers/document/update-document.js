@@ -38,6 +38,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
     let rejected = false;
 
+    $scope.selectedDocument.approvals.push($scope.selectedApproved);
+
     $scope.selectedApproved.forBlueprint = $scope.selectedDocument.type.blueprint && !$scope.isManagement;
     //If the document is a blueprint and I am not from management, then I am authorizing the document
     if (!$scope.selectedDocument.flow.approvedByManagement && ($scope.isManagement && !$scope.selectedDocument.type.blueprint) || ($scope.selectedDocument.type.blueprint && $scope.selectedDocument.flow.blueprintApproved && $scope.isManagement)) {
@@ -128,7 +130,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         })
     }
 
-    $scope.selectedDocument.approvals.push(angular.copy($scope.selectedApproved));
+
 
     documents.updateApprovals($scope.selectedDocument)
       .then((data) => {
@@ -327,6 +329,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     retrieveDepartments();
     retrieveDocTypes();
     retrieveSystems();
+
   }
 
   function retrieveDocument() {
@@ -403,6 +406,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           return rv;
         }, {});
 
+
+
       Object.keys(
         unsortedApprovals
       ).forEach((key) => {
@@ -419,6 +424,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         });
       }
     }
+
+    console.log(approved);
 
     return approved;
   }

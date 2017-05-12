@@ -17,14 +17,15 @@
        </select>
        <br/>
 
-    <h5>Lista de autorizaciones por implicacion</h5>
+       <h5>Lista de autorizaciones por implicacion</h5>
 
        <div ng-repeat="item in selectedSystem.implications" class="row-separator">
          <strong>{{item.implication}}</strong>
-          <select type="text" class="form-control" ng-model="selectedSystem.implications[$index].authorization" name="option-$index" ng-options="item as item.username for item in clients track by item._id" multiple required>
-          </select>
-       </div>
-       <div class="modal-footer">
+         <md-select placeholder="Seleccione usuarios" ng-model="selectedSystem.implications[$index].authorization" name="option-$index" ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline" required multiple>
+          <md-option ng-repeat="item in clients" ng-value="item">{{item.username}}</md-option>
+        </md-select>
+      </div>
+      <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
         <button  class="btn btn-success" type="submit">
           <i class="fa fa-save" aria-hidden="true"/>  Guardar Sistema

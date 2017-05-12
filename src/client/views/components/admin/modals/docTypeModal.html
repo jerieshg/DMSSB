@@ -30,89 +30,96 @@
          Requiere SGIA
        </label>
      </div>
-  </div>
+   </div>
 
-  <div class="col-md-9">
-   <label for="type">Tipo de documento:</label>
-   <input type="text" id="type" class="form-control" ng-model="selectedDocType.type" required>
-   <br/>
-   <label for="code">Codigo:</label>
-   <input type="text" id="code" class="form-control" ng-model="selectedDocType.code" required>
-   <br/>
- </div>
+   <div class="col-md-9">
+     <label for="type">Tipo de documento:</label>
+     <input type="text" id="type" class="form-control" ng-model="selectedDocType.type" required>
+     <br/>
+     <label for="code">Codigo:</label>
+     <input type="text" id="code" class="form-control" ng-model="selectedDocType.code" required>
+     <br/>
+   </div>
 
- <div class="col-sm-12 approvalSection">
-  <h5>Encargados de aprobaciones</h5>
+   <div class="col-sm-12 approvalSection">
+    <h5>Encargados de aprobaciones</h5>
 
-  <div class="col-sm-12">
-    <strong>Empresa:</strong>
-    <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedBusiness.name" ng-change="loadBusinessFlow()" ng-options="item.business as item.business for item in business track by item._id">
-      <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
-    </select>
-  </div>
+    <div class="col-sm-12">
+      <strong>Empresa:</strong>
+      <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedBusiness.name" ng-change="loadBusinessFlow()" ng-options="item.business as item.business for item in business track by item._id">
+        <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
 
-  <div class="form-divider"></div>
+    <div class="form-divider"></div>
 
-  <div ng-show="selectedDocType.flow[selectedBusiness.name]">
-  <div class="col-sm-12 doc-type-separator" ng-show="!selectedDocType.blueprint">
-    <h6>Jefe del departamento:</h6>
-    <strong class="small" style="font-weight: bold;">Seleccione departamento:</strong>
-    <select class="form-control" ng-model="filter.deptBoss" ng-options="item.department as item.department for item in departments">
+    <div ng-show="selectedDocType.flow[selectedBusiness.name]">
+      <div class="col-sm-12 doc-type-separator" ng-show="!selectedDocType.blueprint">
+        <h6>Jefe del departamento:</h6>
+        <strong class="small" style="font-weight: bold;">Seleccione departamento:</strong>
+        <select class="form-control" ng-model="filter.deptBoss" ng-options="item.department as item.department for item in departments">
+          <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+        </select>
+
+
+        <strong class="small" style="font-weight: bold;" ng-show="filter.deptBoss">Seleccionar usuario:</strong>
+        <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['deptBoss'][filter.deptBoss]"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple ng-show="filter.deptBoss">
+          <md-option ng-repeat="item in clients | filter:{ department : filter.deptBoss }" ng-value="item">{{item.username}}</md-option>
+        </md-select>
+      </div>
+
+      <div class="col-sm-12 doc-type-separator" ng-show="!selectedDocType.blueprint">
+        <h6>Calidad:</h6>
+        <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
+        <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['qa']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control row-separator md-no-underline" data-md-container-class="selectdemoSelectHeader" required multiple>
+          <md-optgroup label="Usuarios">
+            <md-option ng-repeat="item in clients | filter:{ department : filter.qa }" ng-value="item">{{item.username}}</md-option>
+          </md-optgroup>
+        </md-select>
+<!-- 
+      <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
+      <select class="form-control" ng-model="filter.qa" ng-options="item.department as item.department for item in departments">
+        <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+      </select> -->
+    </div>
+
+    <div class="col-sm-12 doc-type-separator" ng-show="selectedDocType.requiresSGIA">
+      <h6>SGIA:</h6>
+      <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
+      <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['sgia']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
+        <md-option ng-repeat="item in clients | filter:{ department : filter.sgia }" ng-value="item">{{item.username}}</md-option>
+      </md-select>
+
+   <!--    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
+      <select class="form-control" ng-model="filter.sgia" ng-options="item.department as item.department for item in departments">
+        <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+      </select> -->
+    </div>
+
+    <div class="col-sm-12 doc-type-separator" ng-show="selectedDocType.isProcessOrManual || selectedDocType.blueprint">
+     <h6>Gerencia:</h6>
+     <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
+     <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['management']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
+      <md-option ng-repeat="item in clients | filter:{ department : filter.management }" ng-value="item">{{item.username}}</md-option>
+    </md-select>
+
+ <!--    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
+    <select class="form-control" ng-model="filter.management" ng-options="item.department as item.department for item in departments">
       <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-    </select>
-
-    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-    <select class="form-control"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['deptBoss'][filter.deptBoss]" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.deptBoss } track by item._id" multiple >
-    </select>
-
+    </select> -->
   </div>
-
-  <div class="col-sm-12 doc-type-separator" ng-show="!selectedDocType.blueprint">
-    <h6>Calidad:</h6>
-    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-    <select class="form-control row-separator"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['qa']" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.qa } track by item._id" multiple >
-    </select>
-
-    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
-    <select class="form-control" ng-model="filter.qa" ng-options="item.department as item.department for item in departments">
-      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-    </select>
-  </div>
-
-  <div class="col-sm-12 doc-type-separator" ng-show="selectedDocType.requiresSGIA">
-    <h6>SGIA:</h6>
-    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-    <select class="form-control row-separator"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['sgia']" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.sgia } track by item._id" multiple >
-    </select>
-
-    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
-    <select class="form-control" ng-model="filter.sgia" ng-options="item.department as item.department for item in departments">
-      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-    </select>
-  </div>
-
-  <div class="col-sm-12 doc-type-separator" ng-show="selectedDocType.isProcessOrManual || selectedDocType.blueprint">
-   <h6>Gerencia:</h6>
-   <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-   <select class="form-control row-separator"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['management']" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.management } track by item._id" multiple >
-   </select>
-
-   <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
-   <select class="form-control" ng-model="filter.management" ng-options="item.department as item.department for item in departments">
-    <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-  </select>
-</div>
 
   <div class="col-sm-12 doc-type-separator" >
     <h6>Preparacion para publicacion:</h6>
     <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-    <select class="form-control row-separator"  ng-model="selectedDocType.flow[selectedBusiness.name].approvals['prepForPublication']" name="option-$index" ng-options="{_id: item._id, username: item.username} as item.username for item in clients | filter:{ department : filter.prepForPublication } track by item._id" multiple >
-    </select>
+    <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['prepForPublication']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
+      <md-option ng-repeat="item in clients | filter:{ department : filter.prepForPublication }" ng-value="item">{{item.username}}</md-option>
+    </md-select>
 
-    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
+  <!--   <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
     <select class="form-control" ng-model="filter.prepForPublication" ng-options="item.department as item.department for item in departments">
       <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-    </select>
+    </select> -->
   </div>
 </div>
 

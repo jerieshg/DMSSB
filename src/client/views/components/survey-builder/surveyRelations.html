@@ -34,12 +34,13 @@
          <option value="">Seleccione un servicio {{optional ? '(optional)' : ''}}</option>
        </select>
      </td>
-     <td style="width: 25%;">
-       <select  name="clients" class="form-control" ng-model="e.clients" ng-options="item.job as item.job for item in jobs" multiple required>
-       </select>
-     </td>
-   </tr>
- </tbody>
+     <td>
+     <md-select placeholder="Clientes" ng-model="e.clients" multiple="true" required class="form-control md-no-underline" style="width: 30em;">
+        <md-option ng-repeat="item in jobs" value="{{item.job}}">{{item.job}}</md-option>
+      </md-select>
+    </td>
+  </tr>
+</tbody>
 </table>
 </form>
 </div>

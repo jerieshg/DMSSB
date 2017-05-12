@@ -41,8 +41,9 @@
 
 <div class=" col-md-6">
   <label for="empresa">Empresa:</label>
-  <select id="empresa" name="business" class="form-control" ng-model="survey.business" ng-options="item.business as item.business for item in business" multiple required title="Si necesita seleccionar multiples empresas, utiliza la tecla control (CTRL) dejando presionado mientras hace click en las empresas">
-  </select>
+    <md-select placeholder="Empresa" ng-model="survey.business" multiple="true" required class="form-control md-no-underline">
+    <md-option ng-repeat="item in business" value="{{item.business}}">{{item.business}}</md-option>
+  </md-select>
   <div ng-messages="surveyForm.business.$error" ng-show="surveyForm.business.$dirty && surveyForm.business.$invalid">
     <div ng-message="required" class="text-danger">* Este campo es requerido</div>
   </div>
