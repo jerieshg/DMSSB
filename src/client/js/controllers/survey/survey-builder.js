@@ -12,6 +12,7 @@ function SurveyBuilderController($rootScope, $scope, $state, $http, $stateParams
     }
 
     $scope.questionCopy = angular.copy($scope.newQuestion);
+    $scope.questionCopy._id = null;
   }
 
   $scope.pasteQuestion = function() {

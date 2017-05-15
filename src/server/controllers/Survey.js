@@ -311,9 +311,9 @@
             Client.aggregate(
               [{
                 $group: {
-                  _id: {
-                    job: '$job',
-                    business: '$business'
+                  _id: '$job',
+                  business: {
+                    $first: '$business'
                   },
                   count: {
                     $sum: 1
@@ -338,14 +338,15 @@
                   responsesCount[id] = e.count;
                 });
 
-                clients.forEach((e, index) => {
-                  let id = new Buffer(e._id.job, 'binary').toString('utf8');
-                  totalCountHolder[id] = e.count;
+                //Check responseCount when claling a general survey... it doesnt bring complete...amybe it's text comparison 
 
-                  if (survey.general && e._id.business && survey.business.filter(sv => e._id.business.includes(sv)).length > 0) {
+                clients.forEach((e, index) => {
+                  totalCountHolder[e._id] = e.count;
+
+                  if (survey.general && e.business && survey.business.filter(sv => e.business.includes(sv)).length > 0) {
                     data.responses.push({
-                      _id: e._id.job,
-                      current: responsesCount[id] ? responsesCount[id] : 0,
+                      _id: e._id,
+                      current: responsesCount[e._id] ? responsesCount[e._id] : 0,
                       total: e.count ? e.count : 0
                     })
                   }
@@ -361,6 +362,19 @@
                   });
                 }
 
+                //This is to check and make sure all responses are getting mapped
+                let mappedResponses = data.responses.map(e => e._id);
+                surveyResponses.forEach((e) => {
+                  let id = new Buffer(e._id, 'binary').toString('utf8');
+
+                  if (!mappedResponses.includes(id)) {
+                    data.responses.push({
+                      _id: id,
+                      current: e.count,
+                      total: e.count
+                    })
+                  }
+                });
 
                 data.currentTotal = data.responses.map(e => e.current).reduce((a, b) => a + b, 0);
                 data.total = data.responses.map(e => e.total).reduce((a, b) => a + b, 0);

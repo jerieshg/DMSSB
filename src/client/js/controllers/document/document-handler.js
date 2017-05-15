@@ -9,8 +9,10 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         $scope.selectedDocument.status = "En revision por lista de autorizaciones";
       } else {
         if ($rootScope.client.department.toUpperCase().includes('JEFE') && !$scope.selectedDocument.type.isProcessOrManual) {
-          $scope.selectedDocument.status = "En revision por Calidad";
           $scope.selectedDocument.approvedByBoss = true;
+          $scope.selectedDocument.flow.approvedByQA = true; //Check this
+          $scope.selectedDocument.flow.prepForPublication = true;
+          $scope.selectedDocument.status = "Preparado para publicacion";
         } else {
           $scope.selectedDocument.status = "En revision por jefe de departamento";
         }

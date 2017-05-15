@@ -2,6 +2,25 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
   initializeController();
 
+  $scope.convertApproval = function(key) {
+    switch (key) {
+      case 'deptBoss':
+        return `Jefe de departamento - ${$scope.selectedDocument.flow.approvedByBoss ? 'Aprobado' : 'No Aprobado'}`;
+      case 'sgia':
+        return `Seguridad - ${$scope.selectedDocument.flow.approvedBySGIA ? 'Aprobado' : 'No Aprobado'}`;
+      case 'sgma':
+        return `Seguridad de Medioambiente - ${$scope.selectedDocument.flow.approvedBySGMA ? 'Aprobado' : 'No Aprobado'}`;
+      case 'qa':
+        return `Calidad - ${$scope.selectedDocument.flow.approvedByQA ? 'Aprobado' : 'No Aprobado'}`;
+      case 'management':
+        return `Gerencia - ${$scope.selectedDocument.flow.approvedByManagement ? 'Aprobado' : 'No Aprobado'}`;
+      case 'prepForPublication':
+        return `Preparacion para publicacion - ${$scope.selectedDocument.flow.approvedByPrepForPublish ? 'Aprobado' : 'No Aprobado'}`;
+      default:
+        return null;
+    }
+  }
+
   $scope.triggerEdit = function() {
     $scope.edit = !$scope.edit;
   }
@@ -72,7 +91,9 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         if ($scope.selectedDocument.type.isProcessOrManual) {
           $scope.selectedDocument.status = "En revision por gerencia";
         } else {
-          $scope.selectedDocument.status = "En revision por calidad";
+          $scope.selectedDocument.flow.approvedByQA = true; //Check this
+          $scope.selectedDocument.flow.prepForPublication = true;
+          $scope.selectedDocument.status = "Preparado para publicacion";
         }
       } else {
         $scope.selectedDocument.status = "Rechazado por jefe de departamento";
@@ -92,11 +113,9 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.flow.blueprintApproved = false;
         rejected = true;
       }
-      //If it's a dept Boss and document has not already been approved by QA and Management, then I will be able to approve it
     } else if ($scope.isQA && !$scope.selectedDocument.flow.approvedByQA) {
       console.log("QA");
       $scope.selectedApproved.step = "QA";
-      //If it's approved and it is not in prep for Publication
       if ($scope.selectedApproved.approved) {
         $scope.selectedDocument.flow.approvedByQA = $scope.selectedApproved.approved;
         if ($scope.selectedDocument.type.requiresSGIA) {

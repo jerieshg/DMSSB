@@ -18,19 +18,19 @@
             <td>Porcentaje</td>
           </thead>
           <tbody>
-            <tr ng-repeat="item in trackUsers.responses">
+            <tr ng-repeat="item in trackUsers.responses | orderBy: '_id'">
               <td>{{item._id}}</td>
               <td>{{item.total}}</td>
               <td>{{item.current}}</td>
               <td>{{item.total - item.current}}</td>
-              <td>{{item.current < 1 ? 0: (item.current/item.total) * 100 | number : 2}}%</td>
+              <td>{{calculateTotal(item.current, item.total) | number : 2}}%</td>
             </tr>
             <tr class="table-total-tr">
               <td>Total</td>
               <td>{{trackUsers.total}}</td>
               <td>{{trackUsers.currentTotal}}</td>
               <td>{{trackUsers.total - trackUsers.currentTotal}}</td>
-              <td>{{trackUsers.currentTotal < 1 ? 0: (trackUsers.currentTotal/trackUsers.total) * 100 | number : 2}}%</td>
+              <td>{{calculateTotal(trackUsers.currentTotal, trackUsers.total) | number : 2}}%</td>
             </tr>
           </tbody>
         </table>

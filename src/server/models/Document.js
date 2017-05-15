@@ -14,7 +14,6 @@ let schema = new mongoose.Schema({
   requestedDate: Date,
   priority: String,
   requiredDate: Date,
-  requester: String,
   business: String,
   department: String,
   type: {

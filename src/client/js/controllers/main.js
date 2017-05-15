@@ -53,6 +53,16 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
       })
   }
 
+  $scope.calculateTotal = function(current, total) {
+    let result = 0;
+
+    if (current && current > 0) {
+      result = current / total;
+    }
+
+    return result * 100;
+  }
+
   $scope.generateActionPlan = function() {
     $http.get(`/api/surveys/${$scope.apId}/responses/`)
       .then(function(response) {

@@ -7,39 +7,6 @@ md-select{
   }
 }
 
-.selectdemoSelectHeader {
-  /* Please note: All these selectors are only applied to children of elements with the 'selectdemoSelectHeader' class */ }
-  .selectdemoSelectHeader .demo-header-searchbox {
-    border: none;
-    outline: none;
-    height: 100%;
-    width: 100%;
-    padding: 0; }
-  .selectdemoSelectHeader .demo-select-header {
-    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.14), 0 0 0 0 rgba(0, 0, 0, 0.12);
-    padding-left: 10.667px;
-    height: 48px;
-    cursor: pointer;
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 500px; }
-  .selectdemoSelectHeader md-content._md {
-    max-height: 240px; }
-
-.content_splash{
-  position:relative;
-  z-index:999999;
-}
-/*
-Copyright 2016 Google Inc. All Rights Reserved. 
-Use of this source code is governed by an MIT-style license that can be in foundin the LICENSE file at http://material.angularjs.org/license.
-*/
-
-md-content._md {
-  max-height: 240px; 
-}
-
 md-toast{
   z-index:1200 !important;
 }

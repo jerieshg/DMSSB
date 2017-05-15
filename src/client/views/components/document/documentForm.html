@@ -1,6 +1,8 @@
 <div class="animate fadeIn">
   <div ng-include="'views/components/document/approvalSummaryModal.html'"></div>
+  <div ng-include="'views/components/document/approvalsListModal.html'"></div>
   <div ng-include="'views/components/document/approveDocumentModal.html'"></div>
+
   <div class="row">
     <div class="col-sm-12">
       <a  class="btn btn-primary"  ui-sref-active="active" ui-sref="app.docs.history({id: selectedDocument._id})" title="Ver historial del documento" ng-show="selectedDocument._id">
@@ -8,6 +10,9 @@
       </a>
       <a  class="btn btn-info"  data-toggle="modal"  data-target="#approvalSummaryModal" title="Ver resumen de aprobaciones" ng-show="selectedDocument._id" style="color:white;">
         <i class="fa fa-eye" aria-hidden="true"/>  Resumen de aprobaciones
+      </a>
+        <a  class="btn btn-info"  data-toggle="modal"  data-target="#approvalListModal" title="Ver lista de aprobaciones" ng-show="selectedDocument._id" style="color:white;" ng-click="createApprovalList()">
+        <i class="fa fa-eye" aria-hidden="true"/>  Lista de aprobaciones
       </a>
       <a  class="btn btn-warning"  data-toggle="modal"  data-target="#approveDocumentModal" title="Aprobar o desaprobar documento" ng-show="canApprove" style="color:white;" ng-click="findApproval(e)">
         <i class="fa fa-check" aria-hidden="true"/>  Aprobar documento
@@ -66,12 +71,6 @@
       </select>
     </div>
     <div class="form-divider"></div>
-    <div class="col-sm-4">
-      <label for="requester">Solicitante:</label>
-      <select name="requester" id="requester" class="form-control" ng-model="selectedDocument.requester" ng-options="item.username as item.username for item in clients" required ng-disabled="!edit">
-        <option value="">Seleccione un usuario  {{optional ? '(optional)' : ''}}</option>
-      </select>
-    </div>
     <div class="col-sm-4">
       <label for="dept">Departamento:</label>
       <select name="dept" id="dept" class="form-control" ng-model="selectedDocument.department" ng-options="item.department as item.department for item in departments" required ng-disabled="!edit">
