@@ -1,5 +1,6 @@
 let Job = require('../models/Job');
 let Client = require('../models/Client');
+let Survey = require('../models/Survey');
 
 module.exports.readAll = function(req, res, next) {
   Job.find({}, function(error, jobs) {
@@ -70,7 +71,40 @@ module.exports.update = function(req, res, next) {
             return res.send(error);
           }
 
-          res.json(job);
+          Survey.find({
+            questions: {
+              $elemMatch: {
+                clients: previosJob
+              }
+            }
+          }, function(error, surveys) {
+            if (error) {
+              res.status(500);
+              next(error);
+              return res.send(error);
+            }
+
+            surveys.forEach((selectedSurv, sindex) => {
+
+              selectedSurv.questions.forEach((q, qindex) => {
+                if (q.clients.includes(previosJob)) {
+                  q.clients[q.clients.indexOf(previosJob)] = job.job;
+                }
+              });
+
+              selectedSurv.markModified('questions');
+              selectedSurv.save((error, surv) => {
+                if (error) {
+                  res.status(500);
+                  next(error);
+                  return res.send(error);
+                }
+
+              });
+            });
+
+            res.json(job);
+          });
         })
     });
   });
