@@ -109,6 +109,19 @@
     </select> -->
   </div>
 
+   <div class="col-sm-12 doc-type-separator" >
+    <h6>Seguridad de medioambiente:</h6>
+    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
+    <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['sgma']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
+      <md-option ng-repeat="item in clients | filter:{ department : filter.sgma }" ng-value="item">{{item.username}}</md-option>
+    </md-select>
+
+  <!--   <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
+    <select class="form-control" ng-model="filter.prepForPublication" ng-options="item.department as item.department for item in departments">
+      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+    </select> -->
+  </div>
+
   <div class="col-sm-12 doc-type-separator" >
     <h6>Preparacion para publicacion:</h6>
     <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>

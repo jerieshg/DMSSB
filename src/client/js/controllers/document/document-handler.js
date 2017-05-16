@@ -29,7 +29,7 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         url: `/api/documents/${$scope.selectedDocument.name}`,
         data: {
           files: $scope.files,
-          document: $scope.selectedDocument
+          document: angular.toJson($scope.selectedDocument)
         }
       }).then(function(response) {
         if (response.status === 200) {
@@ -38,7 +38,8 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         }
       }, function(response) {
         if (response.status > 0) {
-          $scope.errorMsg = response.status + ': ' + response.data;
+          commonFactory.toastMessage('Algo paso! Por favor revise el documento o contacte al administrador', 'danger');
+          $scope.selectedDocument.status = 'Nuevo';
         }
       }, function(evt) {
         $scope.progress =
@@ -74,7 +75,8 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         prepForPublication: false,
         published: false,
         approvedByPrepForPublish: false
-      }
+      },
+      publication: {}
     };
     $scope.priorities = ["Alta", "Normal", "Bajo"];
     $scope.edit = true;

@@ -49,15 +49,22 @@ let schema = new mongoose.Schema({
   }],
   flow: {
     revisionBySGIA: Boolean,
+    revisionBySGMA: Boolean,
     approvedByBoss: Boolean,
     approvedByQA: Boolean,
     approvedBySGIA: Boolean,
+    approvedBySGMA: Boolean,
     approvedByManagement: Boolean,
     approvedByPrepForPublish: Boolean,
     blueprintApproved: Boolean,
     prepForPublication: Boolean,
     published: Boolean,
     deleted: Boolean
+  },
+  publication: {
+    code: String,
+    revision: String,
+    publicationDate: Date
   },
   created: Date
 })

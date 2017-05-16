@@ -50,7 +50,7 @@ module.exports.updateFiles = function(req, res, next) {
 }
 
 module.exports.create = function(req, res, next) {
-  let doc = new Document(req.body.document);
+  let doc = new Document(JSON.parse(req.body.document));
   doc.created = new Date();
 
   req.files.forEach((e) => {
@@ -66,6 +66,7 @@ module.exports.create = function(req, res, next) {
   });
 
   doc.code = `${doc.type.code}-${randomNumber}`;
+
 
   doc.save(function(error, doc) {
     if (error) {
@@ -160,34 +161,6 @@ module.exports.delete = function(req, res, next) {
 
     res.json(result);
   });
-
-  // Document.findOne({
-  //   _id: req.params.id
-  // }, function(error, removeDoc) {
-  //   if (error) {
-  //     res.status(500);
-  //     next(error);
-  //     return res.send(error);
-  //   }
-
-  //   removeDoc.status = "Anulado";
-
-  //   removeDoc.remove(function(error, doc) {
-  //     if (error) {
-  //       res.status(500);
-  //       next(error);
-  //       return res.send(error);
-  //     }
-
-  //     if (removeDoc.files.length > 0) {
-  //       //retrieves first folder path and deletes the whole folder
-  //       let folderPath = removeDoc.files[0].path.replace(removeDoc.files[0].fileName, "");
-  //       fse.removeSync(folderPath);
-  //     }
-
-  //     res.json(removeDoc);
-  //   });
-  // });
 }
 
 module.exports.find = function(req, res, next) {
@@ -254,6 +227,9 @@ module.exports.findPendingDocuments = function(req, res, next) {
           let sgia = selectedFlow.approvals.sgia;
           sgia = (sgia) ? sgia.map(e => e._id).includes(client._id.toString()) : false;
 
+          let sgma = selectedFlow.approvals.sgma;
+          sgma = (sgma) ? sgma.map(e => e._id).includes(client._id.toString()) : false;
+
           let qa = selectedFlow.approvals.qa;
           qa = (qa) ? qa.map(e => e._id).includes(client._id.toString()) : false;
 
@@ -268,11 +244,13 @@ module.exports.findPendingDocuments = function(req, res, next) {
 
           if (deptBoss && !doc.flow.approvedByBoss) {
             return true;
-          } else if (management && !doc.flow.approvedByManagement) {
+          } else if (management && !doc.flow.approvedByManagement && !doc.flow.prepForPublication) {
             return true;
-          } else if (qa && !doc.flow.approvedByQA && (!doc.flow.prepForPublication || doc.flowapprovedByBoss)) {
+          } else if (qa && !doc.flow.approvedByQA && (!doc.flow.prepForPublication || doc.flow.approvedByBoss)) {
             return true;
-          } else if (doc.type.requiresSGIA && sgia && !doc.flow.approvedBySGIA && doc.flow.approvedByQA) {
+          } else if (doc.type.requiresSGIA && sgia && !doc.flow.approvedBySGIA && doc.flow.approvedByQA && !doc.flow.prepForPublication) {
+            return true;
+          } else if (sgma && doc.requiresSafetyEnv && doc.flow.approvedBySGIA && !doc.flow.approvedBySGMA && !doc.flow.prepForPublication) {
             return true;
           } else if (prepForPublication && doc.flow.prepForPublication) {
             return true;
@@ -289,80 +267,6 @@ module.exports.findPendingDocuments = function(req, res, next) {
 
 
   });
-  //Get USer ID
-  //Get Department
-  // Load documents as per type.flow and if that person already approved it or not
-  // let isQuality = (req.params.quality && req.params.quality === "true") ? true : false;
-  // let isSGIA = (req.params.SGIA && req.params.SGIA === "true") ? true : false;
-
-  // if (isSGIA) {
-  //   Document.find({
-  //     'requiresSGIA': true,
-  //     'flow.published': false,
-  //     'flow.revisionBySGIA': true,
-  //     'flow.approvedByQuality': true,
-  //     'flow.prepForPublication': false
-  //   }, function(error, docs) {
-  //     if (error) {
-  //       res.status(500);
-  //       next(error);
-  //       return res.send(error);
-  //     }
-
-  //     res.json(docs);
-  //   });
-  // } else if (isQuality) {
-  //   Document.find({
-  //     $and: [{
-  //       'flow.published': false,
-  //     }, {
-  //       $or: [{
-  //         'flow.prepForPublication': true
-  //       }, {
-  //         'flow.approvedByQuality': false
-  //       }]
-  //     }]
-  //   }, function(error, docs) {
-  //     if (error) {
-  //       res.status(500);
-  //       next(error);
-  //       return res.send(error);
-  //     }
-
-  //     res.json(docs);
-  //   });
-  // } else {
-  //   Document.find({
-  //     'flow.published': false,
-  //     // 'type.blueprint': true,
-  //     // 'flow.blueprintApproved': false
-  //   }, function(error, docs) {
-  //     if (error) {
-  //       res.status(500);
-  //       next(error);
-  //       return res.send(error);
-  //     }
-
-  //     let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
-  //     let job = new Buffer(req.params.job, 'binary').toString('utf8');
-
-  //     docs = docs.filter((e) => {
-  //       if (e.type.blueprint && !e.flow.blueprintApproved && e.type.authorized.length > 0) {
-  //         return e.type.authorized.map(a => a.user._id).includes(req.params.id);
-  //       }
-  //       7
-
-  //       return (e.type.hasProcessOwner && e.department === dept && job.toUpperCase().includes('JEFE') && !e.approvedByProcessOwner);
-  //     });
-
-  //     docs = docs.filter((e) => {
-  //       let approvals = e.approvals.filter((e) => e.forBlueprint && !e.approved);
-  //       return !approvals.map(a => a.user._id).includes(req.params.id);
-  //     });
-
-  //     res.json(docs);
-  //   });
-  // }
 }
 
 module.exports.updateApprovals = function(req, res, next) {
@@ -372,7 +276,8 @@ module.exports.updateApprovals = function(req, res, next) {
     $set: {
       approvals: req.body.approvals,
       status: req.body.status,
-      flow: req.body.flow
+      flow: req.body.flow,
+      publication: req.body.publication
     }
   }, function(error, result) {
     if (error) {

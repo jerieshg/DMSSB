@@ -77,10 +77,26 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       $scope.selectedDocument.flow.approvedBySGIA = $scope.selectedApproved.approved;
       $scope.selectedApproved.step = "SGIA";
       if ($scope.selectedApproved.approved) {
+        if ($scope.selectedDocument.requiresSafetyEnv) {
+          $scope.selectedDocument.flow.revisionBySGMA = true;
+          $scope.selectedDocument.status = "En revision por SGMA";
+        } else {
+          $scope.selectedDocument.status = "Preparado para publicacion";
+          $scope.selectedDocument.flow.prepForPublication = true;
+        }
+      } else {
+        $scope.selectedDocument.status = "Rechazado por SGIA";
+        rejected = true;
+      }
+    } else if ($scope.isSGMA && $scope.selectedDocument.requiresSafetyEnv && !$scope.selectedDocument.flow.approvedBySGMA && $scope.selectedDocument.flow.approvedByQA && $scope.selectedDocument.flow.approvedBySGIA) {
+      console.log("SGMA");
+      $scope.selectedDocument.flow.approvedBySGMA = $scope.selectedApproved.approved;
+      $scope.selectedApproved.step = "SGMA";
+      if ($scope.selectedApproved.approved) {
         $scope.selectedDocument.status = "Preparado para publicacion";
         $scope.selectedDocument.flow.prepForPublication = true;
       } else {
-        $scope.selectedDocument.status = "Rechazado por SGIA";
+        $scope.selectedDocument.status = "Rechazado por SGMA";
         rejected = true;
       }
     } else if ($scope.isDeptBoss && !$scope.selectedDocument.flow.approvedByBoss && !$scope.selectedDocument.flow.approvedByQA && !$scope.selectedDocument.flow.approvedByManagement) {
@@ -91,9 +107,13 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         if ($scope.selectedDocument.type.isProcessOrManual) {
           $scope.selectedDocument.status = "En revision por gerencia";
         } else {
-          $scope.selectedDocument.flow.approvedByQA = true; //Check this
-          $scope.selectedDocument.flow.prepForPublication = true;
-          $scope.selectedDocument.status = "Preparado para publicacion";
+          if ($scope.selectedDocument.type.requiresSGIA) {
+            $scope.selectedDocument.status = "En revision por calidad";
+          } else {
+            $scope.selectedDocument.flow.approvedByQA = true; //Check this
+            $scope.selectedDocument.flow.prepForPublication = true;
+            $scope.selectedDocument.status = "Preparado para publicacion";
+          }
         }
       } else {
         $scope.selectedDocument.status = "Rechazado por jefe de departamento";
@@ -134,6 +154,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       $scope.selectedApproved.step = "p2p";
       $scope.selectedDocument.flow.approvedByPrepForPublish = $scope.selectedApproved.approved;
       if ($scope.selectedApproved.approved) {
+        $scope.selectedDocument.publication.publicationDate = new Date();
         $scope.selectedDocument.status = "Publicado";
         $scope.selectedDocument.flow.published = true;
       } else {
@@ -149,18 +170,16 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         })
     }
 
-
-
     documents.updateApprovals($scope.selectedDocument)
       .then((data) => {
         console.log(data);
         commonFactory.toastMessage(`Este documento fue ${$scope.selectedApproved.approved ? 'aprobado' : 'rechazado'}`, 'success');
+        $scope.canApprove = !$scope.selectedApproved.approved;
+        $scope.selectedApproved = {};
       });
 
     updateDocumentHistory();
     $('#approveDocumentModal').modal('toggle');
-    $scope.canApprove = !$scope.selectedApproved.approved;
-    $scope.selectedApproved = {};
   }
 
   function updateDocumentHistory() {
@@ -170,6 +189,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     //something has changed in the document
     if (diff.changed !== 'equal') {
       $scope.documentHistory.docId = $scope.selectedDocument._id;
+      //Detect if it's a json value (FOR PUBLICATION OBJECT)
       for (let [key, value] of Object.entries(diff.value)) {
         if (value.added) {
           changed.push(key);
@@ -380,6 +400,9 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
               let sgia = selectedFlow.approvals.sgia;
               $scope.isSGIA = (sgia) ? sgia.map(e => e._id).includes($rootScope.client._id.toString()) : false;
 
+              let sgma = selectedFlow.approvals.sgma;
+              $scope.isSGMA = (sgma) ? sgma.map(e => e._id).includes($rootScope.client._id.toString()) : false;
+
               let qa = selectedFlow.approvals.qa;
               $scope.isQA = (qa) ? qa.map(e => e._id).includes($rootScope.client._id.toString()) : false;
 
@@ -394,11 +417,13 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
               if ($scope.isDeptBoss && !$scope.selectedDocument.flow.approvedByBoss && !(foundApproval && foundApproval.step === "boss" && foundApproval.approved)) {
                 $scope.canApprove = true;
-              } else if ($scope.isManagement && !$scope.selectedDocument.flow.approvedByManagement && !(foundApproval && foundApproval.step === "management" && foundApproval.approved)) {
+              } else if ($scope.isManagement && !$scope.selectedDocument.flow.approvedByManagement && !(foundApproval && foundApproval.step === "management" && foundApproval.approved) && !$scope.selectedDocument.flow.prepForPublication) {
                 $scope.canApprove = true;
               } else if ($scope.isQA && !$scope.selectedDocument.flow.approvedByQA && !(foundApproval && foundApproval.step === "QA" && foundApproval.approved)) {
                 $scope.canApprove = true;
-              } else if ($scope.isSGIA && $scope.selectedDocument.type.requiresSGIA && !$scope.selectedDocument.flow.approvedBySGIA && $scope.selectedDocument.flow.approvedByQA && !(foundApproval && foundApproval.step === "SGIA" && foundApproval.approved)) {
+              } else if ($scope.isSGIA && $scope.selectedDocument.type.requiresSGIA && !$scope.selectedDocument.flow.approvedBySGIA && $scope.selectedDocument.flow.approvedByQA && !(foundApproval && foundApproval.step === "SGIA" && foundApproval.approved) && !$scope.selectedDocument.flow.prepForPublication) {
+                $scope.canApprove = true;
+              } else if ($scope.isSGMA && $scope.selectedDocument.requiresSafetyEnv && $scope.selectedDocument.flow.approvedBySGIA && !$scope.selectedDocument.flow.approvedBySGMA && !(foundApproval && foundApproval.step === "SGMA" && foundApproval.approved) && !$scope.selectedDocument.flow.prepForPublication) {
                 $scope.canApprove = true;
               } else if ($scope.isPrepForPublication && $scope.selectedDocument.flow.prepForPublication && !$scope.selectedDocument.flow.approvedByPrepForPublish && !(foundApproval && foundApproval.step === "p2p" && foundApproval.approved)) {
                 $scope.canApprove = true;

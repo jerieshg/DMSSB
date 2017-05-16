@@ -6,31 +6,38 @@
         <h5 class="modal-title" id="exampleModalLongTitle">Aprobar documento</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
-       </button>
-    </div>
-    <div class="modal-body">
-      <div class="col-sm-12">
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-sm-12">
          <strong for="approve">Aprobado:</strong>
          <label>
-            <input type="radio" ng-model="$parent.selectedApproved.approved" ng-value="true" ng-required="selectedApproved.approved">
-            Si
-         </label>
-         <label>
-            <input type="radio" ng-model="$parent.selectedApproved.approved" ng-value="false" ng-required="!selectedApproved.approved">
-            No
-         </label>
+          <input type="radio" ng-model="$parent.selectedApproved.approved" ng-value="true" ng-required="selectedApproved.approved">
+          Si
+        </label>
+        <label>
+          <input type="radio" ng-model="$parent.selectedApproved.approved" ng-value="false" ng-required="!selectedApproved.approved">
+          No
+        </label>
       </div>
-      <div class="col-sm-12 row-separator"> 
-         <label for="comment">Comentario</label>
-         <textarea type="text" class="form-control" ng-model="$parent.selectedApproved.comment" required></textarea>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button  class="btn btn-success" type="submit">
-           <i class="fa fa-save" aria-hidden="true"/>  Guardar Aprobacion
-        </button>
-     </div>
-  </form>
+      <div class="col-sm-12" ng-if="$parent.selectedDocument.flow.prepForPublication && selectedApproved.approved">
+        <label>Codigo:</label>
+        <input type="text" ng-model="$parent.selectedDocument.publication.code" class="form-control" required="$parent.selectedDocument.flow.prepForPublication && selectedApproved.approved" placeholder="Codigo de documento" />
+
+        <label>Revision:</label>
+        <input type="text" ng-model="$parent.selectedDocument.publication.revision" class="form-control" required="$parent.selectedDocument.flow.prepForPublication && selectedApproved.approved" placeholder="Revision" />
+    </div>
+    <div class="col-sm-12 row-separator"> 
+     <label for="comment">Comentario</label>
+     <textarea type="text" class="form-control" ng-model="$parent.selectedApproved.comment" placeholder="Comentario..." required></textarea>
+   </div>
+   <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    <button  class="btn btn-success" type="submit">
+     <i class="fa fa-save" aria-hidden="true"/>  Guardar Aprobacion
+   </button>
+ </div>
+</form>
 </div>
 </div>
 </div>
