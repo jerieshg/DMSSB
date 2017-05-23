@@ -72,6 +72,8 @@ module.exports = function(router) {
   let Implication = require('../controllers/Implication');
   //EMAIL
   let Email = require('../controllers/Email');
+  //Request Type
+  let RequestType = require('../controllers/Request-Type');
 
   //SURVEY ROUTES
   router.route('/api/surveys/')
@@ -195,6 +197,16 @@ module.exports = function(router) {
   router.route('/api/document-types/:id')
     .get(DocumentType.find);
 
+  //RequestType ROUTES
+  router.route('/api/request-types/')
+    .get(RequestType.readAll)
+    .post(RequestType.create);
+  router.route('/api/request-types/:id')
+    .put(RequestType.update)
+    .delete(RequestType.delete);
+  router.route('/api/request-types/:id')
+    .get(RequestType.find);
+
   //System ROUTES
   router.route('/api/systems/')
     .get(_System.readAll)
@@ -216,15 +228,19 @@ module.exports = function(router) {
     .get(Implication.find);
 
   //Upload Documents
-
+  router.route('/api/documents/:docId/clients/:clientId/verify')
+    .get(Document.findAndCheckDocument)
+  router.route('/api/documents/')
+    .get(Document.readPublishedDocuments);
   router.route('/api/documents/downloads/:path')
     .get(Document.downloadFile);
+  router.route('/api/documents/:id/downloads/')
+    .get(Document.downloadAllFiles);
   router.route('/api/documents/:id')
     .get(Document.find)
     .delete(Document.delete);
   router.route('/api/documents/:id/file/:name')
     .delete(Document.deleteFile);
-
   router.route('/api/documents/search/')
     .post(Document.search);
   router.route('/api/documents/:id/update/')

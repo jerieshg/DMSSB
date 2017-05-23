@@ -4,6 +4,53 @@ let path = require("path");
 let randomstring = require("randomstring");
 let fs = require("fs");
 let fse = require("fs-extra");
+let archiver = require('archiver');
+
+module.exports.readPublishedDocuments = function(req, res, next) {
+  Document.find({
+    'flow.published': true
+  }, function(error, docs) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    res.json(docs);
+  });
+}
+
+module.exports.downloadAllFiles = function(req, res, next) {
+  Document.findOne({
+    _id: req.params.id
+  }, function(error, doc) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    let basePath = path.join(__dirname, `/../../../uploads/`);
+    let fileName = `${doc.name}.zip`;
+
+    var archive = archiver.create('zip', {});
+    var output = fs.createWriteStream(`${basePath}/${fileName}`);
+
+    output.on('close', function() {
+      fs.unlink(`${basePath}${fileName}`);
+    });
+
+    //set the archive name
+    res.attachment(fileName);
+
+    archive.pipe(res);
+
+    archive.pipe(output);
+    archive
+      .directory(`${basePath}${doc.name}`, false)
+      .finalize();
+  });
+}
 
 module.exports.downloadFile = function(req, res, next) {
   let file = unescape(req.params.path);
@@ -56,7 +103,8 @@ module.exports.create = function(req, res, next) {
   req.files.forEach((e) => {
     doc.files.push({
       fileName: e.filename,
-      path: e.path
+      path: e.path,
+      type: 'electronic'
     });
   });
 
@@ -66,7 +114,6 @@ module.exports.create = function(req, res, next) {
   });
 
   doc.code = `${doc.type.code}-${randomNumber}`;
-
 
   doc.save(function(error, doc) {
     if (error) {
@@ -217,55 +264,38 @@ module.exports.findPendingDocuments = function(req, res, next) {
       }
 
       docs = docs.filter((doc) => {
-        if (doc.type.blueprint && !doc.flow.blueprintApproved) {
-          return doc.implication.authorization.map(a => a._id).includes(req.params.id);
-        }
-
-        let selectedFlow = doc.type.flow[doc.business];
-
-        if (selectedFlow) {
-          let sgia = selectedFlow.approvals.sgia;
-          sgia = (sgia) ? sgia.map(e => e._id).includes(client._id.toString()) : false;
-
-          let sgma = selectedFlow.approvals.sgma;
-          sgma = (sgma) ? sgma.map(e => e._id).includes(client._id.toString()) : false;
-
-          let qa = selectedFlow.approvals.qa;
-          qa = (qa) ? qa.map(e => e._id).includes(client._id.toString()) : false;
-
-          let deptBoss = (selectedFlow.approvals.deptBoss) ? selectedFlow.approvals.deptBoss[client.department] : false;
-          deptBoss = (deptBoss) ? deptBoss.map((e) => e._id).includes(client._id.toString()) : false;
-
-          let management = selectedFlow.approvals.management;
-          management = (management) ? management.map(e => e._id).includes(client._id.toString()) : false;
-
-          let prepForPublication = selectedFlow.approvals.prepForPublication;
-          prepForPublication = (prepForPublication) ? prepForPublication.map(e => e._id).includes(client._id.toString()) : false;
-
-          if (deptBoss && !doc.flow.approvedByBoss) {
-            return true;
-          } else if (management && !doc.flow.approvedByManagement && !doc.flow.prepForPublication) {
-            return true;
-          } else if (qa && !doc.flow.approvedByQA && (!doc.flow.prepForPublication || doc.flow.approvedByBoss)) {
-            return true;
-          } else if (doc.type.requiresSGIA && sgia && !doc.flow.approvedBySGIA && doc.flow.approvedByQA && !doc.flow.prepForPublication) {
-            return true;
-          } else if (sgma && doc.requiresSafetyEnv && doc.flow.approvedBySGIA && !doc.flow.approvedBySGMA && !doc.flow.prepForPublication) {
-            return true;
-          } else if (prepForPublication && doc.flow.prepForPublication) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-
-        return false;
-      })
+        return checkDocument(doc, client).canApprove;
+      });
 
       res.json(docs);
     });
+  });
+}
 
+module.exports.findAndCheckDocument = function(req, res, next) {
+  Client.findOne({
+    _id: req.params.clientId
+  }, function(error, client) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
 
+    Document.findOne({
+      _id: req.params.docId
+    }, function(error, doc) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
+      res.json({
+        document: doc,
+        approval: checkDocument(doc, client)
+      });
+    });
   });
 }
 
@@ -277,7 +307,8 @@ module.exports.updateApprovals = function(req, res, next) {
       approvals: req.body.approvals,
       status: req.body.status,
       flow: req.body.flow,
-      publication: req.body.publication
+      publication: req.body.publication,
+      request: req.body.request
     }
   }, function(error, result) {
     if (error) {
@@ -298,7 +329,9 @@ module.exports.search = function(req, res, next) {
     }
   }
 
-  Document.find({}, function(error, docs) {
+  Document.find({
+    'flow.published': true
+  }, function(error, docs) {
     if (error) {
       res.status(500);
       next(error);
@@ -307,7 +340,7 @@ module.exports.search = function(req, res, next) {
 
     if (req.body.code) {
       docs = docs.filter((doc) => {
-        return doc.code.includes(req.body.code);
+        return doc.publication.code.includes(req.body.code);
       });
     }
     if (req.body.name) {
@@ -338,4 +371,56 @@ module.exports.search = function(req, res, next) {
 
     res.json(docs);
   });
+}
+
+function checkDocument(doc, client) {
+  let includesDoc = false;
+  let step = -1;
+
+  if (doc.type.blueprint && !doc.flow.blueprintApproved) {
+    includesDoc = doc.implication.authorization[doc.business].map(a => a._id).includes(client._id);
+
+    return {
+      canApprove: includesDoc,
+      step: step
+    };
+  }
+
+  for (var i = 0; i < doc.request[doc.business].length; i++) {
+    let currentStep = doc.request[doc.business][i];
+    let previousStep = null;
+    step = i;
+
+    if (i - 1 >= 0) {
+      previousStep = doc.request[doc.business][i - 1];
+    }
+
+    //If the document does not  require safety env and the step includes it, then skips it
+    if (!doc.requiresSafetyEnv && currentStep.forEnvironment) {
+      continue;
+    }
+
+    //If the previous step is not approved yet... then cut the loop
+    if ((previousStep && !previousStep.approved)) {
+      if (!(previousStep.forEnvironment && !doc.requiresSafetyEnv)) {
+        break;
+      }
+    }
+
+    if (currentStep.requiresDept) {
+      if (doc.department === client.department)
+        includesDoc = currentStep.approvals[doc.department].map(e => e._id).includes(client._id.toString()) && !currentStep.approved;
+    } else {
+      includesDoc = currentStep.approvals.map(e => e._id).includes(client._id.toString()) && !currentStep.approved;
+    }
+
+    if (includesDoc) {
+      break;
+    }
+  }
+
+  return {
+    canApprove: includesDoc,
+    step: step
+  };
 }

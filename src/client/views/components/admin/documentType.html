@@ -34,7 +34,7 @@
    <tr ng:repeat="e in docTypes | filter:search">
      <td>{{$index + 1}}</td>
      <td>{{e.type}}</td>
-     <td>{{e.created | date: yyyy-mm-dd}}</td>
+     <td>{{e.created | date: 'yyyy-MM-dd'}}</td>
      <td>
        <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteDocType(e._id)"></i>
        <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateDocType(e)" data-toggle="modal" data-target="#docTypeModal"></i>

@@ -270,6 +270,26 @@ angular
           showConfirmDialog: true
         }
       })
+      .state('app.admin.requesttypes', {
+        url: '/tipo-de-solicitud',
+        templateUrl: 'views/components/admin/requestType.html',
+        ncyBreadcrumb: {
+          label: 'Tipos de solicitud'
+        },
+        controller: 'requestTypeController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load files for an existing module
+            return $ocLazyLoad.load({
+              files: ['js/controllers/admin/request-type.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: true,
+          showConfirmDialog: true
+        }
+      })
       .state('app.admin.business', {
         url: '/empresas',
         templateUrl: 'views/components/admin/business.html',
@@ -440,7 +460,28 @@ angular
         templateUrl: 'views/components/document/index.html',
         //page title goes here
         ncyBreadcrumb: {
-          label: 'Inicio',
+          label: 'Documentos y registros',
+        },
+        controller: 'documentaryCenterController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/documentary-center.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false,
+          showConfirmDialog: false
+        }
+      })
+      .state('app.docs.request', {
+        url: '/request-document',
+        templateUrl: 'views/components/document/document-request/index.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Solicitud de documentos',
         },
         controller: 'documentController',
         resolve: {
@@ -457,7 +498,7 @@ angular
       })
       .state('app.docs.pending', {
         url: '/pending-approval-documents',
-        templateUrl: 'views/components/document/pendingApprovalDocuments.html',
+        templateUrl: 'views/components/document/document-request/pendingApprovalDocuments.html',
         //page title goes here
         ncyBreadcrumb: {
           label: 'Documents para aprobar',
@@ -477,10 +518,10 @@ angular
       })
       .state('app.docs.create', {
         url: '/create',
-        templateUrl: 'views/components/document/documentForm.html',
+        templateUrl: 'views/components/document/document-request/documentForm.html',
         //page title goes here
         ncyBreadcrumb: {
-          label: 'Inicio',
+          label: 'Nuevo Documento',
         },
         controller: 'documentHandlerController',
         resolve: {
@@ -500,7 +541,7 @@ angular
         params: {
           survey: null
         },
-        templateUrl: 'views/components/document/documentForm.html',
+        templateUrl: 'views/components/document/document-request/documentForm.html',
         //page title goes here
         ncyBreadcrumb: {
           label: 'Documento',
@@ -542,7 +583,7 @@ angular
       })
       .state('app.docs.history', {
         url: '/history/:id',
-        templateUrl: 'views/components/document/history.html',
+        templateUrl: 'views/components/document/document-request/history.html',
         //page title goes here
         ncyBreadcrumb: {
           label: 'Historial',

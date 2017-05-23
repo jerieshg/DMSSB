@@ -3,20 +3,30 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
   initializeController();
 
   $scope.saveDocument = function() {
-    if ($scope.files && $scope.files.length) {
+    if (($scope.selectedDocument.files && $scope.selectedDocument.files.length > 0) || ($scope.files && $scope.files.length > 0)) {
 
       if ($scope.selectedDocument.type.blueprint) {
         $scope.selectedDocument.status = "En revision por lista de autorizaciones";
       } else {
-        if ($rootScope.client.department.toUpperCase().includes('JEFE') && !$scope.selectedDocument.type.isProcessOrManual) {
-          $scope.selectedDocument.approvedByBoss = true;
-          $scope.selectedDocument.flow.approvedByQA = true; //Check this
-          $scope.selectedDocument.flow.prepForPublication = true;
-          $scope.selectedDocument.status = "Preparado para publicacion";
+        let firstStep = $scope.selectedDocument.request[$scope.selectedDocument.business][0];
+
+        if (firstStep.bossPriority && (firstStep.approvals[$rootScope.client.department] && firstStep.approvals[$rootScope.client.department].map(e => e._id).includes($rootScope.client._id))) {
+          $scope.selectedDocument.request[$scope.selectedDocument.business][0].approved = true;
+          
+          let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][1];
+          if (!nextStep) {
+            $scope.selectedDocument.publication.publicationDate = new Date();
+            $scope.selectedDocument.status = "Publicado";
+            $scope.selectedDocument.flow.published = true;
+          } else {
+            $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
+          }
         } else {
-          $scope.selectedDocument.status = "En revision por jefe de departamento";
+          $scope.selectedDocument.status = `En revision por ${firstStep.name}`;
         }
       }
+
+      $scope.selectedDocument.requestedDate = new Date();
 
       delete $scope.selectedDocument.type["$$hashKey"];
 
@@ -34,7 +44,7 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
       }).then(function(response) {
         if (response.status === 200) {
           commonFactory.toastMessage('Documento creado exitosamente!', 'success');
-          $state.go('app.docs.main');
+          $state.go('app.docs.request');
         }
       }, function(response) {
         if (response.status > 0) {
@@ -45,18 +55,39 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         $scope.progress =
           Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
       });
-
-      //sends email
     } else {
       commonFactory.toastMessage("No se ha adjuntado un archivo!", "danger");
     }
   };
 
+  $scope.addToFiles = function(fileName) {
+    $scope.selectedDocument.files.push({
+      fileName: fileName,
+      type: 'physical'
+    });
+
+    $('#physicalFileModal').modal('toggle');
+  }
+
   $scope.retrieveImplications = function() {
     if ($scope.systems) {
       let filteredImplications = $scope.systems.filter(e => e.system === $scope.selectedDocument.system);
-
       return (filteredImplications.length > 0) ? filteredImplications[0].implications : [];
+    }
+
+    return null;
+  }
+
+  $scope.retrieveRequests = function() {
+    if ($scope.selectedDocument.type) {
+      let parsedArray = [];
+
+      Object.keys($scope.selectedDocument.type.requests).forEach(function(key, index) {
+        $scope.selectedDocument.type.requests[key].key = key;
+        parsedArray.push($scope.selectedDocument.type.requests[key]);
+      });
+
+      return parsedArray;
     }
 
     return null;
@@ -76,8 +107,12 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         published: false,
         approvedByPrepForPublish: false
       },
-      publication: {}
+      publication: {
+        revision: 1
+      },
+      files: []
     };
+
     $scope.priorities = ["Alta", "Normal", "Bajo"];
     $scope.edit = true;
     retrieveBusiness();

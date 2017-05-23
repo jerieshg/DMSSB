@@ -1,101 +1,81 @@
-let Business = require('../models/Business');
-let Department = require('../models/Department');
+let RequestType = require('../models/Request-Type');
 
 module.exports.readAll = function(req, res, next) {
-  Business.find({}, function(error, business) {
+  RequestType.find({}, function(error, types) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    res.json(business);
+    res.json(types);
   });
 }
 
 module.exports.create = function(req, res, next) {
-  let business = new Business(req.body);
+  let docType = new RequestType(req.body);
 
-  business.save(function(error, business) {
+  docType.save(function(error, type) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    res.json(business);
+    res.json(type);
   });
 }
 
 module.exports.update = function(req, res, next) {
-  Business.findOne({
+  RequestType.findOne({
     _id: req.params.id
-  }, function(error, business) {
+  }, function(error, type) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    let prevBusiness = business.business;
-
     for (prop in req.body) {
-      business[prop] = req.body[prop];
+      type[prop] = req.body[prop];
     }
 
-    business.save(function(error) {
+    type.save(function(error) {
       if (error) {
         res.status(500);
         next(error);
         return res.send(error);
       }
 
-      Department.update({
-          business: prevBusiness
-        }, {
-          $set: {
-            "business.$": business.business
-          }
-        }, {
-          "multi": true
-        },
-        function(error, result) {
-          if (error) {
-            res.status(500);
-            next(error);
-            return res.send(error);
-          }
-        });
-
-      res.json(business);
+      res.json(type);
     });
   });
 }
 
 module.exports.delete = function(req, res, next) {
-  Business.remove({
+  RequestType.remove({
     _id: req.params.id
-  }, function(error, business) {
+  }, function(error, type) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    res.json(business);
+    res.json(type);
   });
 }
 
 module.exports.find = function(req, res, next) {
-  Business.findOne({
+  RequestType.findOne({
     _id: req.params.id
-  }, function(error, business) {
+  }, function(error, type) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    res.json(business);
+    res.json(type);
   });
 }

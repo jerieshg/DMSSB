@@ -1,17 +1,16 @@
 <div class="animate fadeIn">
-  <div ng-include="'views/components/document/approvalSummaryModal.html'"></div>
-  <div ng-include="'views/components/document/approvalsListModal.html'"></div>
-  <div ng-include="'views/components/document/approveDocumentModal.html'"></div>
+  <div ng-include="'views/components/document/document-request/approvalSummaryModal.html'"></div>
+  <div ng-include="'views/components/document/document-request/approvalsListModal.html'"></div>
+  <div ng-include="'views/components/document/document-request/approveDocumentModal.html'"></div>
+  <div ng-include="'views/components/document/document-request/physicalFileModal.html'"></div>
 
   <div class="row">
     <div class="col-sm-12">
       <a  class="btn btn-primary"  ui-sref-active="active" ui-sref="app.docs.history({id: selectedDocument._id})" title="Ver historial del documento" ng-show="selectedDocument._id">
         <i class="fa fa-eye" aria-hidden="true"/>  Ver Historial
       </a>
-      <a  class="btn btn-info"  data-toggle="modal"  data-target="#approvalSummaryModal" title="Ver resumen de aprobaciones" ng-show="selectedDocument._id" style="color:white;">
-        <i class="fa fa-eye" aria-hidden="true"/>  Resumen de aprobaciones
-      </a>
-        <a  class="btn btn-info"  data-toggle="modal"  data-target="#approvalListModal" title="Ver lista de aprobaciones" ng-show="selectedDocument._id" style="color:white;" ng-click="createApprovalList()">
+
+      <a  class="btn btn-info"  data-toggle="modal"  data-target="#approvalListModal" title="Ver lista de aprobaciones" ng-show="selectedDocument._id" style="color:white;" ng-click="createApprovalList()">
         <i class="fa fa-eye" aria-hidden="true"/>  Lista de aprobaciones
       </a>
       <a  class="btn btn-warning"  data-toggle="modal"  data-target="#approveDocumentModal" title="Aprobar o desaprobar documento" ng-show="canApprove" style="color:white;" ng-click="findApproval(e)">
@@ -20,6 +19,10 @@
 
       <a  class="btn btn-secondary" ng-click="triggerEdit()" title="Ver historial del documento" ng-show="selectedDocument._id && selectedDocument.status !== 'Anulado'">
         <i class="fa fa-pencil" aria-hidden="true"/>  Editar
+      </a>
+
+      <a  class="btn btn-danger" ng-click="resetFlow()" title="Ver historial del documento" ng-show="selectedDocument._id && selectedDocument.status === 'Anulado'" style="color:white;">
+        <i class="fa fa-rotate-left" aria-hidden="true"/>  Reiniciar flujo de aprobaciones
       </a>
     </div>
   </div>
@@ -43,7 +46,7 @@
     </div>
     <div class="col-sm-2">
       <label for="verison">Version vigente:</label>
-      <input name="verison" type="text" class="form-control" placeholder="Version vigente" ng-model="selectedDocument.version" required ng-disabled="!edit">
+      <input name="verison" type="text" class="form-control" placeholder="Version vigente" ng-value="selectedDocument.publication.revision | numberFixedLen: 3" required ng-disabled="true">
     </div>
     <div class="col-sm-3">
       <label for="priority">Prioridad:</label>
@@ -58,13 +61,19 @@
         <option value="">Seleccione un tipo  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
+    <div class="col-sm-4" ng-show="selectedDocument.type">
+      <label>Solicitud:</label>
+      <select name="request" class="form-control" ng-model="selectedDocument.request" ng-options="item as item.key for item in retrieveRequests() track by item.key" required ng-disabled="!edit">
+        <option value="">Seleccione una solicitud  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
     <div class="col-sm-4" ng-show="selectedDocument.type.blueprint">
       <label for="system">Sistema:</label>
       <select name="system" id="system" class="form-control" ng-model="selectedDocument.system" ng-options="item.system as item.system for item in systems" ng-change="updateImplication()" ng-disabled="!edit">
         <option value="">Seleccione un sistema  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
-    <div class="col-sm-4" ng-show="selectedDocument.type.blueprint && selectedDocument.system" ng-disabled="!edit">
+    <div class="col-sm-4" ng-if="selectedDocument.type.blueprint && selectedDocument.system" ng-disabled="!edit">
       <label for="implication">Implicacion:</label>
       <select name="implication" id="implication" class="form-control"  ng-model="selectedDocument.implication" ng-options="item as item.implication for item in retrieveImplications() track by item.implication" ng-disabled="!edit">
         <option value="">Seleccione una implicacion  {{optional ? '(optional)' : ''}}</option>
@@ -84,26 +93,20 @@
       </select>
     </div>
     <div class="form-divider"></div>
-    <div class="col-sm-3 datepicker" style="padding-left:1em;">
-      <label for="requestedDate">Fecha solicitud:</label>
-      <datepicker date-format="yyyy-MM-dd">
-        <input name="requestedDate" type="text" class="form-control" placeholder="Fecha solicitud" ng-model="selectedDocument.requestedDate" required ng-disabled="!edit">
-      </datepicker>
-    </div>
-    <div class="col-sm-3 datepicker" style="padding-left:1em;">
+    <div class="col-sm-3">
       <label for="requiredDate">Fecha requerida:</label>
       <datepicker date-format="yyyy-MM-dd">
         <input name="requiredDate" type="text" class="form-control" placeholder="Fecha requerida" ng-model="selectedDocument.requiredDate" required ng-disabled="!edit">
       </datepicker>
     </div>
-    <div class="col-sm-3 datepicker" style="padding-left:1em;">
+    <div class="col-sm-4">
       <label for="requiredDate">Fecha Vencimiento:</label>
       <datepicker date-format="yyyy-MM-dd">
         <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate" ng-disabled="!edit">
       </datepicker>
     </div>
-    <div class="col-sm-3">
-      <label for="reqSGIA" style="font-weight: bold;">Requiere revision de seguridad de medioambiente:
+    <div class="col-sm-4">
+      <label for="reqSGIA" style="font-weight: bold;">Requiere revision de medioambiente:
         <input name="reqSGIA" type="checkbox" class="form-control" ng-model="selectedDocument.requiresSafetyEnv" ng-disabled="!edit">
       </label>
     </div>
@@ -111,6 +114,11 @@
     <div class="col-sm-4" ng-show="!selectedDocument._id">
       <label for="file">Adjuntar archivo: </label>
       <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple ng-disabled="!edit">
+    </div>
+    <div class="col-sm-3" ng-show="!selectedDocument._id">
+      <a  class="btn btn-secondary"  title="Agregar archivos que estan en fisico (no electronico)" data-toggle="modal"  data-target="#physicalFileModal">
+        <i class="fa fa-file-archive-o" aria-hidden="true"/>  Agregar archivo en duro
+      </a>
     </div>
     <div class="col-sm-12 row-separator">
       <label for="comments">Comentario:</label>
@@ -132,7 +140,10 @@
         <tr>
           <td>#</td>
           <td>Nombre</td>
-          <td></td>
+          <td>
+            <i class="fa fa-upload" aria-hidden="true" data-toggle="modal"  data-target="#physicalFileModal" title="Subir document o registro en duro " style="margin-right:0.5em;">  </i>
+            <div class="fa fa-cloud-upload" aria-hidden="true" ngf-select="uploadFiles()" ng-model="files" ngf-multiple="true" title="Subir document o registro electronico">  </div>
+          </td>
         </tr>
       </thead>
       <tbody>
@@ -140,23 +151,14 @@
           <td >{{$index + 1}}</td>
           <td>{{file.fileName}}</td>
           <td>
-            <a href="#" ng-click="download(file.fileName,file.path)">Descarga</a>
-            <label>|</label>
-            <i class="fa fa-trash" aria-hidden="true" ng-click="deleteFile(file.fileName)"></i>
-          </td>
-
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="row row-separator" ng-show="selectedDocument._id && !selectedDocument.flow.published" >
-      <div class="col-sm-5">
-        <label for="file">Adjuntar archivo: </label>
-        <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple>
-        <button  class="btn btn-info" type="submit" ng-click="uploadFiles()" ng-disabled="!files || files.length < 1">
-          <i class="fa fa-upload" aria-hidden="true"/>  Subir Archivos
-        </button>
-      </div>
-    </div>
-  </div>
+            <span ng-if="file.path">
+             <a href="#" ng-click="download(file.fileName,file.path)">Descarga</a>
+             <label>|</label>
+           </span>
+           <i class="fa fa-trash" aria-hidden="true" ng-click="deleteFile(file.fileName)"></i>
+         </td>
+       </tr>
+     </tbody>
+   </table>
+ </div>
 </div>

@@ -2,15 +2,15 @@
     <nav class="sidebar-nav">
         <ul class="nav">
 
-<!--          <li class="nav-item">
-            <a class="nav-link" ui-sref-active="active" ui-sref="app.surveys.main"><i class="fa fa-newspaper-o"></i>Centro Documental</a>
+         <li class="nav-item">
+            <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.main"><i class="fa fa-hdd-o"></i>Centro Documental</a>
         </li>
 
         <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.docs')}" >
-            <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.docs')}" href="#"><i class="fa fa-hdd-o"></i> R-098</a>
+            <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.docs')}" href="#"><i class="fa fa-laptop"></i>Solicitud de documentos o registros nuevos</a>
             <ul class="nav-dropdown-items">
              <li class="nav-item" >
-                 <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.main"><i class="fa fa-table"></i> Mis documentos</a>
+                 <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.request"><i class="fa fa-table"></i> Mis solicitudes</a>
              </li>
              <li class="nav-item" >
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.pending"><i class="fa fa-table"></i> Pendientes</a>
@@ -18,11 +18,10 @@
             
         </ul>
     </li>
-
     
     <li class="nav-item" >
         <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.search"><i class="fa fa-search"></i> Busqueda de documentos/registros</a>
-    </li> -->
+    </li>
 
     <li class="form-divider" style="height:1px;"></li>
 
@@ -54,15 +53,18 @@
             <li class="nav-item" ng-show="client.role.level === 1">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.jobs"><i class="fa fa-level-up"></i> Posiciones de Trabajo</a>
             </li>
-<!--             <li class="nav-item" ng-show="client.role.level === 1">
+            <li class="nav-item" ng-show="client.role.level === 1">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.doctypes"><i class="fa fa-archive"></i>Tipo de documentos</a>
+            </li>
+             <li class="nav-item" ng-show="client.role.level === 1">
+                <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.requesttypes"><i class="fa fa-ticket"></i>Tipo de solicitud</a>
             </li>
             <li class="nav-item" ng-show="client.role.level === 1">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.systems"><i class="fa fa-cube"></i> Sistemas</a>
             </li>
             <li class="nav-item" ng-show="client.role.level === 1">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.implications"><i class="fa fa-flash"></i> Implicaciones</a>
-            </li> -->
+            </li>
         </ul>
     </li>
 

@@ -1,44 +1,42 @@
 <div class="animated fadeIn">
 
-  <div id="alertArea"></div>
+ <div id="alertArea"></div>
 
-  <div ng-include="'views/components/admin/modals/systemsModal.html'"></div>
+ <div ng-include="'views/components/admin/modals/requestTypeModal.html'"></div>
 
-  <div class="row">
-    <div class="col-md-12 hide-print">
-
+ <div class="row">
+   <div class="hide-print col-md-12">
      <div class="input-group row-separator">
       <div class="input-group-addon"><i class="fa fa-search"></i></div>
       <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
-    </div>      
+    </div>   
 
-    <button type="button" class="btn btn-info row-separator" ng-click="newSystem()" data-toggle="modal" data-target="#systemModal">
-     <i class="fa fa-plus" aria-hidden="true"/> Nuevo sistema
+    <button type="button" class="btn btn-info row-separator" ng-click="new()" data-toggle="modal" data-target="#requestTypeModal">
+     <i class="fa fa-plus" aria-hidden="true"/> Nuevo tipo de solicitud
    </button>
-
+   
    <button type="button" class="btn btn-secondary row-separator" onClick="window.print()" style="margin-left: 1%;">
      <i class="fa fa-print" aria-hidden="true"/> Imprimir
    </button>
-   
  </div>
 
  <table class="table table-hover table-responsive" id="adminTable">
   <thead>
     <tr>
      <td><strong>#</strong></td>
-     <td><strong>Sistema</strong></td>
+     <td><strong>Tipo de solicitud</strong></td>
      <td><strong>Fecha Creada</strong></td>
      <td><strong>Acciones</strong></td>
    </tr>
  </thead>
  <tbody>
-   <tr ng:repeat="e in systems | filter:search">
+   <tr ng:repeat="e in requestTypes | filter:search">
      <td>{{$index + 1}}</td>
-     <td>{{e.system}}</td>
+     <td>{{e.type}}</td>
      <td>{{e.created | date: 'yyyy-MM-dd'}}</td>
      <td>
-       <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteSystem(e._id)"></i>
-       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateSystem(e._id)" data-toggle="modal" data-target="#systemModal"></i>
+       <i class="fa fa-trash" aria-hidden="true"  ng-click="delete(e._id)"></i>
+       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="update(e._id)" data-toggle="modal" data-target="#requestTypeModal"></i>
      </td>
    </tr>
  </tbody>

@@ -79,10 +79,10 @@
        <td>{{e.department}}</td>
        <td>{{e.priority}}</td>
        <td>{{e.requester}}</td>
-       <td>{{e.requestedDate | date: yyyy-mm-dd}}</td>
-       <td>{{e.requiredDate | date: yyyy-mm-dd}}</td>
-       <td>{{e.expiredDate | date: yyyy-mm-dd}}</td>
-       <td>{{e.created | date: yyyy-mm-dd}}</td>
+       <td>{{e.requestedDate | date: 'yyyy/MM/dd'}}</td>
+       <td>{{e.requiredDate | date: 'yyyy/MM/dd'}}</td>
+       <td>{{e.expiredDate | date: 'yyyy/MM/dd'}}</td>
+       <td>{{e.created | date: 'yyyy/MM/dd'}}</td>
        <td>
          <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteDocument(e._id)" ng-show="client.role.level === 1"></i>
          <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;"  ui-sref-active="active" ui-sref="app.docs.edit({id: e._id})"></i>

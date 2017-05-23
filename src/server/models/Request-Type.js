@@ -2,12 +2,12 @@
 var mongoose = require('mongoose');
 
 let schema = new mongoose.Schema({
-  department: {
+  type: {
     type: String,
     unique: true
   },
-  business: [String],
+  hide: Boolean,
   created: Date
 })
 
-module.exports = mongoose.model('Department', schema);
+module.exports = mongoose.model('Request-Type', schema);

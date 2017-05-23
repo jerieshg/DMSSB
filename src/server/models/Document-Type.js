@@ -7,10 +7,8 @@ let schema = new mongoose.Schema({
     unique: true
   },
   code: String,
-  flow: {},
+  requests: {},
   blueprint: Boolean,
-  isProcessOrManual: Boolean,
-  requiresSGIA: Boolean,
   created: Date
 })
 

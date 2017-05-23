@@ -8,10 +8,7 @@ let schema = new mongoose.Schema({
   },
   implications: [{
     implication: String,
-    authorization: [{
-      _id: mongoose.Schema.Types.ObjectId,
-      username: String
-    }]
+    authorization: {}
   }],
   created: Date
 })

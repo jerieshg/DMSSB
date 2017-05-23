@@ -60,6 +60,9 @@ function DocumentHistoryController($rootScope, $scope, $http, $stateParams, Uplo
     if (field === 'approvals') {
       return 'aprobacion';
     }
+    if (field === 'request') {
+      return 'Tipo de solicitud';
+    }
 
     return field;
   }

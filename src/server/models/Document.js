@@ -10,7 +10,6 @@ let schema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  version: String,
   requestedDate: Date,
   priority: String,
   requiredDate: Date,
@@ -18,13 +17,12 @@ let schema = new mongoose.Schema({
   department: String,
   type: {
     type: {
-      type: String
+      type: String,
+      unique: false
     },
     code: String,
-    flow: {},
+    requests: {},
     blueprint: Boolean,
-    isProcessOrManual: Boolean,
-    requiresSGIA: Boolean,
     created: Date
   },
   expiredDate: Date,
@@ -41,12 +39,13 @@ let schema = new mongoose.Schema({
   },
   approvals: [{
     forBlueprint: Boolean,
-    step: String,
+    step: Number,
     approved: Boolean,
     user: {},
     comment: String,
     created: Date
   }],
+  request: {},
   flow: {
     revisionBySGIA: Boolean,
     revisionBySGMA: Boolean,
@@ -63,7 +62,7 @@ let schema = new mongoose.Schema({
   },
   publication: {
     code: String,
-    revision: String,
+    revision: Number,
     publicationDate: Date
   },
   created: Date

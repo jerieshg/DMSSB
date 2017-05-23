@@ -12,6 +12,10 @@
          <label for="department">Departamento:</label>
          <input type="text" id="department" class="form-control" ng-model="selectedDept.department" required>
          <br/>
+         <label for="role">Empresa:</label>
+         <md-select placeholder="Seleccione una empresa" ng-model="selectedDept.business" multiple="true" required class="form-control md-no-underline">
+          <md-option ng-repeat="item in business" value="{{item.business}}">{{item.business}}</md-option>
+        </md-select>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
           <button  class="btn btn-success" type="submit">

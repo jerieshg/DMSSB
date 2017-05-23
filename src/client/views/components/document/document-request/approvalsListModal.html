@@ -1,0 +1,62 @@
+<div class="modal fade" id="approvalListModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLongTitle">Lista de aprobaciones</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div ng-if="selectedDocument.type.blueprint">
+          <h5>Lista de autorizaciones - <small>{{selectedDocument.flow.blueprintApproved ? 'Aprobado' : 'Pendiente'}}</small></h5>
+
+          <div ng-repeat="e in selectedDocument.implication.authorization[selectedDocument.business]" ng-if="selectedDocument.type.blueprint">
+           <p class="lead">
+             {{e.username}}
+           </p>
+            <div>
+               <strong>Comentario:</strong>
+               {{retrieveApproval(e).comment}}
+             </div>
+             <div class="form-divider" ng-if="$index+1 !==  selectedDocument.implication.authorization[selectedDocument.business].length"></div>
+         </div>
+         <div class="form-divider" style="background-color: black;"></div>
+       </div>
+       <div ng-repeat="item in selectedDocument.request[selectedDocument.business]" ng-if="!(item.forEnvironment && !selectedDocument.requiresSafetyEnv)">
+         <h5>{{item.name}} - <small>{{item.approved ? 'Aprobado' : 'Pendiente'}}</small></h5>
+
+         <div ng-if="item.requiresDept">
+           <div ng-repeat="e in item.approvals[selectedDocument.department]">
+             <p class="lead">
+               {{e.username}} 
+             </p>
+             <div>
+               <strong>Comentario:</strong>
+               {{retrieveApproval(e).comment}}
+             </div>
+             <div class="form-divider" ng-if="$index+1 !==  item.approvals[selectedDocument.department].length"></div>
+           </div>
+         </div>
+         <div ng-if="!item.requiresDept">
+           <div ng-repeat="e in item.approvals">
+             <p class="lead">
+               {{e.username}} 
+             </p>
+
+             <div>
+               <strong>Comentario:</strong>
+               {{retrieveApproval(e).comment}}
+             </div>
+             <div class="form-divider" ng-if="$index+1 !==  item.approvals.length"></div>
+           </div>
+         </div>
+         <div class="form-divider" style="background-color: black;"></div>
+       </div>
+       <p class="small"><strong>Nota:</strong> Las aprobaciones dependen del tipo de documento. Se pueden mostrar varias usuarios, pero no signfica que todos deban de aprobar, excepto para la lista de autorizaciones. Tambien se puede ver todos los comentarios aprobados y rechazados dentro del historial</p>
+       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -9166,6 +9166,18 @@ hr:after {
 #datepicker .input-group-addon {
   min-width: 60px; }
 
+.good-doc {
+  background-color: green; }
+
+.warning-doc {
+  background-color: orange; }
+
+.expired-doc {
+  background-color: red; }
+
+.big-modal {
+  max-width: 680px; }
+
 /*!
  * surveyjs - Survey JavaScript library v0.11.0
  * Copyright (c) 2015-2017 Devsoft Baltic O�  - http://surveyjs.org/

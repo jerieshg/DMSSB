@@ -1,5 +1,5 @@
 <div class="modal fade" id="docTypeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog big-modal" role="document">
     <div class="modal-content">
       <form name="deptForm" class="form-group" ng-submit="saveDocType()">
         <div class="modal-header">
@@ -12,130 +12,109 @@
 
           <div class="col-md-3 modal-legend" >
            <strong>Opciones: </strong>
-           <div class="checkbox-legend" ng-show="!selectedDocType.isProcessOrManual">
+           <div class="checkbox-legend">
             <label style="font-size:10px;">
              <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.blueprint" title="Seleccione esta casilla si el documento es un plano.">
              Plano
            </label>
          </div>
-         <div class="checkbox-legend" ng-show="!selectedDocType.blueprint">
-          <label style="font-size:10px;">
-           <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.isProcessOrManual" title="Seleccione esta casilla si el documento es un proceso o manual">
-           Proceso o Manual
-         </label>
        </div>
-       <div class="checkbox-legend">
-        <label style="font-size:10px;">
-         <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.requiresSGIA" title="Seleccione esta casilla si el documento ocupa SGIA">
-         Requiere SGIA
-       </label>
-     </div>
-   </div>
 
-   <div class="col-md-9">
-     <label for="type">Tipo de documento:</label>
-     <input type="text" id="type" class="form-control" ng-model="selectedDocType.type" required>
-     <br/>
-     <label for="code">Codigo:</label>
-     <input type="text" id="code" class="form-control" ng-model="selectedDocType.code" required>
-     <br/>
-   </div>
+       <div class="col-md-9">
+         <label for="type">Tipo de documento:</label>
+         <input type="text" id="type" class="form-control" ng-model="selectedDocType.type" required>
+         <br/>
+         <label for="code">Codigo:</label>
+         <input type="text" id="code" class="form-control" ng-model="selectedDocType.code" required>
+         <br/>
+       </div>
 
-   <div class="col-sm-12 approvalSection">
-    <h5>Encargados de aprobaciones</h5>
+       <div class="form-divider"></div>
 
-    <div class="col-sm-12">
-      <strong>Empresa:</strong>
-      <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedBusiness.name" ng-change="loadBusinessFlow()" ng-options="item.business as item.business for item in business track by item._id">
-        <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
-      </select>
-    </div>
+       <div class="col-sm-12">
+        <h5>Flujo de aprobaciones</h5>
 
-    <div class="form-divider"></div>
+        <div class="col-sm-12">
+          <strong>Tipo de solicitud:</strong>
+          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedRequestType.name" ng-options="item.type as item.type for item in requestTypes track by item._id">
+            <option value="">Seleccione un tipo de solicitud {{optional ? '(optional)' : ''}}</option>
+          </select>
+        </div>
 
-    <div ng-show="selectedDocType.flow[selectedBusiness.name]">
-      <div class="col-sm-12 doc-type-separator" ng-show="!selectedDocType.blueprint">
-        <h6>Jefe del departamento:</h6>
-        <strong class="small" style="font-weight: bold;">Seleccione departamento:</strong>
-        <select class="form-control" ng-model="filter.deptBoss" ng-options="item.department as item.department for item in departments">
-          <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-        </select>
+        <div class="col-sm-12" ng-if="selectedRequestType.name">
+          <strong>Empresa:</strong>
+          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedBusiness.name"  ng-options="item.business as item.business for item in business track by item._id">
+            <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
+          </select>
+        </div>
 
+        <div class="form-divider"></div>
 
-        <strong class="small" style="font-weight: bold;" ng-show="filter.deptBoss">Seleccionar usuario:</strong>
-        <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['deptBoss'][filter.deptBoss]"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple ng-show="filter.deptBoss">
-          <md-option ng-repeat="item in clients | filter:{ department : filter.deptBoss }" ng-value="item">{{item.username}}</md-option>
-        </md-select>
+        <div class="col-sm-12" ng-if="selectedBusiness.name">
+
+         <a  class="btn btn-sm btn-secondary" ng-click="addStep()" title="Agregar nuevo paso para el flujo de aprobaciones">
+           <i class="fa fa-plus" aria-hidden="true" /> 
+         </a>
+
+         <div ng-repeat="e in selectedDocType.requests[selectedRequestType.name][selectedBusiness.name]" class="row-separator">
+
+          <strong>Paso {{$index + 1}}</strong>
+
+          <div class="row">
+            <div class="col-sm-4">
+              <strong class="small" style="font-weight: bold;">Nombre:</strong>
+              <select class="form-control" ng-model="e.name" ng-options="item for item in stepNames">
+                <option value="">Seleccione el nombre del paso {{optional ? '(optional)' : ''}}</option>
+              </select>
+              <br/>
+              <div class="checkbox-legend">
+                <label style="font-size:10px;">
+                 <input type="checkbox" value="true" class="form-control" ng-model="e.requiresDept" title="Seleccione esta casilla si el paso seleccionado requiere que seleccione usuarios por departamento. Usualmente seleccionado para jefes de departamento. Esta opcion habilita prioridad para jefes" ng-click="resetApprovalList(e)">
+                 Requiere por departamento (Jefe de departamentos)  
+               </label>
+
+               <label style="font-size:10px;" ng-show="e.requiresDept && $index === 0">
+                 <input type="checkbox" value="true" class="form-control" ng-model="e.bossPriority" title="Seleccione esta casilla si quiere habilitar prioridad para jefes cuando lo selecciona. Solamente para el paso 1" ng-click="resetApprovalList(e)">
+                 Requiere prioridad para jefe
+               </label>
+
+               <label style="font-size:10px;">
+                 <input type="checkbox" value="true" class="form-control" ng-model="e.forEnvironment" title="Seleccione esta casilla si este paso es para usuarios de medioambiente (Si">
+                 Usuarios para medioambiente
+               </label>
+             </div>
+           </div>
+
+           <div class="col-sm-8">
+             <span ng-if="e.requiresDept">
+               <strong class="small" style="font-weight: bold;">Seleccione departamento:</strong>
+               <select class="form-control" ng-model="filter.department" ng-options="item.department as item.department for item in departments | filter: {business: selectedBusiness.name}">
+                <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+              </select>
+
+              <strong class="small" style="font-weight: bold;" ng-show="filter.department">Seleccione usuarios:</strong>
+              <md-select placeholder="Seleccione usuarios" ng-model="e.approvals[filter.department]"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple ng-show="filter.department">
+                <md-optgroup label="Usuarios">
+                  <md-option ng-repeat="item in clients | filter:{ department : filter.department, business: selectedBusiness.name}" ng-value="{_id: item._id, username: item.username}">{{item.username}}</md-option>
+                </md-optgroup>
+              </md-select>
+            </span>
+
+            <span ng-if="!e.requiresDept">
+              <strong class="small" style="font-weight: bold;">Seleccione usuarios:</strong>
+              <md-select placeholder="Seleccione usuarios" ng-model="e.approvals"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
+                <md-optgroup label="Usuarios">
+                  <md-option ng-repeat="item in clients | filter:{business: selectedBusiness.name }" ng-value="{_id: item._id, username: item.username}">{{item.username}}</md-option>
+                </md-optgroup>
+              </md-select>
+            </span>
+          </div>
+        </div>
+        <div class="form-divider"></div>
       </div>
 
-      <div class="col-sm-12 doc-type-separator" ng-show="!selectedDocType.blueprint">
-        <h6>Calidad:</h6>
-        <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-        <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['qa']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control row-separator md-no-underline" data-md-container-class="selectdemoSelectHeader" required multiple>
-          <md-optgroup label="Usuarios">
-            <md-option ng-repeat="item in clients | filter:{ department : filter.qa }" ng-value="item">{{item.username}}</md-option>
-          </md-optgroup>
-        </md-select>
-<!-- 
-      <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
-      <select class="form-control" ng-model="filter.qa" ng-options="item.department as item.department for item in departments">
-        <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-      </select> -->
+      <p class="small"><strong>Nota:</strong> En documento tipo plano, el primer paso siempre es aprobacion de la lista de autorizaciones configuradas en el modulo de sistemas. Una vez aprobado, seguiran los pasos en este inciso.</p>
     </div>
-
-    <div class="col-sm-12 doc-type-separator" ng-show="selectedDocType.requiresSGIA">
-      <h6>SGIA:</h6>
-      <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-      <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['sgia']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
-        <md-option ng-repeat="item in clients | filter:{ department : filter.sgia }" ng-value="item">{{item.username}}</md-option>
-      </md-select>
-
-   <!--    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
-      <select class="form-control" ng-model="filter.sgia" ng-options="item.department as item.department for item in departments">
-        <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-      </select> -->
-    </div>
-
-    <div class="col-sm-12 doc-type-separator" ng-show="selectedDocType.isProcessOrManual || selectedDocType.blueprint">
-     <h6>Gerencia:</h6>
-     <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-     <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['management']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
-      <md-option ng-repeat="item in clients | filter:{ department : filter.management }" ng-value="item">{{item.username}}</md-option>
-    </md-select>
-
- <!--    <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
-    <select class="form-control" ng-model="filter.management" ng-options="item.department as item.department for item in departments">
-      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-    </select> -->
-  </div>
-
-   <div class="col-sm-12 doc-type-separator" >
-    <h6>Seguridad de medioambiente:</h6>
-    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-    <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['sgma']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
-      <md-option ng-repeat="item in clients | filter:{ department : filter.sgma }" ng-value="item">{{item.username}}</md-option>
-    </md-select>
-
-  <!--   <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
-    <select class="form-control" ng-model="filter.prepForPublication" ng-options="item.department as item.department for item in departments">
-      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-    </select> -->
-  </div>
-
-  <div class="col-sm-12 doc-type-separator" >
-    <h6>Preparacion para publicacion:</h6>
-    <strong class="small" style="font-weight: bold;">Seleccionar usuario:</strong>
-    <md-select placeholder="Seleccione usuarios" ng-model="selectedDocType.flow[selectedBusiness.name].approvals['prepForPublication']"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
-      <md-option ng-repeat="item in clients | filter:{ department : filter.prepForPublication }" ng-value="item">{{item.username}}</md-option>
-    </md-select>
-
-  <!--   <strong class="small" style="font-weight: bold;">Filtrar por departamento:</strong>
-    <select class="form-control" ng-model="filter.prepForPublication" ng-options="item.department as item.department for item in departments">
-      <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-    </select> -->
-  </div>
-</div>
-
 </div>
 <div class="modal-footer">
 

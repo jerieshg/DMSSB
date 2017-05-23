@@ -4,55 +4,139 @@
 
  <div class="row">
 
-  <div class="input-group row-separator">
-    <div class="input-group-addon"><i class="fa fa-search"></i></div>
-    <input type="text" class="form-control" placeholder="Busqueda" ng-model="search">
-  </div> 
+   <form class="row row-separator" ng-submit="doSearch()">
+    <div class="col-sm-5">
+      <label>Codigo:</label>
+      <input type="text" placeholder="Codigo de documento o registro" class="form-control" ng-model="search.code"/>
+    </div>
+    <div class="col-sm-5">
+      <label>Nombre:</label>
+      <input type="text" placeholder="Nombre de documento o registro" class="form-control" ng-model="search.name"/>
+    </div>
+    <div class="col-sm-5">
+      <label for="dept">Departamento:</label>
+      <select name="dept" id="dept" class="form-control" ng-model="search.department" ng-options="item.department as item.department for item in departments">
+        <option value="">Seleccione un departamento  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+    <div class="col-sm-5 ">
+      <label for="dept">Planta :</label>
+      <select name="dept" id="dept" class="form-control" ng-model="search.business" ng-options="item.business as item.business for item in business">
+        <option value="">Seleccione una planta  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+    <div class="col-sm-5 row-separator">
+      <label for="dept">Tipo de Documento:</label>
+      <select name="dept" id="dept" class="form-control" ng-model="search.docType" ng-options="item.type as item.type for item in docTypes">
+        <option value="">Seleccione un tipo de documento  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+    <div class="col-sm-5">
+      <label>Estado:</label>
+      <select name="dept" id="dept" class="form-control" ng-model="search.status">
+        <option value="">Seleccione un estado  {{optional ? '(optional)' : ''}}</option>
+        <option value="Anulado">Anulado</option>
+        <option value="En revision por calidad">En revision por calidad</option>
+        <option value="Rechazado por calidad">Rechazado por calidad</option>
+        <option value="En revision por SGIA">En revision por SGIA</option>
+        <option value="Rechazado por SGIA">Rechazado por SGIA</option>
+        <option value="En revision por gerencia">En revision por gerencia</option>
+        <option value="Rechazado por gerencia">Rechazado por gerencia</option>
+        <option value="En revision por jefe de departmento">En revision por jefe de departmento</option>
+        <option value="Rechazado por jefe de departmento">Rechazado por jefe de departmento</option>
+        <option value="Publicado">Publicado</option>
+      </select>
+    </div>
+    <div class="col-sm-8">
+      <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+    </div>
+  </form>
 
-  <button ui-sref-active="active" ui-sref="app.docs.create" class="btn btn-success row-separator" style="margin-right:1em">Nuevo documento</button>
-
-    <div class="col-sm-12" ng-show="documents.length < 1">
-    <h5>No tiene documentos creados!</h5>
+  <div class="col-sm-12" ng-show="documents.length < 1">
+    <h5>No se encontraron documentos!</h5>
   </div>
 
   <table class="table table-hover table-responsive" ng-show="documents.length > 0">
     <thead>
       <tr>
        <td><strong>#</strong></td>
-       <td><strong>Nombre</strong></td>
-       <td><strong>Estado</strong></td>
-       <td><strong>Tipo</strong></td>
-       <td><strong>Planta</strong></td>
-       <td><strong>Departamento</strong></td>
-       <td><strong>Prioridad</strong></td>
-       <td><strong>Solicitante</strong></td>
-       <td><strong>Fecha Requerida</strong></td>
-       <td><strong>Fecha Vencimiento</strong></td>
-       <td><strong>Fecha Creada</strong></td>
-       <td></td>
-     </tr>
-   </thead>
-   <tbody>
-     <tr ng:repeat="e in documents | filter:search | orderBy: 'status' : true" ng-class="{'danger' : e.status === 'Anulado'}">
-       <td >{{e.code}}</td>
-       <td>{{e.name}}</td>
-       <td>{{e.status}}</td>
-       <td>{{e.type.type}}</td>
-       <td>{{e.business}}</td>
-       <td>{{e.department}}</td>
-       <td>{{e.priority}}</td>
-       <td>{{e.requester}}</td>
-       <td>{{e.requiredDate | date: yyyy-mm-dd}}</td>
-       <td>{{e.expiredDate | date: yyyy-mm-dd}}</td>
-       <td>{{e.created | date: yyyy-mm-dd}}</td>
        <td>
-         <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteDocument(e._id)" ng-show="client.role.level === 1"></i>
-         <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;"  ui-sref-active="active" ui-sref="app.docs.edit({id: e._id})"></i>
-         <i class="fa fa-eye" aria-hidden="true" style="margin-left:10px;"  ui-sref-active="active" ui-sref="app.docs.history({id: e._id})" title="Ver historial del documento"></i>
-       </td>
-     </tr>
-   </tbody>
- </table>
+         <a href="#" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+          <strong>Nombre del documento</strong>
+          <span ng-show="sortType == 'name' && !sortReverse" class="fa fa-caret-down"></span>
+          <span ng-show="sortType == 'name' && sortReverse" class="fa fa-caret-up"></span>
+        </a>
+      </td>
+      <td>
+        <a href="#" ng-click="sortType = 'type.type'; sortReverse = !sortReverse">
+         <strong>Tipo</strong>
+         <span ng-show="sortType == 'type.type' && !sortReverse" class="fa fa-caret-down"></span>
+         <span ng-show="sortType == 'type.type' && sortReverse" class="fa fa-caret-up"></span>
+       </a>
+     </td>
+     <td>
+       <a href="#" ng-click="sortType = 'publication.code'; sortReverse = !sortReverse">
+        <strong>Codigo</strong>
+        <span ng-show="sortType == 'publication.code' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'publication.code' && sortReverse" class="fa fa-caret-up"></span>
+      </a>
+    </td>
+    <td>
+     <a href="#" ng-click="sortType = 'publication.revision'; sortReverse = !sortReverse">
+      <strong>Revision</strong>
+      <span ng-show="sortType == 'publication.revision' && !sortReverse" class="fa fa-caret-down"></span>
+      <span ng-show="sortType == 'publication.revision' && sortReverse" class="fa fa-caret-up"></span>
+    </a>
+  </td>
+  <td>
+   <a href="#" ng-click="sortType = 'publication.publicationDate'; sortReverse = !sortReverse">
+     <strong>Fecha de publicacion</strong>
+     <span ng-show="sortType == 'publication.publicationDate' && !sortReverse" class="fa fa-caret-down"></span>
+     <span ng-show="sortType == 'publication.publicationDate' && sortReverse" class="fa fa-caret-up"></span>
+   </a>
+ </td>
+ <td>
+   <a href="#" ng-click="sortType = 'expiredDate'; sortReverse = !sortReverse">
+     <strong>Fecha de expiracion</strong>
+     <span ng-show="sortType == 'expiredDate' && !sortReverse" class="fa fa-caret-down"></span>
+     <span ng-show="sortType == 'expiredDate' && sortReverse" class="fa fa-caret-up"></span>
+   </a>
+ </td>
+ <td>
+   <strong>Tiempo restante</strong>
+ </td>
+ <td><strong>Estado</strong></td>
+ <td>
+   <strong>Ubicacion</strong>
+ </td>
+ <td></td>
+</tr>
+</thead>
+<tbody>
+  <tr ng:repeat="e in documents  | orderBy:sortType:sortReverse">
+   <td >{{$index+1}}</td>
+   <td>{{e.name}}</td>
+   <td>{{e.type.type}}</td>
+   <td><a href="#" ng-click="downloadFiles(e)" title="Descargar los archivos">
+     {{e.publication.code}}
+   </a>
+ </td>
+ <td>{{e.publication.revision}}</td>
+ <td>{{e.publication.publicationDate | date: 'yyyy/MM/dd'}}</td>
+ <td>{{e.expiredDate ? e.expiredDate : 'Indefinido' | date: 'yyyy/MM/dd'}}</td>
+ <td>{{expiredCheck[$index].time + expiredCheck[$index].suffix}}</td>
+ <td ng-class="{'warning-doc' : expiredCheck[$index].time > 0 && expiredCheck[$index].time < 32, 'expired-doc' : expiredCheck[$index].time < 1, 'good-doc' : expiredCheck[$index].time  > 31}">
+ </td>
+ <td>
+   {{filesLocation(e)}}
+ </td>
+ <td>
+   <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;"  ui-sref-active="active" ui-sref="app.docs.edit({id: e._id})" title="Abrir el documento"></i>
+   <i class="fa fa-eye" aria-hidden="true" style="margin-left:10px;"  ui-sref-active="active" ui-sref="app.docs.history({id: e._id})" title="Ver historial de aprobaciones y documento"></i>
+ </td>
+</tr>
+</tbody>
+</table>
 
 </div>
 <!-- End .row -->

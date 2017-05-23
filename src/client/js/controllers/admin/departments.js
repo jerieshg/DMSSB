@@ -1,4 +1,4 @@
-function DepartmentController($scope, $http, commonFactory, departments) {
+function DepartmentController($scope, $http, commonFactory, departments, business) {
 
   initializeController();
 
@@ -10,7 +10,7 @@ function DepartmentController($scope, $http, commonFactory, departments) {
 
     return false;
   }
-  
+
   $scope.disableSGIA = function() {
     if ($scope.selectedDept.documentRevision) {
       $scope.selectedDept.isSGIA = false;
@@ -69,6 +69,7 @@ function DepartmentController($scope, $http, commonFactory, departments) {
   function initializeController() {
     $scope.selectedDept = {};
     retrieveDepartments();
+    retrieveBusiness();
   }
 
   function retrieveDepartments() {
@@ -77,7 +78,14 @@ function DepartmentController($scope, $http, commonFactory, departments) {
         $scope.departments = data;
       })
   }
+
+  function retrieveBusiness() {
+    business.readAll()
+      .then((data) => {
+        $scope.business = data;
+      })
+  }
 }
 
-DepartmentController.$inject = ['$scope', '$http', 'commonFactory', 'departments'];
+DepartmentController.$inject = ['$scope', '$http', 'commonFactory', 'departments', 'business'];
 angular.module('app').controller('departmentsController', DepartmentController);

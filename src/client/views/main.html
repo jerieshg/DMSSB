@@ -51,8 +51,8 @@
       <td>{{(e.finalGrade ? e.finalGrade : 0) * 100 | number: 2}}%</td>
       <td>{{e.created | date: yyyy-mm-dd}}</td>
       <td style="width:14em;">
-       <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteSurvey(e._id)"></i>
-       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.edit({id: e._id})"></i>
+       <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteSurvey(e._id)" title="Borrar encuesta"></i>
+       <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.edit({id: e._id})" title="Editar encuesta"></i>
        <i class="fa fa-bar-chart" aria-hidden="true" style="margin-left:10px;" ui-sref-active="active" ui-sref="app.survey-builder.stats({id: e._id})" title="Mostrar estadisticas de la encuesta"></i>
        <i class="fa fa-clone" aria-hidden="true" style="margin-left:10px;"  ng-click="duplicateSurvey(e)" title="Duplicar encuesta"></i>
        <i class="fa fa-users" aria-hidden="true" style="margin-left:10px;" data-toggle="modal"  data-target="#trackSurveyResponse" ng-click="trackSurvey(e)" title="Monitoreo de encuesta"></i>

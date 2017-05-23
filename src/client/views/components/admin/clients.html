@@ -43,7 +43,7 @@
      <td>{{e.role.role}}</td>
      <td>{{(e.job) ? e.job : 'N/A'}}</td>
      <td>{{(e.department) ? e.department : 'N/A'}}</td>
-     <td>{{e.created | date: yyyy-mm-dd}}</td>
+     <td>{{e.created | date: 'yyyy-MM-dd'}}</td>
      <td>
        <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteClient(e._id)"></i>
        <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;" ng-click="updateClient(e)" data-toggle="modal" data-target="#clientsModal"></i>

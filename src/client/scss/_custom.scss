@@ -512,3 +512,19 @@ hr:after {
     min-width: 60px;
   }
 }
+
+.good-doc{
+  background-color: green;
+}
+
+.warning-doc{
+  background-color: orange;
+}
+
+.expired-doc{
+  background-color: red;
+}
+
+.big-modal{
+  max-width: 680px;
+}

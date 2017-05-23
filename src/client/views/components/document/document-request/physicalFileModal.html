@@ -1,0 +1,24 @@
+<div class="modal fade" id="physicalFileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+     <form name="physicalFileForm" class="form-group"  ng-submit="addToFiles(fileName)">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Agregar en disco en duro</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label>Nombre:</label>
+        <input type="text" ng-model="fileName" class="form-control" placeholder="Nombre de documento o registro en duro" required />
+
+       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button  class="btn btn-success" type="submit">
+         <i class="fa fa-save" aria-hidden="true"/>  Guardar
+       </button>
+     </div>
+   </form>
+ </div>
+</div>
+</div>

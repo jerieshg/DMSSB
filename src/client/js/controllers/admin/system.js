@@ -1,4 +1,4 @@
-function SystemController($rootScope, $scope, $http, commonFactory, system, implications, clients) {
+function SystemController($rootScope, $scope, $http, commonFactory, business, system, implications, clients) {
 
   initializeController();
 
@@ -45,9 +45,11 @@ function SystemController($rootScope, $scope, $http, commonFactory, system, impl
   }
 
   function initializeController() {
+    $scope.selectedBusiness = '';
     retrieveSystems();
     retrieveImplications();
     retrieveClients();
+    retrieveBusiness();
   }
 
   function retrieveSystems() {
@@ -77,7 +79,14 @@ function SystemController($rootScope, $scope, $http, commonFactory, system, impl
       });
   }
 
+  function retrieveBusiness() {
+    business.readAll()
+      .then((data) => {
+        $scope.business = data;
+      });
+  }
+
 }
 
-SystemController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'system', 'implications', 'clients'];
+SystemController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'business', 'system', 'implications', 'clients'];
 angular.module('app').controller('systemController', SystemController);
