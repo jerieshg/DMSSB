@@ -108,7 +108,7 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         approvedByPrepForPublish: false
       },
       publication: {
-        revision: 1
+        revision: 0
       },
       files: []
     };

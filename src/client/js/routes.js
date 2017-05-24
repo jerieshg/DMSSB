@@ -602,6 +602,27 @@ angular
           isAdminRequired: false
         }
       })
+      .state('app.docs.change-control', {
+        url: '/control-de-cambios/:id',
+        templateUrl: 'views/components/document/document-request/change-control.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Control de cambios',
+        },
+        controller: 'documentChangeControlController',
+        resolve: {
+
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/document-change-control.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false
+        }
+      })
       //SIMPLE PAGES
       .state('appSimple', {
         abstract: true,

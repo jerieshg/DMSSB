@@ -66,6 +66,8 @@ module.exports = function(router) {
   let Document = require('../controllers/Document');
   //Document History API calls
   let DocumentHistory = require('../controllers/Document-History');
+  //Document History API calls
+  let DocumentChangeControl = require('../controllers/Document-Change-Control');
   //Document API calls
   let _System = require('../controllers/System');
   //Document API calls
@@ -264,6 +266,15 @@ module.exports = function(router) {
     .delete(DocumentHistory.delete);
   router.route('/api/documents-history/:id')
     .get(DocumentHistory.find);
+
+  router.route('/api/documents-change-control/')
+    .get(DocumentChangeControl.readAll)
+    .post(DocumentChangeControl.create);
+  router.route('/api/documents-change-control/:id')
+    .put(DocumentChangeControl.update)
+    .delete(DocumentChangeControl.delete);
+  router.route('/api/documents-change-control/:id')
+    .get(DocumentChangeControl.find);
 
   //Email Routers
   router.route('/api/email/:email/expired')

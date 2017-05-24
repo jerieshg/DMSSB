@@ -378,11 +378,12 @@ function checkDocument(doc, client) {
   let step = -1;
 
   if (doc.type.blueprint && !doc.flow.blueprintApproved) {
-    includesDoc = doc.implication.authorization[doc.business].map(a => a._id).includes(client._id);
+    includesDoc = doc.implication.authorization[doc.business].map(a => a._id).includes(client._id.toString());
 
     return {
       canApprove: includesDoc,
-      step: step
+      step: step,
+      blueprint: true
     };
   }
 
@@ -421,6 +422,7 @@ function checkDocument(doc, client) {
 
   return {
     canApprove: includesDoc,
-    step: step
+    step: step,
+    blueprint: false
   };
 }

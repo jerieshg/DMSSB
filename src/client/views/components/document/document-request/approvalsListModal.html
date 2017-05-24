@@ -17,7 +17,7 @@
            </p>
             <div>
                <strong>Comentario:</strong>
-               {{retrieveApproval(e).comment}}
+               {{retrieveApproval(e, true).comment}}
              </div>
              <div class="form-divider" ng-if="$index+1 !==  selectedDocument.implication.authorization[selectedDocument.business].length"></div>
          </div>
@@ -33,7 +33,7 @@
              </p>
              <div>
                <strong>Comentario:</strong>
-               {{retrieveApproval(e).comment}}
+               {{retrieveApproval(e, false).comment}}
              </div>
              <div class="form-divider" ng-if="$index+1 !==  item.approvals[selectedDocument.department].length"></div>
            </div>
@@ -46,7 +46,7 @@
 
              <div>
                <strong>Comentario:</strong>
-               {{retrieveApproval(e).comment}}
+               {{retrieveApproval(e, false).comment}}
              </div>
              <div class="form-divider" ng-if="$index+1 !==  item.approvals.length"></div>
            </div>

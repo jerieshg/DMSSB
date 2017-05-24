@@ -47,16 +47,7 @@ let schema = new mongoose.Schema({
   }],
   request: {},
   flow: {
-    revisionBySGIA: Boolean,
-    revisionBySGMA: Boolean,
-    approvedByBoss: Boolean,
-    approvedByQA: Boolean,
-    approvedBySGIA: Boolean,
-    approvedBySGMA: Boolean,
-    approvedByManagement: Boolean,
-    approvedByPrepForPublish: Boolean,
     blueprintApproved: Boolean,
-    prepForPublication: Boolean,
     published: Boolean,
     deleted: Boolean
   },

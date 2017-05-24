@@ -1,0 +1,25 @@
+<div class="animated fadeIn">
+
+<div class="col-sm-12 row-separator">
+   <a class="btn btn-primary"  ui-sref-active="active" ui-sref="app.docs.edit({id: selectedDocument._id})">
+    <i class="fa fa-arrow-left" aria-hidden="true"/>
+  </a>
+</div>   
+
+<div class="card" style="width: 25rem;margin-left:1em;"  ng:repeat="e in documentChangeControl.changes | orderBy : created : true">
+  <div class="card-header">
+    <td>Cambio {{documentChangeControl.changes.length - ($index)}}</td>
+  </div>
+  <div class="card-block">
+    <h4 class="card-title"></h4>
+    <p class="card-text">
+      {{e.description}}
+    </p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item small">Cambiado el {{e.created |  date: 'yyyy-MM-dd hh:mm:ss a'}} por {{e.user.username}}</li>
+    </ul>
+  </div>
+</div>
+
+
+</div>

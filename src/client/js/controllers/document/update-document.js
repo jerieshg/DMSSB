@@ -2,14 +2,54 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
   initializeController();
 
-  $scope.retrieveApproval = function(item) {
-    return $scope.selectedDocument.approvals
-      .sort((a, b) => {
-        return new Date(b.created).getTime() - new Date(a.created).getTime()
+  $scope.addChangeControl = function() {
+    $scope.documentChangeControl.docId = $scope.selectedDocument._id;
+
+    $scope.changeControl.created = new Date();
+    $scope.changeControl.user = {
+      _id: $rootScope.client._id,
+      username: $rootScope.client.username
+    };
+
+    $scope.documentChangeControl.changes.push(angular.copy($scope.changeControl));
+
+    let url = `/api/documents-change-control/${(!$scope.documentChangeControl.new) ? $scope.documentChangeControl.docId : ''}`;
+    let method = $scope.documentChangeControl.new ? 'POST' : 'PUT';
+
+    $http({
+        method: method,
+        url: url,
+        data: $scope.documentChangeControl
+      }).then(function(response) {
+        $scope.documentChangeControl = response.data;
+        $scope.changeControl = {};
+        commonFactory.toastMessage('Cambio guardado exitosamente!', 'success');
       })
-      .find((appr) => {
-        return appr.user._id === item._id
+      .catch(function(error) {
+        commonFactory.toastMessage('Woops! Algo paso!', 'danger');
       });
+  }
+
+  $scope.retrieveApproval = function(item, blueprint) {
+    if (!blueprint) {
+      return $scope.selectedDocument.approvals
+        .filter((e) => !e.forBlueprint)
+        .sort((a, b) => {
+          return new Date(b.created).getTime() - new Date(a.created).getTime()
+        })
+        .find((appr) => {
+          return appr.user._id === item._id
+        });
+    } else {
+      return $scope.selectedDocument.approvals
+        .filter((e) => e.forBlueprint)
+        .sort((a, b) => {
+          return new Date(b.created).getTime() - new Date(a.created).getTime()
+        })
+        .find((appr) => {
+          return appr.user._id === item._id
+        });
+    }
   }
 
   $scope.addToFiles = function(fileName) {
@@ -24,10 +64,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       });
 
     $('#physicalFileModal').modal('toggle');
-  }
-
-  $scope.triggerEdit = function() {
-    $scope.edit = !$scope.edit;
   }
 
   $scope.uploadFiles = function() {
@@ -63,42 +99,30 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
     $scope.selectedDocument.approvals.push($scope.selectedApproved);
 
-    //Missing validation for blueprints
+    $scope.selectedApproved.forBlueprint = $scope.forBlueprint;
 
-    $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep].approved = $scope.selectedApproved.approved;
-    let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 1];
-    if (!$scope.selectedDocument.requiresSafetyEnv && nextStep && nextStep.forEnvironment) {
-      nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 2];
-    }
+    if ($scope.forBlueprint) {
 
-    if ($scope.selectedApproved.approved) {
-      if (nextStep) {
-        $scope.selectedDocument.status = `En revision por ${nextStep ? nextStep.name : 'finalizando proceso'}`;
-      } else {
-        $scope.selectedDocument.publication.publicationDate = new Date();
-        $scope.selectedDocument.status = "Publicado";
-        $scope.selectedDocument.flow.published = true;
+      if (checkBlueprintCompletedApprovals()) {
+        $scope.selectedDocument.flow.blueprintApproved = true;
+        let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][0];
+        moveNextStep(nextStep);
+      } else if (!$scope.selectedApproved.approved) {
+        $scope.selectedDocument.flow.blueprintApproved = false;
       }
     } else {
-      $scope.selectedDocument.status = `Rechazado por ${$scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep].name}`;
+      $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep].approved = $scope.selectedApproved.approved;
+      let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 1];
+      if (!$scope.selectedDocument.requiresSafetyEnv && nextStep && nextStep.forEnvironment) {
+        nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 2];
+      }
+
+      if ($scope.selectedApproved.approved) {
+        moveNextStep(nextStep);
+      } else {
+        $scope.selectedDocument.status = `Rechazado por ${$scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep].name}`;
+      }
     }
-
-
-
-    // $scope.selectedApproved.forBlueprint = $scope.selectedDocument.type.blueprint && !$scope.isManagement;
-    //If the document is a blueprint and I am not from management, then I am authorizing the document
-    // if (!$scope.selectedDocument.flow.approvedByManagement && ($scope.isManagement && !$scope.selectedDocument.type.blueprint) || ($scope.selectedDocument.type.blueprint && $scope.selectedDocument.flow.blueprintApproved && $scope.isManagement)) {
-    //   console.log("GERENCIA");
-    //   $scope.selectedDocument.flow.approvedByManagement = $scope.selectedApproved.approved;
-    //   $scope.selectedApproved.step = "Management";
-    //   if ($scope.selectedApproved.approved) {
-    //     $scope.selectedDocument.flow.prepForPublication = true;
-    //     $scope.selectedDocument.status = "Preparado para publicacion";
-    //   } else {
-    //     $scope.selectedDocument.status = "Rechazado por la gerencia";
-    //     rejected = true;
-    //   }
-    // } 
 
     if (!$scope.selectedApproved.approved) {
       email.sendRejectedEmail($rootScope.client.username, $scope.selectedDocument._id)
@@ -109,7 +133,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
     documents.updateApprovals($scope.selectedDocument)
       .then((data) => {
-        console.log(data);
         commonFactory.toastMessage(`Este documento fue ${$scope.selectedApproved.approved ? 'aprobado' : 'rechazado'}`, 'success');
         $scope.canApprove = !$scope.selectedApproved.approved;
         $scope.selectedApproved = {};
@@ -335,38 +358,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     }
   }
 
-  function initializeController() {
-    $scope.edit = false;
-    $scope.priorities = ["Alta", "Normal", "Bajo"];
-    $scope.isQA = false;
-    $scope.isSGIA = false;
-    $scope.canApprove = false;
-    retrieveDocument();
-    retrieveDocumentHistory();
-    retrieveBusiness();
-    retrieveClients();
-    retrieveDepartments();
-    retrieveDocTypes();
-    retrieveSystems();
-
-  }
-
-  function retrieveDocument() {
-    $http.get(`/api/documents/${$stateParams.id}/clients/${$rootScope.client._id}/verify`)
-      .then(function(response) {
-        $scope.selectedDocument = response.data.document;
-        $scope.originalDocument = angular.copy($scope.selectedDocument);
-
-        if (!$scope.selectedDocument.flow.published) {
-          $scope.canApprove = response.data.approval.canApprove;
-          $scope.currentStep = response.data.approval.step;
-        }
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-  }
-
   function checkBlueprintCompletedApprovals() {
     let approved = false;
 
@@ -380,8 +371,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           return rv;
         }, {});
 
-
-
       Object.keys(
         unsortedApprovals
       ).forEach((key) => {
@@ -392,16 +381,78 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       })
 
       //If everyone already approved the document, check if someone denied it
-      if (sortedApprovals.length >= $scope.selectedDocument.implication.authorization.length) {
+      if (sortedApprovals.length >= $scope.selectedDocument.implication.authorization[$scope.selectedDocument.business].length) {
         approved = sortedApprovals.every((approval) => {
           return approval.approved;
         });
       }
     }
 
-    console.log(approved);
-
     return approved;
+  }
+
+  function moveNextStep(nextStep) {
+    if (nextStep) {
+      $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
+    } else {
+      $scope.selectedDocument.publication.publicationDate = new Date();
+      $scope.selectedDocument.status = "Publicado";
+      $scope.selectedDocument.flow.published = true;
+      $scope.selectedDocument.publication.revision += 1;
+      $scope.publicationStep = false;
+    }
+  }
+
+  function initializeController() {
+    $scope.edit = false;
+    $scope.priorities = ["Alta", "Normal", "Bajo"];
+    $scope.isQA = false;
+    $scope.isSGIA = false;
+    $scope.canApprove = false;
+    retrieveDocument();
+    retrieveDocumentHistory();
+    retrieveChangeControl();
+    retrieveBusiness();
+    retrieveClients();
+    retrieveDepartments();
+    retrieveDocTypes();
+    retrieveSystems();
+
+  }
+
+  function retrieveDocument() {
+    $http.get(`/api/documents/${$stateParams.id}/clients/${$rootScope.client._id}/verify`)
+      .then(function(response) {
+        $scope.selectedDocument = response.data.document;
+        $scope.originalDocument = angular.copy($scope.selectedDocument);
+        if (!$scope.selectedDocument.flow.published) {
+          $scope.canApprove = response.data.approval.canApprove;
+          $scope.currentStep = response.data.approval.step;
+          $scope.forBlueprint = response.data.approval.blueprint;
+
+          let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 1];
+          if (!$scope.selectedDocument.requiresSafetyEnv && nextStep && nextStep.forEnvironment) {
+            nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 2];
+          }
+
+          if (!nextStep) {
+            $scope.publicationStep = true;
+          }
+
+          if (response.data.approval.blueprint) {
+            let foundApproval = $scope.retrieveApproval({
+              _id: $rootScope.client._id
+            }, true);
+
+            if (foundApproval && foundApproval.approved) {
+              $scope.canApprove = false;
+            }
+          }
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function retrieveBusiness() {
@@ -422,6 +473,23 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           $scope.documentHistory = {
             new: true,
             history: []
+          };
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
+
+  function retrieveChangeControl() {
+    $http.get(`/api/documents-change-control/${$stateParams.id}`)
+      .then(function(response) {
+        $scope.documentChangeControl = response.data;
+        if (!$scope.documentChangeControl) {
+          $scope.documentChangeControl = {
+            new: true,
+            changes: [],
+            created: new Date()
           };
         }
       })

@@ -1,0 +1,26 @@
+<div class="modal fade" id="changeControlModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+     <form name="approveDocumentForm" class="form-group"  ng-submit="addChangeControl()">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Agregar control de cambios</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+    <div class="col-sm-12 row-separator"> 
+     <label for="comment">Cambio:</label>
+     <textarea type="text" class="form-control" ng-model="changeControl.description" placeholder="Describa el cambio" required></textarea>
+   </div>
+   <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    <button  class="btn btn-success" type="submit">
+     <i class="fa fa-save" aria-hidden="true"/>  Guardar Cambio
+   </button>
+ </div>
+</form>
+</div>
+</div>
+</div>

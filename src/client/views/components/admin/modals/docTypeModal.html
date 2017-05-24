@@ -17,6 +17,10 @@
              <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.blueprint" title="Seleccione esta casilla si el documento es un plano.">
              Plano
            </label>
+           <label style="font-size:10px;">
+             <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.changeControl" title="Seleccione esta casilla si se requiere tener un control de cambios">
+             Control de cambios
+           </label>
          </div>
        </div>
 
@@ -115,17 +119,17 @@
 
       <p class="small"><strong>Nota:</strong> En documento tipo plano, el primer paso siempre es aprobacion de la lista de autorizaciones configuradas en el modulo de sistemas. Una vez aprobado, seguiran los pasos en este inciso.</p>
     </div>
-</div>
-<div class="modal-footer">
+  </div>
+  <div class="modal-footer">
 
-  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-  <button type="button" class="btn btn-danger" ng-click="clear()">
-    <i class="fa fa-ban" aria-hidden="true"/>Limpiar formulario
-  </button>
-  <button  class="btn btn-success" type="submit">
-   <i class="fa fa-save" aria-hidden="true"/>  Guardar Tipo de documento
- </button>
-</div>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    <button type="button" class="btn btn-danger" ng-click="clear()">
+      <i class="fa fa-ban" aria-hidden="true"/>Limpiar formulario
+    </button>
+    <button  class="btn btn-success" type="submit">
+     <i class="fa fa-save" aria-hidden="true"/>  Guardar Tipo de documento
+   </button>
+ </div>
 </form>
 </div>
 </div>

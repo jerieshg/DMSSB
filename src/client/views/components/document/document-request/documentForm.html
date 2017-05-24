@@ -3,6 +3,7 @@
   <div ng-include="'views/components/document/document-request/approvalsListModal.html'"></div>
   <div ng-include="'views/components/document/document-request/approveDocumentModal.html'"></div>
   <div ng-include="'views/components/document/document-request/physicalFileModal.html'"></div>
+  <div ng-include="'views/components/document/document-request/changeControlModal.html'"></div>
 
   <div class="row">
     <div class="col-sm-12">
@@ -10,14 +11,23 @@
         <i class="fa fa-eye" aria-hidden="true"/>  Ver Historial
       </a>
 
+      <a  class="btn btn-info"  ui-sref-active="active" ui-sref="app.docs.change-control({id: selectedDocument._id})" title="Ver control de cambios del documento"  ng-show="selectedDocument.type.changeControl" >
+      <i class="fa fa-eye" aria-hidden="true"/>  Ver Control de cambios
+      </a>
+
+       <a  class="btn btn-secondary"  data-toggle="modal"  data-target="#changeControlModal" title="Control de cambios" ng-show="publicationStep && selectedDocument.type.changeControl" ng-click="changeControl = {};">
+        <i class="fa fa-minus" aria-hidden="true"/>  Agregar control de cambios
+      </a>
+
       <a  class="btn btn-info"  data-toggle="modal"  data-target="#approvalListModal" title="Ver lista de aprobaciones" ng-show="selectedDocument._id" style="color:white;" ng-click="createApprovalList()">
         <i class="fa fa-eye" aria-hidden="true"/>  Lista de aprobaciones
       </a>
+
       <a  class="btn btn-warning"  data-toggle="modal"  data-target="#approveDocumentModal" title="Aprobar o desaprobar documento" ng-show="canApprove" style="color:white;" ng-click="findApproval(e)">
         <i class="fa fa-check" aria-hidden="true"/>  Aprobar documento
       </a>
 
-      <a  class="btn btn-secondary" ng-click="triggerEdit()" title="Ver historial del documento" ng-show="selectedDocument._id && selectedDocument.status !== 'Anulado'">
+      <a  class="btn btn-secondary" ng-click="edit = !edit;" title="Ver historial del documento" ng-show="selectedDocument._id && selectedDocument.status !== 'Anulado'">
         <i class="fa fa-pencil" aria-hidden="true"/>  Editar
       </a>
 
