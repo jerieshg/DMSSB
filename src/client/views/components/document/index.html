@@ -117,15 +117,20 @@
    <td >{{$index+1}}</td>
    <td>{{e.name}}</td>
    <td>{{e.type.type}}</td>
-   <td><a href="#" ng-click="downloadFiles(e)" title="Descargar los archivos">
+   <td>
+   <a href="#" ng-click="downloadFiles(e)" title="Descargar los archivos">
      {{e.publication.code}}
    </a>
  </td>
- <td>{{e.publication.revision}}</td>
+ <td>
+  <a href="#" ng-click="downloadFiles(e)" title="Descargar los archivos">
+    {{e.publication.revision}}
+   </a>
+ </td>
  <td>{{e.publication.publicationDate | date: 'yyyy/MM/dd'}}</td>
  <td>{{e.expiredDate ? e.expiredDate : 'Indefinido' | date: 'yyyy/MM/dd'}}</td>
- <td>{{expiredCheck[$index].time + expiredCheck[$index].suffix}}</td>
- <td ng-class="{'warning-doc' : expiredCheck[$index].time > 0 && expiredCheck[$index].time < 32, 'expired-doc' : expiredCheck[$index].time < 1, 'good-doc' : expiredCheck[$index].time  > 31}">
+ <td>{{expiredCheck[e._id].time + expiredCheck[e._id].suffix}}</td>
+ <td ng-class="{'warning-doc' : expiredCheck[e._id].time > 0 && expiredCheck[e._id].time < 32, 'expired-doc' : expiredCheck[e._id].time < 1, 'good-doc' : expiredCheck[e._id].time  > 31}">
  </td>
  <td>
    {{filesLocation(e)}}

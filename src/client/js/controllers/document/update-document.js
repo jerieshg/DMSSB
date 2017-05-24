@@ -400,6 +400,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       $scope.selectedDocument.flow.published = true;
       $scope.selectedDocument.publication.revision += 1;
       $scope.publicationStep = false;
+      //MISSING STEP TO GENERATE PUBLICATION CODE
     }
   }
 

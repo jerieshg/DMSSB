@@ -19,8 +19,15 @@ function DocumentaryCenterController($rootScope, $scope, $http, commonFactory, d
     let result = '';
 
     let mapped = doc.files.map(e => e.type);
-    result += (mapped.includes('electronic')) ? ' Electronico' : '';
-    result += (mapped.includes('physical')) ? ' En duro' : '';
+    let electronic = (mapped.includes('electronic'));
+    let physical = (mapped.includes('physical'));
+
+    if (physical && electronic) {
+      return 'Electronico | En Duro';
+    }
+
+    result += (electronic) ? 'Electronico ' : '';
+    result += (physical) ? ' En Duro' : '';
 
     return result;
   }
@@ -31,7 +38,7 @@ function DocumentaryCenterController($rootScope, $scope, $http, commonFactory, d
         .then((response) => {
           $scope.documents = response.data;
           $scope.documents.forEach((doc, index) => {
-            calculateTimeMissing(doc.expiredDate, index);
+            calculateTimeMissing(doc.expiredDate, doc._id);
           });
 
           commonFactory.toastMessage(`Se han encontrado ${$scope.searchDocuments.length} documento(s)`, 'info');
@@ -120,7 +127,7 @@ function DocumentaryCenterController($rootScope, $scope, $http, commonFactory, d
       .then(function(response) {
         $scope.documents = response.data;
         $scope.documents.forEach((doc, index) => {
-          calculateTimeMissing(doc.expiredDate, index);
+          calculateTimeMissing(doc.expiredDate, doc._id);
         });
       })
       .catch(function(error) {
