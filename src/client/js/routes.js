@@ -703,6 +703,7 @@ angular
       //if regular user redirect
       if ($rootScope.client.role.level === 3) {
         let documentaryCenter = $rootScope.client.documentaryCenterAdmin && trans.$to().data.documentaryCenter
+        //If its going to documentary administrador and it has access, then skip...
         if (trans.$to().data.isAdminRequired && !documentaryCenter) {
           return trans.router.stateService.target('app.surveys.main');
         }
