@@ -43,7 +43,7 @@
             <li class="nav-item" ng-show="client.role.level === 1">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.departments"><i class="fa fa-university"></i> Departamentos</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" ng-show="client.role.level === 1 || client.role.level === 2">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.services"><i class="fa fa-tasks"></i> Servicios</a>
             </li>
             <li class="nav-item" ng-show="client.role.level === 1">

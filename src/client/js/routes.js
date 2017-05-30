@@ -696,7 +696,7 @@ angular
       $rootScope.client = authentication.currentClient();
 
       //if regular user redirect
-      if ($rootScope.client.role.level === 3) {
+      if ($rootScope.client.role.level === 3 && !$rootScope.client.documentaryCenterAdmin) {
         if (trans.$to().data.isAdminRequired) {
           return trans.router.stateService.target('app.surveys.main');
         }
