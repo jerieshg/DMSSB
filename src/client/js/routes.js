@@ -247,7 +247,8 @@ angular
         },
         data: {
           isAdminRequired: true,
-          showConfirmDialog: true
+          showConfirmDialog: true,
+          documentaryCenter: true
         }
       })
       .state('app.admin.departments', {
@@ -307,7 +308,8 @@ angular
         },
         data: {
           isAdminRequired: true,
-          showConfirmDialog: true
+          showConfirmDialog: true,
+          documentaryCenter: true
         }
       })
       .state('app.admin.business', {
@@ -367,7 +369,8 @@ angular
         },
         data: {
           isAdminRequired: true,
-          showConfirmDialog: true
+          showConfirmDialog: true,
+          documentaryCenter: true
         }
       })
       .state('app.admin.systems', {
@@ -387,7 +390,8 @@ angular
         },
         data: {
           isAdminRequired: true,
-          showConfirmDialog: true
+          showConfirmDialog: true,
+          documentaryCenter: true
         }
       })
       .state('app.admin.implications', {
@@ -407,7 +411,8 @@ angular
         },
         data: {
           isAdminRequired: true,
-          showConfirmDialog: true
+          showConfirmDialog: true,
+          documentaryCenter: true
         }
       })
       //USER RELATED
@@ -696,8 +701,9 @@ angular
       $rootScope.client = authentication.currentClient();
 
       //if regular user redirect
-      if ($rootScope.client.role.level === 3 && !$rootScope.client.documentaryCenterAdmin) {
-        if (trans.$to().data.isAdminRequired) {
+      if ($rootScope.client.role.level === 3) {
+        let documentaryCenter = $rootScope.client.documentaryCenterAdmin && trans.$to().data.documentaryCenter
+        if (trans.$to().data.isAdminRequired && !documentaryCenter) {
           return trans.router.stateService.target('app.surveys.main');
         }
       }
