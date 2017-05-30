@@ -31,7 +31,7 @@
     
     <li class="form-divider" style="height:1px;"></li>
 
-    <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.admin')}" ng-show="client.role.level === 1 || client.role.level === 2">
+    <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.admin')}" ng-show="client.role.level === 1 || client.role.level === 2 || client.documentaryCenterAdmin">
         <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.admin')}" href="#"><i class="fa fa-cogs"></i> Administrador</a>
         <ul class="nav-dropdown-items">
             <li class="nav-item" ng-show="client.role.level === 1">
@@ -49,19 +49,19 @@
             <li class="nav-item" ng-show="client.role.level === 1">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.jobs"><i class="fa fa-level-up"></i> Posiciones de Trabajo</a>
             </li>
-            <li class="nav-item" ng-show="client.role.level === 1">
+            <li class="nav-item" ng-show="client.documentaryCenterAdmin">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.doctypes"><i class="fa fa-archive"></i>Tipo de documentos</a>
             </li>
-             <li class="nav-item" ng-show="client.role.level === 1">
+             <li class="nav-item" ng-show="client.documentaryCenterAdmin">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.requesttypes"><i class="fa fa-ticket"></i>Tipo de solicitud</a>
             </li>
-              <li class="nav-item" ng-show="client.role.level === 1">
-                <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.docStatus"><i class="fa fa-globe"></i>Estados de documentos</a>
+              <li class="nav-item" ng-show="client.documentaryCenterAdmin">
+                <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.docStatus"><i class="fa fa-globe"></i>Estado de aprobaciones</a>
             </li>
-            <li class="nav-item" ng-show="client.role.level === 1">
+            <li class="nav-item" ng-show="client.documentaryCenterAdmin">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.systems"><i class="fa fa-cube"></i> Sistemas</a>
             </li>
-            <li class="nav-item" ng-show="client.role.level === 1">
+            <li class="nav-item" ng-show="client.documentaryCenterAdmin">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.implications"><i class="fa fa-flash"></i> Implicaciones</a>
             </li>
         </ul>

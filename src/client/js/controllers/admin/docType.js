@@ -10,13 +10,16 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
     $scope.selectedDocType.requests[selectedRequestType.type].hideWhenPublished = selectedRequestType.hideWhenPublished
   }
 
-  $scope.addStep = function() {
-    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name] = $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name] || [];
-    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name].push({});
+  $scope.addBusinessRequestType = function(type, business) {
+    $scope.selectedDocType.requests[type][business] = $scope.selectedDocType.requests[type][business] || [];
   }
 
-  $scope.removeStep = function(step) {
-    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name].splice(step, 1);
+  $scope.addStep = function(type) {
+    $scope.selectedDocType.requests[type][$scope.selectedBusiness.name].push({});
+  }
+
+  $scope.removeStep = function(type, step) {
+    $scope.selectedDocType.requests[type][$scope.selectedBusiness.name].splice(step, 1);
   }
 
   $scope.print = function() {

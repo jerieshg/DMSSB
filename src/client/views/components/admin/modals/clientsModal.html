@@ -25,10 +25,10 @@
       </div>
 
       <div class="col-md-6 row-separator">
-      <label for="role">Empresa:</label>
-       <md-select placeholder="Seleccione una empresa" ng-model="selectedClient.business" multiple="true" required class="form-control md-no-underline">
-        <md-option ng-repeat="item in business" value="{{item.business}}">{{item.business}}</md-option>
-      </md-select>
+        <label for="role">Empresa:</label>
+        <md-select placeholder="Seleccione una empresa" ng-model="selectedClient.business" multiple="true" required class="form-control md-no-underline">
+          <md-option ng-repeat="item in business" value="{{item.business}}">{{item.business}}</md-option>
+        </md-select>
       </div>
 
       <div class="col-md-6 row-separator">
@@ -51,14 +51,20 @@
           <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
         </select>
       </div>
-      <br/>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button  class="btn btn-success" type="submit">
-          <i class="fa fa-save" aria-hidden="true"/>  Guardar Cliente
-        </button>
-      </div>
-    </form>
-  </div>
+      <div class="col-md-6 checkbox-legend">
+        <label >
+         <input type="checkbox" value="true" class="form-control" ng-model="selectedClient.documentaryCenterAdmin" title="Seleccione esta casilla si el usuario debe administrar el centro documental">
+         Administrador del centro documental
+       </label>
+     </div>
+     <br/>
+     <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      <button  class="btn btn-success" type="submit">
+        <i class="fa fa-save" aria-hidden="true"/>  Guardar Cliente
+      </button>
+    </div>
+  </form>
+</div>
 </div>
 </div>

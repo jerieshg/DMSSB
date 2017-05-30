@@ -155,7 +155,7 @@
              <a href="#" ng-click="download(file.fileName,file.path)">Descarga</a>
              <label>|</label>
            </span>
-           <i class="fa fa-trash" aria-hidden="true" ng-click="deleteFile(file.fileName)" ng-if="client.role.level === 1"></i>
+           <i class="fa fa-trash" aria-hidden="true" ng-click="deleteFile(file.fileName)" ng-if="client.documentaryCenterAdmin"></i>
          </td>
        </tr>
      </tbody>

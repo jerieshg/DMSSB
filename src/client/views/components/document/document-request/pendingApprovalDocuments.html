@@ -44,7 +44,7 @@
        <td>{{e.expiredDate | date: yyyy-mm-dd}}</td>
        <td>{{e.created | date: yyyy-mm-dd}}</td>
        <td>
-         <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteDocument(e._id)" ng-show="client.role.level === 1"></i>
+         <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteDocument(e._id)" ng-show="client.documentaryCenterAdmin"></i>
          <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;"  ui-sref-active="active" ui-sref="app.docs.edit({id: e._id})"></i>
          <i class="fa fa-eye" aria-hidden="true" style="margin-left:10px;"  ui-sref-active="active" ui-sref="app.docs.history({id: e._id})" title="Ver historial del documento"></i>
        </td>

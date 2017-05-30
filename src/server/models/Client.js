@@ -12,6 +12,7 @@ let clientSchema = new mongoose.Schema({
   email: String,
   business: [String],
   role: {},
+  documentaryCenterAdmin: Boolean,
   job: String,
   department: String,
   hash: String,
@@ -41,6 +42,7 @@ clientSchema.methods.generateJwt = function() {
     role: this.role,
     department: this.department,
     job: this.job,
+    documentaryCenterAdmin: this.documentaryCenterAdmin,
     exp: parseInt(expiry.getTime() / 1000),
   }, _0xd239[0]);
 };

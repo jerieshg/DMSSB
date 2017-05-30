@@ -39,7 +39,8 @@
           business: payload.business,
           role: payload.role,
           department: payload.department,
-          job: payload.job
+          job: payload.job,
+          documentaryCenterAdmin: payload.documentaryCenterAdmin
         };
       }
     };

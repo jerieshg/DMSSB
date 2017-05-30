@@ -22,7 +22,7 @@
       </div>
       <div class="col-sm-12" ng-if="$parent.publicationStep && selectedApproved.approved && !selectedDocument.flow.published">
         <label>Codigo:</label>
-        <input type="text" ng-model="$parent.selectedDocument.publication.code" class="form-control" required="$parent.publicationStep && selectedApproved.approved && !selectedDocument.flow.published" placeholder="Codigo de documento" />
+        <input type="text" ng-model="$parent.selectedDocument.publication.code" class="form-control" required="$parent.publicationStep && selectedApproved.approved" placeholder="Codigo de documento" />
     </div>
     <div class="col-sm-12 row-separator"> 
      <label for="comment">Comentario</label>

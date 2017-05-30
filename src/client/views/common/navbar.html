@@ -14,7 +14,7 @@
       <a class="nav-link" ui-sref="app.main">Tablero de encuestas</a>
     </li>
 
-    <li class="nav-item dropdown" ng-show="client.role.level === 1 || client.role.level === 2">
+    <li class="nav-item dropdown" ng-show="client.role.level === 1 || client.role.level === 2 || client.documentaryCenterAdmin">
       <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Administrador
       </a>
@@ -24,11 +24,11 @@
         <a class="dropdown-item" ui-sref="app.admin.departments" ng-show="client.role.level === 1">Departamentos</a>
         <a class="dropdown-item" ui-sref="app.admin.services">Servicios</a>
         <a class="dropdown-item" ui-sref="app.admin.jobs" ng-show="client.role.level === 1">Posiciones de Trabajo</a>
-        <a class="dropdown-item" ui-sref="app.admin.doctypes" ng-show="client.role.level === 1">Tipo de documentos</a>
-        <a class="dropdown-item" ui-sref="app.admin.requesttypes" ng-show="client.role.level === 1">Tipo de solicitud</a>
-        <a class="dropdown-item" ui-sref="app.admin.docStatus" ng-show="client.role.level === 1">Estados de documento</a>
-        <a class="dropdown-item" ui-sref="app.admin.systems" ng-show="client.role.level === 1">Sistemas</a>
-        <a class="dropdown-item" ui-sref="app.admin.implications" ng-show="client.role.level === 1">Implicaciones</a>
+        <a class="dropdown-item" ui-sref="app.admin.doctypes" ng-show="client.documentaryCenterAdmin">Tipo de documentos</a>
+        <a class="dropdown-item" ui-sref="app.admin.requesttypes" ng-show="client.documentaryCenterAdmin">Tipo de solicitud</a>
+        <a class="dropdown-item" ui-sref="app.admin.docStatus" ng-show="client.documentaryCenterAdmin">Estados de aprobaciones</a>
+        <a class="dropdown-item" ui-sref="app.admin.systems" ng-show="client.documentaryCenterAdmin">Sistemas</a>
+        <a class="dropdown-item" ui-sref="app.admin.implications" ng-show="client.documentaryCenterAdmin">Implicaciones</a>
       </div>
     </li>
 

@@ -6,10 +6,6 @@ let schema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  code: {
-    type: String,
-    unique: true
-  },
   requestedDate: Date,
   priority: String,
   requiredDate: Date,
@@ -48,6 +44,7 @@ let schema = new mongoose.Schema({
   request: {},
   flow: {
     blueprintApproved: Boolean,
+    readyToPublish: Boolean,
     published: Boolean,
     deleted: Boolean
   },

@@ -135,13 +135,6 @@ module.exports.create = function(req, res, next) {
     });
   });
 
-  // let randomNumber = randomstring.generate({
-  //   length: 5,
-  //   charset: 'numeric'
-  // });
-
-  // doc.code = `${doc.type.code}-${randomNumber}`;
-
   doc.save(function(error, doc) {
     if (error) {
       res.status(500);
@@ -276,13 +269,23 @@ module.exports.findPendingDocuments = function(req, res, next) {
     }
 
     Document.find({
-      "flow.published": false,
-      "status": {
-        $ne: "Anulado"
-      },
-      business: {
-        $in: client.business
-      }
+      $and: [{
+        $or: [{
+          "status": {
+            $ne: "Anulado"
+          }
+        }, {
+          "status": {
+            $ne: "Publicado"
+          }
+        }, {
+          "flow.readyToPublish": true
+        }]
+      }, {
+        business: {
+          $in: client.business
+        }
+      }]
     }, function(error, docs) {
       if (error) {
         res.status(500);
@@ -404,6 +407,14 @@ module.exports.search = function(req, res, next) {
 function checkDocument(doc, client) {
   let includesDoc = false;
   let step = -1;
+
+  if (doc.flow.readyToPublish && client.documentaryCenterAdmin) {
+    return {
+      canApprove: true,
+      step: step,
+      publicationStep: true
+    };
+  }
 
   if (doc.type.blueprint && !doc.flow.blueprintApproved) {
     includesDoc = doc.implication.authorization[doc.business].map(a => a._id).includes(client._id.toString());

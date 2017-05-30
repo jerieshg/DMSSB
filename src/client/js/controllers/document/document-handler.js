@@ -15,9 +15,8 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
 
           let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][1];
           if (!nextStep) {
-            $scope.selectedDocument.publication.publicationDate = new Date();
-            $scope.selectedDocument.status = "Publicado";
-            $scope.selectedDocument.flow.published = true;
+            $scope.selectedDocument.status = "Listo para publicacion";
+            $scope.selectedDocument.flow.readyToPublish = true;
           } else {
             $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
           }

@@ -15,6 +15,15 @@ function DocumentaryCenterController($rootScope, $scope, $http, commonFactory, d
     retrieveDocTypes();
   }
 
+  $scope.deleteDocument = function(id) {
+    if (commonFactory.dialog("Esta seguro de borrar este documento?")) {
+      documents.delete(id)
+        .then((data) => {
+          retrieveMyDocuments();
+        });
+    }
+  }
+
   $scope.filesLocation = function(doc) {
     let result = '';
 
