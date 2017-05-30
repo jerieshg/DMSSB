@@ -1,0 +1,37 @@
+<div class="modal fade" id="filesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form name="approveDocumentForm" class="form-group"  ng-submit="saveFiles()">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Configurar archivos</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div  ng-repeat="file in files">
+            <div class="col-sm-8">
+              <p class="lead"> {{file.name}}</p>
+            </div>
+            <div class="col-sm-8">
+              <label>
+                <input type="radio" ng-model="file.electronic" ng-value="true" ng-required="file.electronic">
+                Electronico
+              </label>
+              <label>
+                <input type="radio" ng-model="file.electronic" ng-value="false" ng-required="!file.electronic">
+                En duro
+              </label>
+              <div class="form-divider"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button  class="btn btn-success" type="submit">
+             <i class="fa fa-save" aria-hidden="true"/>  Confirmar
+           </button>
+         </div>
+       </form>
+     </div>
+   </div>
+ </div>

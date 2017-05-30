@@ -9,7 +9,6 @@ let schema = new mongoose.Schema({
   code: String,
   requests: {},
   blueprint: Boolean,
-  changeControl: Boolean,
   created: Date
 })
 

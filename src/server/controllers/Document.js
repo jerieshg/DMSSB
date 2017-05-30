@@ -7,9 +7,17 @@ let fse = require("fs-extra");
 let archiver = require('archiver');
 
 module.exports.readPublishedDocuments = function(req, res, next) {
-  Document.find({
-    'flow.published': true
-  }, function(error, docs) {
+  Document.aggregate([{
+    $match: {
+      'flow.published': true
+    }
+  }, {
+    $sort: {
+      'publication.publicationDate': -1
+    }
+  }, {
+    $limit: 30
+  }], function(error, docs) {
     if (error) {
       res.status(500);
       next(error);
@@ -34,6 +42,15 @@ module.exports.downloadAllFiles = function(req, res, next) {
     let fileName = `${doc.name}.zip`;
 
     var archive = archiver.create('zip', {});
+
+    doc.files
+      .filter((e) => e.published)
+      .forEach((file) => {
+        archive.file(file.path, {
+          name: file.fileName
+        });
+      });
+
     var output = fs.createWriteStream(`${basePath}/${fileName}`);
 
     output.on('close', function() {
@@ -47,7 +64,7 @@ module.exports.downloadAllFiles = function(req, res, next) {
 
     archive.pipe(output);
     archive
-      .directory(`${basePath}${doc.name}`, false)
+    // .directory(`${basePath}${doc.name}`, false)
       .finalize();
   });
 }
@@ -66,12 +83,15 @@ module.exports.downloadFile = function(req, res, next) {
 
 
 module.exports.updateFiles = function(req, res, next) {
-  let doc = new Document(req.body.document);
+  let doc = new Document(JSON.parse(req.body.document));
+  let extras = JSON.parse(req.body.extras);
 
   req.files.forEach((e) => {
+
     doc.files.push({
       fileName: e.filename,
-      path: e.path
+      path: e.path,
+      electronic: extras[e.filename].electronic
     });
   });
 
@@ -83,6 +103,11 @@ module.exports.updateFiles = function(req, res, next) {
     _id: doc._id
   }, {
     $set: {
+      approvals: doc.approvals,
+      status: doc.status,
+      flow: doc.flow,
+      publication: doc.publication,
+      request: doc.request,
       files: doc.files
     }
   }, function(error, result) {
@@ -98,22 +123,24 @@ module.exports.updateFiles = function(req, res, next) {
 
 module.exports.create = function(req, res, next) {
   let doc = new Document(JSON.parse(req.body.document));
+  let extras = JSON.parse(req.body.extras);
+
   doc.created = new Date();
 
   req.files.forEach((e) => {
     doc.files.push({
       fileName: e.filename,
       path: e.path,
-      type: 'electronic'
+      electronic: extras[e.filename].electronic
     });
   });
 
-  let randomNumber = randomstring.generate({
-    length: 5,
-    charset: 'numeric'
-  });
+  // let randomNumber = randomstring.generate({
+  //   length: 5,
+  //   charset: 'numeric'
+  // });
 
-  doc.code = `${doc.type.code}-${randomNumber}`;
+  // doc.code = `${doc.type.code}-${randomNumber}`;
 
   doc.save(function(error, doc) {
     if (error) {
@@ -308,7 +335,8 @@ module.exports.updateApprovals = function(req, res, next) {
       status: req.body.status,
       flow: req.body.flow,
       publication: req.body.publication,
-      request: req.body.request
+      request: req.body.request,
+      files: req.body.files
     }
   }, function(error, result) {
     if (error) {

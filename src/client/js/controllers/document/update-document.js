@@ -66,14 +66,24 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     $('#physicalFileModal').modal('toggle');
   }
 
-  $scope.uploadFiles = function() {
-    if ($scope.files && $scope.files.length) {
+  $scope.saveFiles = function() {
+    if (commonFactory.dialog("Esta seguro? El documento volvera a un estado inicial en donde se reinicara el flujo de documentos.") && $scope.files && $scope.files.length) {
+      resetFlow();
+
+      let fileExtras = {};
+      $scope.files.forEach((e) => {
+        fileExtras[e.name] = {
+          electronic: e.electronic
+        }
+      });
+
       Upload.upload({
         method: 'PUT',
         url: `/api/documents/${$scope.selectedDocument.name}/`,
         data: {
           files: $scope.files,
-          document: $scope.selectedDocument
+          document: angular.toJson($scope.selectedDocument),
+          extras: angular.toJson(fileExtras)
         }
       }).then(function(response) {
         $scope.selectedDocument.files = response.data.files;
@@ -236,7 +246,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       let changed = updateDocumentHistory();
 
       if (changed.length > 0) {
-        $scope.resetFlow();
+        resetFlow();
       }
 
       documents.update($scope.selectedDocument)
@@ -262,15 +272,9 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
   function resetFlow() {
     $scope.selectedDocument.flow = {
-      revisionBySGIA: false,
-      approvedByBoss: false,
-      approvedByQA: false,
-      approvedBySGIA: false,
-      approvedByManagement: false,
-      approvedByPrepForPublish: false,
       blueprintApproved: false,
       prepForPublication: false,
-      published: false
+      published: $scope.selectedDocument.flow.published
     };
 
     $scope.selectedDocument.approvals = [];
@@ -295,9 +299,11 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.status = `En revision por ${firstStep.name}`;
       }
     }
+
+    $scope.selectedDocument.request[$scope.selectedDocument.business].forEach((e, index) => {
+      $scope.selectedDocument.request[$scope.selectedDocument.business][index].approved = false;
+    });
   }
-
-
 
   $scope.download = function(fileName, filePath) {
     $http.get(`/api/documents/downloads/${encodeURIComponent(filePath)}`, {
@@ -338,6 +344,13 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
       Object.keys($scope.selectedDocument.type.requests).forEach(function(key, index) {
         $scope.selectedDocument.type.requests[key].key = key;
+
+        if ($scope.selectedDocument.type.requests[key].hideWhenPublished && $scope.selectedDocument.flow.published) {
+          $scope.hidden = true;
+          return;
+        }
+
+
         parsedArray.push($scope.selectedDocument.type.requests[key]);
       });
 
@@ -398,9 +411,16 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       $scope.selectedDocument.publication.publicationDate = new Date();
       $scope.selectedDocument.status = "Publicado";
       $scope.selectedDocument.flow.published = true;
-      $scope.selectedDocument.publication.revision += 1;
+      if (!$scope.selectedDocument.request.dataUpdateOnly) {
+        $scope.selectedDocument.publication.revision += 1;
+      }
+
+      $scope.selectedDocument.files.forEach((e, index) => {
+        console.log($scope.selectedDocument.files[index]);
+        $scope.selectedDocument.files[index].published = true;
+      });
+
       $scope.publicationStep = false;
-      //MISSING STEP TO GENERATE PUBLICATION CODE
     }
   }
 
@@ -426,28 +446,27 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       .then(function(response) {
         $scope.selectedDocument = response.data.document;
         $scope.originalDocument = angular.copy($scope.selectedDocument);
-        if (!$scope.selectedDocument.flow.published) {
-          $scope.canApprove = response.data.approval.canApprove;
-          $scope.currentStep = response.data.approval.step;
-          $scope.forBlueprint = response.data.approval.blueprint;
 
-          let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 1];
-          if (!$scope.selectedDocument.requiresSafetyEnv && nextStep && nextStep.forEnvironment) {
-            nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 2];
-          }
+        $scope.canApprove = response.data.approval.canApprove;
+        $scope.currentStep = response.data.approval.step;
+        $scope.forBlueprint = response.data.approval.blueprint;
 
-          if (!nextStep) {
-            $scope.publicationStep = true;
-          }
+        let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 1];
+        if (!$scope.selectedDocument.requiresSafetyEnv && nextStep && nextStep.forEnvironment) {
+          nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][$scope.currentStep + 2];
+        }
 
-          if (response.data.approval.blueprint) {
-            let foundApproval = $scope.retrieveApproval({
-              _id: $rootScope.client._id
-            }, true);
+        if (!nextStep) {
+          $scope.publicationStep = true;
+        }
 
-            if (foundApproval && foundApproval.approved) {
-              $scope.canApprove = false;
-            }
+        if (response.data.approval.blueprint) {
+          let foundApproval = $scope.retrieveApproval({
+            _id: $rootScope.client._id
+          }, true);
+
+          if (foundApproval && foundApproval.approved) {
+            $scope.canApprove = false;
           }
         }
       })

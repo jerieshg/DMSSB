@@ -10,7 +10,6 @@ let schema = new mongoose.Schema({
     end: Date
   },
   responsible: String,
-  clients: [String],
   questions: [{
     name: String,
     title: String,

@@ -3,20 +3,12 @@
   <div ng-include="'views/components/document/document-request/approvalsListModal.html'"></div>
   <div ng-include="'views/components/document/document-request/approveDocumentModal.html'"></div>
   <div ng-include="'views/components/document/document-request/physicalFileModal.html'"></div>
-  <div ng-include="'views/components/document/document-request/changeControlModal.html'"></div>
+  <div ng-include="'views/components/document/document-request/filesModal.html'"></div>
 
   <div class="row">
     <div class="col-sm-12">
       <a  class="btn btn-primary"  ui-sref-active="active" ui-sref="app.docs.history({id: selectedDocument._id})" title="Ver historial del documento" ng-show="selectedDocument._id">
         <i class="fa fa-eye" aria-hidden="true"/>  Ver Historial
-      </a>
-
-      <a  class="btn btn-info"  ui-sref-active="active" ui-sref="app.docs.change-control({id: selectedDocument._id})" title="Ver control de cambios del documento"  ng-show="selectedDocument.type.changeControl" >
-      <i class="fa fa-eye" aria-hidden="true"/>  Ver Control de cambios
-      </a>
-
-       <a  class="btn btn-secondary"  data-toggle="modal"  data-target="#changeControlModal" title="Control de cambios" ng-show="publicationStep && selectedDocument.type.changeControl" ng-click="changeControl = {};">
-        <i class="fa fa-minus" aria-hidden="true"/>  Agregar control de cambios
       </a>
 
       <a  class="btn btn-info"  data-toggle="modal"  data-target="#approvalListModal" title="Ver lista de aprobaciones" ng-show="selectedDocument._id" style="color:white;" ng-click="createApprovalList()">
@@ -72,7 +64,7 @@
       </select>
     </div>
     <div class="col-sm-4" ng-show="selectedDocument.type">
-      <label>Solicitud:</label>
+      <label>Solicitud <small ng-if="hidden">- Actual: ({{selectedDocument.request.key}})</small>:</label>
       <select name="request" class="form-control" ng-model="selectedDocument.request" ng-options="item as item.key for item in retrieveRequests() track by item.key" required ng-disabled="!edit">
         <option value="">Seleccione una solicitud  {{optional ? '(optional)' : ''}}</option>
       </select>
@@ -110,9 +102,9 @@
       </datepicker>
     </div>
     <div class="col-sm-4">
-      <label for="requiredDate">Fecha Vencimiento:</label>
+      <label for="requiredDate">Fecha de revision:</label>
       <datepicker date-format="yyyy-MM-dd">
-        <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate" ng-disabled="!edit">
+        <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate" ng-disabled="!edit" title="Fecha cuando se requiere volver a revisar el documento">
       </datepicker>
     </div>
     <div class="col-sm-4">
@@ -123,13 +115,9 @@
     <div class="form-divider"></div>
     <div class="col-sm-4" ng-show="!selectedDocument._id">
       <label for="file">Adjuntar archivo: </label>
-      <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple ng-disabled="!edit">
+      <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple data-toggle="modal"  data-target="#filesModal">
     </div>
-    <div class="col-sm-3" ng-show="!selectedDocument._id">
-      <a  class="btn btn-secondary"  title="Agregar archivos que estan en fisico (no electronico)" data-toggle="modal"  data-target="#physicalFileModal">
-        <i class="fa fa-file-archive-o" aria-hidden="true"/>  Agregar archivo en duro
-      </a>
-    </div>
+  
     <div class="col-sm-12 row-separator">
       <label for="comments">Comentario:</label>
       <textarea name="comments" id="comments" rows="5" class="form-control" ng-model="selectedDocument.comments" ng-disabled="!edit"></textarea>
@@ -150,9 +138,10 @@
         <tr>
           <td>#</td>
           <td>Nombre</td>
+          <td>Publicado</td>
           <td>
-            <i class="fa fa-upload" aria-hidden="true" data-toggle="modal"  data-target="#physicalFileModal" title="Subir document o registro en duro " style="margin-right:0.5em;">  </i>
-            <div class="fa fa-cloud-upload" aria-hidden="true" ngf-select="uploadFiles()" ng-model="files" ngf-multiple="true" title="Subir document o registro electronico">  </div>
+            <div class="fa fa-cloud-upload" aria-hidden="true" ngf-select ng-model="files" ngf-multiple="true" title="Subir document o registro electronico"
+            data-toggle="modal"  data-target="#filesModal"/>
           </td>
         </tr>
       </thead>
@@ -160,12 +149,13 @@
         <tr ng-repeat="file in selectedDocument.files">
           <td >{{$index + 1}}</td>
           <td>{{file.fileName}}</td>
+          <td>{{file.published ? 'Si' : 'No'}}</td>
           <td>
             <span ng-if="file.path">
              <a href="#" ng-click="download(file.fileName,file.path)">Descarga</a>
              <label>|</label>
            </span>
-           <i class="fa fa-trash" aria-hidden="true" ng-click="deleteFile(file.fileName)"></i>
+           <i class="fa fa-trash" aria-hidden="true" ng-click="deleteFile(file.fileName)" ng-if="client.role.level === 1"></i>
          </td>
        </tr>
      </tbody>

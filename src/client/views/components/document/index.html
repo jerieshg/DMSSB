@@ -31,22 +31,6 @@
         <option value="">Seleccione un tipo de documento  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
-    <div class="col-sm-5">
-      <label>Estado:</label>
-      <select name="dept" id="dept" class="form-control" ng-model="search.status">
-        <option value="">Seleccione un estado  {{optional ? '(optional)' : ''}}</option>
-        <option value="Anulado">Anulado</option>
-        <option value="En revision por calidad">En revision por calidad</option>
-        <option value="Rechazado por calidad">Rechazado por calidad</option>
-        <option value="En revision por SGIA">En revision por SGIA</option>
-        <option value="Rechazado por SGIA">Rechazado por SGIA</option>
-        <option value="En revision por gerencia">En revision por gerencia</option>
-        <option value="Rechazado por gerencia">Rechazado por gerencia</option>
-        <option value="En revision por jefe de departmento">En revision por jefe de departmento</option>
-        <option value="Rechazado por jefe de departmento">Rechazado por jefe de departmento</option>
-        <option value="Publicado">Publicado</option>
-      </select>
-    </div>
     <div class="col-sm-8">
       <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
     </div>
@@ -123,9 +107,7 @@
    </a>
  </td>
  <td>
-  <a href="#" ng-click="downloadFiles(e)" title="Descargar los archivos">
     {{e.publication.revision}}
-   </a>
  </td>
  <td>{{e.publication.publicationDate | date: 'yyyy/MM/dd'}}</td>
  <td>{{e.expiredDate ? e.expiredDate : 'Indefinido' | date: 'yyyy/MM/dd'}}</td>

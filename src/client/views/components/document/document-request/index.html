@@ -27,21 +27,21 @@
        <td><strong>Prioridad</strong></td>
        <td><strong>Solicitante</strong></td>
        <td><strong>Fecha Requerida</strong></td>
-       <td><strong>Fecha Vencimiento</strong></td>
+       <td><strong>Fecha de revision</strong></td>
        <td><strong>Fecha Creada</strong></td>
        <td></td>
      </tr>
    </thead>
    <tbody>
      <tr ng:repeat="e in documents | filter:search | orderBy: 'status' : true" ng-class="{'danger' : e.status === 'Anulado'}">
-       <td >{{e.code}}</td>
+       <td >{{$index + 1}}</td>
        <td>{{e.name}}</td>
        <td>{{e.status}}</td>
        <td>{{e.type.type}}</td>
        <td>{{e.business}}</td>
        <td>{{e.department}}</td>
        <td>{{e.priority}}</td>
-       <td>{{e.requester}}</td>
+       <td>{{e.createdBy.username}}</td>
        <td>{{e.requiredDate | date: 'yyyy/MM/dd'}}</td>
        <td>{{e.expiredDate | date: 'yyyy/MM/dd'}}</td>
        <td>{{e.created | date: 'yyyy/MM/dd'}}</td>

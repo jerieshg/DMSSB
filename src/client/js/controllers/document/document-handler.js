@@ -12,7 +12,7 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
 
         if (firstStep.bossPriority && (firstStep.approvals[$rootScope.client.department] && firstStep.approvals[$rootScope.client.department].map(e => e._id).includes($rootScope.client._id))) {
           $scope.selectedDocument.request[$scope.selectedDocument.business][0].approved = true;
-          
+
           let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][1];
           if (!nextStep) {
             $scope.selectedDocument.publication.publicationDate = new Date();
@@ -39,7 +39,8 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         url: `/api/documents/${$scope.selectedDocument.name}`,
         data: {
           files: $scope.files,
-          document: angular.toJson($scope.selectedDocument)
+          document: angular.toJson($scope.selectedDocument),
+          extras: angular.toJson($scope.fileExtras)
         }
       }).then(function(response) {
         if (response.status === 200) {
@@ -60,13 +61,18 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
     }
   };
 
-  $scope.addToFiles = function(fileName) {
-    $scope.selectedDocument.files.push({
-      fileName: fileName,
-      type: 'physical'
-    });
+  $scope.saveFiles = function() {
+    if ($scope.files && $scope.files.length) {
 
-    $('#physicalFileModal').modal('toggle');
+      $scope.fileExtras = {};
+      $scope.files.forEach((e) => {
+        $scope.fileExtras[e.name] = {
+          electronic: e.electronic
+        }
+      });
+
+      $('#filesModal').modal('toggle');
+    }
   }
 
   $scope.retrieveImplications = function() {
@@ -84,6 +90,10 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
 
       Object.keys($scope.selectedDocument.type.requests).forEach(function(key, index) {
         $scope.selectedDocument.type.requests[key].key = key;
+
+        if ($scope.selectedDocument.type.requests[key].hideWhenPublished && $scope.selectedDocument.flow.published)
+          return;
+
         parsedArray.push($scope.selectedDocument.type.requests[key]);
       });
 

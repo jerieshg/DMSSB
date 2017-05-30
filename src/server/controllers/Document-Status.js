@@ -1,81 +1,86 @@
-let DocumentChangeControl = require('../models/Document-Change-Control');
+let DocumentStatus = require('../models/Document-Status');
 
 module.exports.readAll = function(req, res, next) {
-  DocumentChangeControl.find({}, function(error, documentsChangeControl) {
+  DocumentStatus.find({}, function(error, documentStatuses) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    res.json(documentsChangeControl);
+    documentStatuses.sort((a, b) => {
+      return (a.status < b.status) ? -1 : (a.status > b.status) ? 1 : 0;
+    });
+
+    res.json(documentStatuses);
   });
 }
 
 module.exports.create = function(req, res, next) {
-  let documentChangeControl = new DocumentChangeControl(req.body);
+  let documentStatus = new DocumentStatus(req.body);
 
-  documentChangeControl.save(function(error, documentChangeControl) {
+  documentStatus.save(function(error, documentStatus) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    res.json(documentChangeControl);
+    res.json(documentStatus);
   });
 }
 
 module.exports.update = function(req, res, next) {
-  DocumentChangeControl.findOne({
-    docId: req.params.id
-  }, function(error, documentChangeControl) {
+  DocumentStatus.findOne({
+    _id: req.params.id
+  }, function(error, documentStatus) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
+
     for (prop in req.body) {
-      documentChangeControl[prop] = req.body[prop];
+      documentStatus[prop] = req.body[prop];
     }
 
-    documentChangeControl.save(function(error) {
+    documentStatus.save(function(error) {
       if (error) {
         res.status(500);
         next(error);
         return res.send(error);
       }
 
-      res.json(documentChangeControl);
+      res.json(documentStatus);
     });
   });
 }
 
 module.exports.delete = function(req, res, next) {
-  DocumentChangeControl.remove({
-    docId: req.params.id
-  }, function(error, documentChangeControl) {
+  DocumentStatus.remove({
+    _id: req.params.id
+  }, function(error, documentStatus) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    res.json(documentChangeControl);
+    res.json(documentStatus);
   });
 }
 
 module.exports.find = function(req, res, next) {
-  DocumentChangeControl.findOne({
-    docId: req.params.id
-  }, function(error, documentChangeControl) {
+  DocumentStatus.findOne({
+    _id: req.params.id
+  }, function(error, documentStatus) {
     if (error) {
       res.status(500);
       next(error);
       return res.send(error);
     }
 
-    res.json(documentChangeControl);
+    res.json(documentStatus);
   });
 }

@@ -10,16 +10,12 @@
         </div>
         <div class="modal-body">
 
-          <div class="col-md-3 modal-legend" >
+          <div class="col-md-3 modal-legend" style="text-align: center;">
            <strong>Opciones: </strong>
            <div class="checkbox-legend">
-            <label style="font-size:10px;">
+            <label >
              <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.blueprint" title="Seleccione esta casilla si el documento es un plano.">
              Plano
-           </label>
-           <label style="font-size:10px;">
-             <input type="checkbox" value="true" class="form-control" ng-model="selectedDocType.changeControl" title="Seleccione esta casilla si se requiere tener un control de cambios">
-             Control de cambios
            </label>
          </div>
        </div>
@@ -40,12 +36,12 @@
 
         <div class="col-sm-12">
           <strong>Tipo de solicitud:</strong>
-          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedRequestType.name" ng-options="item.type as item.type for item in requestTypes track by item._id">
+          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedRequestType" ng-options="item as item.type for item in requestTypes track by item._id" ng-change="addRequestTypeInfo(selectedRequestType)">
             <option value="">Seleccione un tipo de solicitud {{optional ? '(optional)' : ''}}</option>
           </select>
         </div>
 
-        <div class="col-sm-12" ng-if="selectedRequestType.name">
+        <div class="col-sm-12" ng-if="selectedRequestType.type">
           <strong>Empresa:</strong>
           <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedBusiness.name"  ng-options="item.business as item.business for item in business track by item._id">
             <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
@@ -60,15 +56,19 @@
            <i class="fa fa-plus" aria-hidden="true" /> 
          </a>
 
-         <div ng-repeat="e in selectedDocType.requests[selectedRequestType.name][selectedBusiness.name]" class="row-separator">
+         <div class="form-divider"></div>
+
+         <div ng-repeat="e in selectedDocType.requests[selectedRequestType.type][selectedBusiness.name]" class="row-separator">
 
           <strong>Paso {{$index + 1}}</strong>
+
+          <i class="fa fa-close" aria-hidden="true" style="color: red; float:right;" ng-click="removeStep($index)" title="Eliminar este paso" /> 
 
           <div class="row">
             <div class="col-sm-4">
               <strong class="small" style="font-weight: bold;">Nombre:</strong>
-              <select class="form-control" ng-model="e.name" ng-options="item for item in stepNames">
-                <option value="">Seleccione el nombre del paso {{optional ? '(optional)' : ''}}</option>
+              <select class="form-control" ng-model="e.name" ng-options="item.status as item.status for item in documentStatuses" title="Este item es para seleccionar un nombre para el paso seleccionado">
+                <option value="">Seleccione un nombre {{optional ? '(optional)' : ''}}</option>
               </select>
               <br/>
               <div class="checkbox-legend">
@@ -78,8 +78,8 @@
                </label>
 
                <label style="font-size:10px;" ng-show="e.requiresDept && $index === 0">
-                 <input type="checkbox" value="true" class="form-control" ng-model="e.bossPriority" title="Seleccione esta casilla si quiere habilitar prioridad para jefes cuando lo selecciona. Solamente para el paso 1" ng-click="resetApprovalList(e)">
-                 Requiere prioridad para jefe
+                 <input type="checkbox" value="true" class="form-control" ng-model="e.bossPriority" title="Seleccione esta casilla cuando no requiere auto revision. Autorevision: No requiere la autorizacion del documento cuando el jefe es el solicitante" ng-click="resetApprovalList(e)">
+                 No requiere auto-revision
                </label>
 
                <label style="font-size:10px;">

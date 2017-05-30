@@ -1,51 +1,52 @@
 <header class="app-header navbar">
-    <button class="navbar-toggler mobile-sidebar-toggler hidden-lg-up" type="button">&#9776;</button>
-    <a class="navbar-brand" ui-sref="app.main"></a>
-    <ul class="nav navbar-nav hidden-md-down">
-        <li class="nav-item">
-            <a class="nav-link navbar-toggler sidebar-toggler" href="#">&#9776;</a>
-        </li>
+  <button class="navbar-toggler mobile-sidebar-toggler hidden-lg-up" type="button">&#9776;</button>
+  <a class="navbar-brand" ui-sref="app.main"></a>
+  <ul class="nav navbar-nav hidden-md-down">
+    <li class="nav-item">
+      <a class="nav-link navbar-toggler sidebar-toggler" href="#">&#9776;</a>
+    </li>
 
-        <li class="nav-item px-1" ng-show="client.role.level === 1">
-            <a class="nav-link" ui-sref="app.main">Tablero de encuestas</a>
-        </li>
+    <li class="nav-item px-1">
+      <a class="nav-link" ui-sref="app.docs.main">Centro documental</a>
+    </li>
 
-          <li class="nav-item px-1">
-            <a class="nav-link" ui-sref="app.docs.main">Centro documental</a>
-        </li>
+    <li class="nav-item px-1" ng-show="client.role.level === 1">
+      <a class="nav-link" ui-sref="app.main">Tablero de encuestas</a>
+    </li>
 
-        <li class="nav-item dropdown" ng-show="client.role.level === 1 || client.role.level === 2">
-            <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Administrador
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" ui-sref="app.admin.clients" ng-show="client.role.level === 1">Clientes/Usuarios</a>
-              <a class="dropdown-item" ui-sref="app.admin.business" ng-show="client.role.level === 1">Empresas</a>
-              <a class="dropdown-item" ui-sref="app.admin.departments" ng-show="client.role.level === 1">Departamentos</a>
-              <a class="dropdown-item" ui-sref="app.admin.services">Servicios</a>
-              <a class="dropdown-item" ui-sref="app.admin.jobs" ng-show="client.role.level === 1">Posiciones de Trabajo</a>
-              <a class="dropdown-item" ui-sref="app.admin.doctypes" ng-show="client.role.level === 1">Tipo de documentos</a>
-              <a class="dropdown-item" ui-sref="app.admin.requesttypes" ng-show="client.role.level === 1">Tipo de solicitud</a>
-              <a class="dropdown-item" ui-sref="app.admin.systems" ng-show="client.role.level === 1">Sistemas</a>
-              <a class="dropdown-item" ui-sref="app.admin.implications" ng-show="client.role.level === 1">Implicaciones</a>
-          </div>
-      </li>
+    <li class="nav-item dropdown" ng-show="client.role.level === 1 || client.role.level === 2">
+      <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Administrador
+      </a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <a class="dropdown-item" ui-sref="app.admin.clients" ng-show="client.role.level === 1">Clientes/Usuarios</a>
+        <a class="dropdown-item" ui-sref="app.admin.business" ng-show="client.role.level === 1">Empresas</a>
+        <a class="dropdown-item" ui-sref="app.admin.departments" ng-show="client.role.level === 1">Departamentos</a>
+        <a class="dropdown-item" ui-sref="app.admin.services">Servicios</a>
+        <a class="dropdown-item" ui-sref="app.admin.jobs" ng-show="client.role.level === 1">Posiciones de Trabajo</a>
+        <a class="dropdown-item" ui-sref="app.admin.doctypes" ng-show="client.role.level === 1">Tipo de documentos</a>
+        <a class="dropdown-item" ui-sref="app.admin.requesttypes" ng-show="client.role.level === 1">Tipo de solicitud</a>
+        <a class="dropdown-item" ui-sref="app.admin.docStatus" ng-show="client.role.level === 1">Estados de documento</a>
+        <a class="dropdown-item" ui-sref="app.admin.systems" ng-show="client.role.level === 1">Sistemas</a>
+        <a class="dropdown-item" ui-sref="app.admin.implications" ng-show="client.role.level === 1">Implicaciones</a>
+      </div>
+    </li>
 
   </ul>
   <ul class="nav navbar-nav ml-auto hidden-md-down">
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            <img src="img/avatars/1.png" class="img-avatar" alt="admin@bootstrapmaster.com">
-            <span class="hidden-md-down">{{client.username}}</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right" ng-controller="logoutController">
+      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+        <img src="img/avatars/1.png" class="img-avatar" alt="admin@bootstrapmaster.com">
+        <span class="hidden-md-down">{{client.username}}</span>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" ng-controller="logoutController">
 
-            <div class="dropdown-header text-center">
-                <strong>Settings</strong>
-            </div>
-
-            <a class="dropdown-item" href="#" ng-click="logout()"><i class="fa fa-lock"></i> Logout</a>
+        <div class="dropdown-header text-center">
+          <strong>Settings</strong>
         </div>
+
+        <a class="dropdown-item" href="#" ng-click="logout()"><i class="fa fa-lock"></i> Logout</a>
+      </div>
     </li>
-</ul>
+  </ul>
 </header>

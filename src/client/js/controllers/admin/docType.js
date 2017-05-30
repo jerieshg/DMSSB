@@ -1,14 +1,22 @@
-function DocTypesController($scope, $http, commonFactory, documentTypes, clients, business, departments, requestType) {
+function DocTypesController($scope, $http, commonFactory, documentTypes, clients, business, departments, requestType, documentStatus) {
 
   initializeController();
 
   $scope.selectedDocType = {};
 
-  $scope.addStep = function() {
-    $scope.selectedDocType.requests[$scope.selectedRequestType.name] = $scope.selectedDocType.requests[$scope.selectedRequestType.name] || {};
-    $scope.selectedDocType.requests[$scope.selectedRequestType.name][$scope.selectedBusiness.name] = $scope.selectedDocType.requests[$scope.selectedRequestType.name][$scope.selectedBusiness.name] || [];
+  $scope.addRequestTypeInfo = function(selectedRequestType) {
+    $scope.selectedDocType.requests[selectedRequestType.type] = $scope.selectedDocType.requests[selectedRequestType.type] || {};
+    $scope.selectedDocType.requests[selectedRequestType.type].dataUpdateOnly = selectedRequestType.dataUpdateOnly
+    $scope.selectedDocType.requests[selectedRequestType.type].hideWhenPublished = selectedRequestType.hideWhenPublished
+  }
 
-    $scope.selectedDocType.requests[$scope.selectedRequestType.name][$scope.selectedBusiness.name].push({});
+  $scope.addStep = function() {
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name] = $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name] || [];
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name].push({});
+  }
+
+  $scope.removeStep = function(step) {
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name].splice(step, 1);
   }
 
   $scope.print = function() {
@@ -80,6 +88,7 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
     retrieveBusiness();
     retrieveDepartment();
     retrieveRequestTypes();
+    retrieveDocumentStatus();
     $scope.choiceOptions = commonFactory.generateNumberArray(1, 20);
     $scope.priorityLevels = commonFactory.generateNumberArray(1, 3);
     $scope.selectedAuths = [{}];
@@ -125,10 +134,17 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
       });
   }
 
+  function retrieveDocumentStatus() {
+    documentStatus.readAll()
+      .then((data) => {
+        $scope.documentStatuses = data;
+      })
+  }
+
   function retrieveStepNames() {
     $scope.stepNames = ["Jefe de departamento", "Seguridad Industrial", "Gerencia", "Medioambiente", "Calidad", "Preparacion para publicacion"];
   }
 }
 
-DocTypesController.$inject = ['$scope', '$http', 'commonFactory', 'documentTypes', 'clients', 'business', 'departments', 'requestType'];
+DocTypesController.$inject = ['$scope', '$http', 'commonFactory', 'documentTypes', 'clients', 'business', 'departments', 'requestType', 'documentStatus'];
 angular.module('app').controller('docTypesController', DocTypesController);

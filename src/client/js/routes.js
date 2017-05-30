@@ -230,6 +230,26 @@ angular
           showConfirmDialog: true
         }
       })
+      .state('app.admin.docStatus', {
+        url: '/document-status',
+        templateUrl: 'views/components/admin/documentStatus.html',
+        ncyBreadcrumb: {
+          label: 'Estado de cada documento'
+        },
+        controller: 'documentStatusController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load files for an existing module
+            return $ocLazyLoad.load({
+              files: ['js/controllers/admin/document-status.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: true,
+          showConfirmDialog: true
+        }
+      })
       .state('app.admin.departments', {
         url: '/departamentos',
         templateUrl: 'views/components/admin/departments.html',
@@ -501,7 +521,7 @@ angular
         templateUrl: 'views/components/document/document-request/pendingApprovalDocuments.html',
         //page title goes here
         ncyBreadcrumb: {
-          label: 'Documents para aprobar',
+          label: 'Documents o registros pendientes',
         },
         controller: 'pendingApprovalDocumentController',
         resolve: {
@@ -595,27 +615,6 @@ angular
             // you can lazy load controllers
             return $ocLazyLoad.load({
               files: ['js/controllers/document/document-history.js']
-            });
-          }]
-        },
-        data: {
-          isAdminRequired: false
-        }
-      })
-      .state('app.docs.change-control', {
-        url: '/control-de-cambios/:id',
-        templateUrl: 'views/components/document/document-request/change-control.html',
-        //page title goes here
-        ncyBreadcrumb: {
-          label: 'Control de cambios',
-        },
-        controller: 'documentChangeControlController',
-        resolve: {
-
-          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load controllers
-            return $ocLazyLoad.load({
-              files: ['js/controllers/document/document-change-control.js']
             });
           }]
         },

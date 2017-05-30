@@ -67,7 +67,7 @@ module.exports = function(router) {
   //Document History API calls
   let DocumentHistory = require('../controllers/Document-History');
   //Document History API calls
-  let DocumentChangeControl = require('../controllers/Document-Change-Control');
+  let DocumentStatus = require('../controllers/Document-Status');
   //Document API calls
   let _System = require('../controllers/System');
   //Document API calls
@@ -267,14 +267,14 @@ module.exports = function(router) {
   router.route('/api/documents-history/:id')
     .get(DocumentHistory.find);
 
-  router.route('/api/documents-change-control/')
-    .get(DocumentChangeControl.readAll)
-    .post(DocumentChangeControl.create);
-  router.route('/api/documents-change-control/:id')
-    .put(DocumentChangeControl.update)
-    .delete(DocumentChangeControl.delete);
-  router.route('/api/documents-change-control/:id')
-    .get(DocumentChangeControl.find);
+  router.route('/api/documents-statuses/')
+    .get(DocumentStatus.readAll)
+    .post(DocumentStatus.create);
+  router.route('/api/documents-statuses/:id')
+    .put(DocumentStatus.update)
+    .delete(DocumentStatus.delete);
+  router.route('/api/documents-statuses/:id')
+    .get(DocumentStatus.find);
 
   //Email Routers
   router.route('/api/email/:email/expired')

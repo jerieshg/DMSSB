@@ -18,9 +18,9 @@ function DocumentaryCenterController($rootScope, $scope, $http, commonFactory, d
   $scope.filesLocation = function(doc) {
     let result = '';
 
-    let mapped = doc.files.map(e => e.type);
-    let electronic = (mapped.includes('electronic'));
-    let physical = (mapped.includes('physical'));
+    let mapped = doc.files.filter(e => e.published).map(e => e.electronic);
+    let electronic = (mapped.includes(true));
+    let physical = (mapped.includes(false));
 
     if (physical && electronic) {
       return 'Electronico | En Duro';
