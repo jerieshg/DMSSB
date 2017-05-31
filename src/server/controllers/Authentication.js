@@ -19,6 +19,37 @@ module.exports.register = function(req, res) {
   });
 };
 
+module.exports.changePassword = function(req, res, next) {
+  Client.findOne({
+    _id: req.params.clientId
+  }, function(error, client) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    if (client.validPassword(req.body.oldPassword)) {
+      client.setPassword(req.body.newPassword);
+
+      client.save(function(error) {
+        if (error) {
+          res.status(500);
+          next(error);
+          return res.send(error);
+        }
+
+        let token = client.generateJwt();
+        res.json({
+          "token": token
+        });
+      });
+    } else {
+      res.status(400).json("Invalid Old Password");
+    }
+  });
+}
+
 module.exports.login = function(req, res) {
   passport.authenticate('local', function(err, user, info) {
     var token;

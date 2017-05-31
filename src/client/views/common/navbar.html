@@ -39,14 +39,20 @@
         <img src="img/avatars/1.png" class="img-avatar" alt="admin@bootstrapmaster.com">
         <span class="hidden-md-down">{{client.username}}</span>
       </a>
-      <div class="dropdown-menu dropdown-menu-right" ng-controller="logoutController">
+      <div class="dropdown-menu dropdown-menu-right">
 
         <div class="dropdown-header text-center">
           <strong>Settings</strong>
         </div>
 
-        <a class="dropdown-item" href="#" ng-click="logout()"><i class="fa fa-lock"></i> Logout</a>
-      </div>
-    </li>
-  </ul>
+        <div  ng-controller="changePasswordController">
+        <a class="dropdown-item" href="#" ng-click="resetPasswordForm()" data-toggle="modal" data-target="#changePasswordModal"><i class="fa fa-user-secret"></i> Cambiar contraseña</a>
+        </div>
+        <div  ng-controller="logoutController">
+         <a class="dropdown-item" href="#" ng-click="logout()"><i class="fa fa-lock"></i> Logout</a>
+       </div>
+       
+     </div>
+   </li>
+ </ul>
 </header>

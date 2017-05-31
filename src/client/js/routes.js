@@ -47,6 +47,7 @@ angular
               files: [
                 'js/factories/common.js',
                 'js/controllers/logout.js',
+                'js/controllers/change-password.js',
               ]
             }, {
               serie: true,
@@ -703,7 +704,7 @@ angular
       //if regular user redirect
       if ($rootScope.client.role.level === 3) {
         let documentaryCenter = $rootScope.client.documentaryCenterAdmin && trans.$to().data.documentaryCenter
-        //If its going to documentary administrador and it has access, then skip...
+          //If its going to documentary administrador and it has access, then skip...
         if (trans.$to().data.isAdminRequired && !documentaryCenter) {
           return trans.router.stateService.target('app.surveys.main');
         }

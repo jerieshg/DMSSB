@@ -67,6 +67,21 @@
         );
     };
 
+    var changePassword = function(clientId, passwords) {
+      return $http.put(`/api/auth/client/${clientId}/`, passwords)
+        .then(function(response) {
+            if (response.status === 200) {
+              saveToken(response.data.token);
+            }
+
+            return response;
+          },
+          function(response) {
+            return response;
+          }
+        );
+    };
+
     var logout = function() {
       $window.localStorage.removeItem('mean-token');
     };
@@ -78,6 +93,7 @@
       isLoggedIn: isLoggedIn,
       register: register,
       login: login,
+      changePassword: changePassword,
       logout: logout
     };
   }

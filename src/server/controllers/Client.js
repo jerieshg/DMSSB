@@ -28,10 +28,18 @@ module.exports.update = function(req, res, next) {
     }
 
     for (prop in req.body) {
-      client[prop] = req.body[prop];
+      if (req.body[prop].type === 'Buffer') {
+        client[prop] = Buffer.from(req.body[prop].data);
+      } else {
+        client[prop] = req.body[prop];
+      }
     }
+    
     client.markModified('role');
-    client.setPassword(req.body.password);
+
+    if (req.body.password) {
+      client.setPassword(req.body.password);
+    }
 
     client.save(function(error) {
       if (error) {

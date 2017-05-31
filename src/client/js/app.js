@@ -18,7 +18,8 @@ angular
     'ncy-angular-breadcrumb',
     'angular-loading-bar',
     'ngMaterial',
-    '720kb.datepicker'
+    '720kb.datepicker',
+    'ngMessages'
   ])
   .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
     cfpLoadingBarProvider.includeSpinner = false;

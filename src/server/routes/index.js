@@ -169,6 +169,8 @@ module.exports = function(router) {
     .post(Authentication.login);
   router.route('/api/auth/register/')
     .post(Authentication.register);
+  router.route('/api/auth/client/:clientId/')
+    .put(Authentication.changePassword);
   //AUTHENTICATION ROUTES
   router.route('/api/profile/')
     .get(auth, Profile.readProfile);
