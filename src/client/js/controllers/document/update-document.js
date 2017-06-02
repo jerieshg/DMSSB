@@ -37,11 +37,11 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
       Upload.upload({
         method: 'PUT',
-        url: `/api/documents/${$scope.selectedDocument.name}/`,
+        url: `/api/documents/`,
         data: {
-          files: $scope.files,
           document: angular.toJson($scope.selectedDocument),
-          extras: angular.toJson(fileExtras)
+          extras: angular.toJson(fileExtras),
+          files: $scope.files
         }
       }).then(function(response) {
         $scope.selectedDocument.files = response.data.files;

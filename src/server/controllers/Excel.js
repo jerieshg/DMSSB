@@ -1,5 +1,174 @@
 let SurveyResponse = require('../models/Survey-Response');
+
+//Required for migration
+let Document = require('../models/Document');
+let _System = require('../models/System');
+let DocumentType = require('../models/Document-Type');
+let Client = require('../models/Client');
+
 let excel = require('node-excel-export');
+let xlstojson = require("xls-to-json-lc");
+let xlsxtojson = require("xlsx-to-json-lc");
+let path = require('path');
+let fs = require('fs');
+
+
+let multer = require('multer');
+let storage = multer.diskStorage({ //multers disk storage settings
+  destination: function(req, file, cb) {
+    cb(null, path.join(__dirname, `/../../../uploads/`))
+  },
+  filename: function(req, file, cb) {
+    let datetimestamp = Date.now();
+    cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length - 1])
+  }
+});
+
+let upload = multer({ //multer settings
+  storage: storage,
+  fileFilter: function(req, file, callback) { //file filter
+    if (['xls', 'xlsx'].indexOf(file.originalname.split('.')[file.originalname.split('.').length - 1]) === -1) {
+      return callback(new Error('Wrong extension type'));
+    }
+    callback(null, true);
+  }
+}).single('files');
+
+module.exports.migratePreviousVersion = function(req, res, next) {
+  let exceltojson; //Initialization
+
+  upload(req, res, function(error) {
+    if (error) {
+      next(error);
+      return res.status(500).json(error);
+      return;
+    }
+
+    if (!req.file) {
+      res.json({
+        error_code: 1,
+        err_desc: "No file passed"
+      });
+
+      return;
+    }
+
+    if (req.file.originalname.split('.')[req.file.originalname.split('.').length - 1] === 'xlsx') {
+      exceltojson = xlsxtojson;
+    } else {
+      exceltojson = xlstojson;
+    }
+
+    try {
+      exceltojson({
+        input: req.file.path, //the same path where we uploaded our file
+        output: null, //since we don't need output.json
+        lowerCaseHeaders: true
+      }, function(error, result) {
+        if (error) {
+          next(error);
+          return res.status(500).json(error);
+        }
+
+        let migratedItems = [];
+        let convertedItems = [];
+        let promises = [];
+
+        result.forEach((item) => {
+
+          let migratedDoc = new Document({
+            name: item.nombre,
+            priority: item.prioridad ? item.prioridad : 'Normal',
+            requiredDate: item.fecharequerida ? new Date(item.fecharequerida) : null,
+            business: item.planta,
+            department: item.departamento,
+            expiredDate: item.fecharevision ? new Date(item.fecharevision) : null,
+            requiresSafetyEnv: item.revisionmedioambiente,
+            status: 'Publicado',
+            comments: item.comentario,
+            flow: {
+              blueprintApproved: item.sistema ? true : false,
+              published: item.fechapublicacion ? true : false,
+              deleted: item.anulado
+            },
+            publication: {
+              code: item.codigo,
+              revision: item.versionvigente,
+              publicationDate: item.fechapublicacion ? new Date(item.fechapublicacion) : null
+            },
+            migrated: true
+          });
+
+          migratedDoc.solicitante = item.solicitante ? item.solicitante : 'ypadilla';
+          migratedDoc.tipo = item.tipo;
+          migratedDoc.sistema = item.sistema;
+          migratedDoc.solicitud = item.solicitud;
+          migratedDoc.implicacion = item.implicacion;
+
+          convertedItems.push(migratedDoc);
+          promises.push(findDoc(item.nombre, migratedDoc.business, migratedDoc.department));
+          promises.push(findClient(item.solicitante ? item.solicitante : 'ypadilla'));
+          promises.push(findSystem(item.sistema));
+          promises.push(findType(item.tipo));
+        });
+
+        Promise.all(promises).then(values => {
+          convertedItems.forEach((doc, index) => {
+
+            let foundDoc = values.find((e) =>
+              e && (e.name === doc.name && (e.business && e.business.includes(doc.business)) && e.department === doc.department)
+            );
+
+            if (!foundDoc) {
+              let client = values.find((e) => e && (e.username === doc.solicitante));
+              if (client) {
+                convertedItems[index].createdBy = {
+                  _id: client._id,
+                  username: client.username
+                }
+              }
+
+              let type = values.find((e) => {
+                return e && (e.type === doc.tipo);
+              });
+
+              convertedItems[index].type = type ? type : doc.tipo;
+              if (type) {
+                convertedItems[index].request = convertedItems[index].type.requests[doc.solicitud];
+              }
+
+
+              if (type && type.blueprint) {
+                let system = values.find((e) => e && (e.system === doc.sistema));
+                convertedItems[index].system = system ? system.system : doc.sistema;
+                if (system) {
+                  convertedItems[index].implication = system.implications ? system.implications.find((x) => x.implication === doc.implicacion) : {};
+                }
+              }
+
+              migratedItems.push(convertedItems[index]);
+            }
+          });
+
+          fs.unlinkSync(req.file.path);
+          res.status(200).json({
+            data: migratedItems
+          });
+        }).catch(reason => {
+          console.log(reason);
+          fs.unlink(req.file.path);
+          res.status(500).json(reason);
+        });
+      });
+    } catch (e) {
+      res.status(500).json({
+        err_desc: "Archivo de excel corrupto"
+      });
+    }
+  });
+}
+
+
 
 module.exports.exportToExcel = function(req, res) {
 
@@ -309,4 +478,32 @@ function retrieveFontStyle(color, bold) {
     sz: 11,
     bold: bold
   }
+}
+
+function findDoc(name, business, department) {
+  return Document.findOne({
+    name: name,
+    business: {
+      $in: business
+    },
+    department: department
+  }).exec();
+}
+
+function findClient(username) {
+  return Client.findOne({
+    username: username
+  }).exec();
+}
+
+function findSystem(system) {
+  return _System.findOne({
+    system: system
+  }).exec();
+}
+
+function findType(docType) {
+  return DocumentType.findOne({
+    type: docType
+  }).exec();
 }

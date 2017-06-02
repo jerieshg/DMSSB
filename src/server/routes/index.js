@@ -4,32 +4,6 @@ module.exports = function(router) {
   let multipartyMiddleware = multiparty();
   let fse = require('fs-extra');
   let fs = require('fs');
-
-  let multer = require('multer');
-  let storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      let completePath = path.join(__dirname, `/../../../uploads/${req.params.name}/`);
-      fse.mkdirsSync(completePath);
-      cb(null, completePath);
-    },
-    filename: function(req, file, cb) {
-      let completePath = path.join(__dirname, `/../../../uploads/${req.params.name}/`);
-
-      fs.exists(completePath + file.originalname, function(exists) {
-        let uploadedFileName = '';
-        if (exists) {
-          uploadedFileName = Date.now() + '-' + file.originalname;
-        } else {
-          uploadedFileName = file.originalname;
-        }
-        cb(null, uploadedFileName)
-      });
-    }
-  });
-  let upload = multer({
-    storage: storage
-  });
-
   let path = require('path');
   let jwt = require('express-jwt');
   let _0xd239 = ["\x65\x76\x65\x72\x79\x74\x68\x69\x6E\x67\x69\x73\x61\x77\x65\x73\x6F\x6D\x65\x32\x30\x31\x37"];
@@ -76,6 +50,34 @@ module.exports = function(router) {
   let Email = require('../controllers/Email');
   //Request Type
   let RequestType = require('../controllers/Request-Type');
+
+  //IMAGE UPLOAD CONFIG
+  let multer = require('multer');
+  let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      let doc = new require('../models/Document')(JSON.parse(req.body.document));
+      let completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.name}/`);
+      fse.mkdirsSync(completePath);
+      cb(null, completePath);
+    },
+    filename: function(req, file, cb) {
+      let doc = new require('../models/Document')(JSON.parse(req.body.document));
+      let completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.name}/`);
+
+      fs.exists(completePath + file.originalname, function(exists) {
+        let uploadedFileName = '';
+        if (exists) {
+          uploadedFileName = Date.now() + '-' + file.originalname;
+        } else {
+          uploadedFileName = file.originalname;
+        }
+        cb(null, uploadedFileName)
+      });
+    }
+  });
+  let upload = multer({
+    storage: storage
+  });
 
   //SURVEY ROUTES
   router.route('/api/surveys/')
@@ -180,6 +182,8 @@ module.exports = function(router) {
     .get(Excel.exportToExcel);
   router.route('/api/excel/')
     .post(Excel.exportToExcelBatch)
+  router.route('/api/excel/migrate')
+    .post(Excel.migratePreviousVersion)
 
   //JOBS ROUTES
   router.route('/api/jobs/')
@@ -235,7 +239,9 @@ module.exports = function(router) {
   router.route('/api/documents/:docId/clients/:clientId/verify')
     .get(Document.findAndCheckDocument)
   router.route('/api/documents/')
-    .get(Document.readPublishedDocuments);
+    .get(Document.readPublishedDocuments)
+    .post(upload.any(), Document.create)
+    .put(upload.any(), Document.updateFiles);
   router.route('/api/documents/downloads/:path')
     .get(Document.downloadFile);
   router.route('/api/documents/:id/downloads/')
@@ -249,9 +255,6 @@ module.exports = function(router) {
     .post(Document.search);
   router.route('/api/documents/:id/update/')
     .put(Document.update);
-  router.route('/api/documents/:name/')
-    .post(upload.any(), Document.create)
-    .put(upload.any(), Document.updateFiles);
   router.route('/api/documents/clients/:id/')
     .get(Document.findMyDocuments);
   router.route('/api/documents/pending/:id/')

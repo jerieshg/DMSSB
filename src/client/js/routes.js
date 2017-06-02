@@ -502,6 +502,27 @@ angular
           showConfirmDialog: false
         }
       })
+      .state('app.docs.migrateDocs', {
+        url: '/migration',
+        templateUrl: 'views/components/document/migrateDocuments.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Migrar documentos',
+        },
+        controller: 'migrateDocumentsController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/document/migrate-documents.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false,
+          showConfirmDialog: true
+        }
+      })
       .state('app.docs.request', {
         url: '/request-document',
         templateUrl: 'views/components/document/document-request/index.html',

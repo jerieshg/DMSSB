@@ -128,10 +128,11 @@ module.exports.create = function(req, res, next) {
   doc.created = new Date();
 
   req.files.forEach((e) => {
+
     doc.files.push({
       fileName: e.filename,
       path: e.path,
-      electronic: extras[e.filename].electronic
+      electronic: extras[e.filename] ? extras[e.filename].electronic : false
     });
   });
 
@@ -417,7 +418,7 @@ function checkDocument(doc, client) {
   }
 
   if (doc.type.blueprint && !doc.flow.blueprintApproved) {
-    includesDoc = doc.implication.authorization[doc.business].map(a => a._id).includes(client._id.toString());
+    includesDoc = doc.implication ? doc.implication.authorization[doc.business].map(a => a._id).includes(client._id.toString()) : false;
 
     return {
       canApprove: includesDoc,
@@ -426,38 +427,41 @@ function checkDocument(doc, client) {
     };
   }
 
-  for (var i = 0; i < doc.request[doc.business].length; i++) {
-    let currentStep = doc.request[doc.business][i];
-    let previousStep = null;
-    step = i;
+  if (doc.request && doc.request[doc.business]) {
+    for (var i = 0; i < doc.request[doc.business].length; i++) {
+      let currentStep = doc.request[doc.business][i];
+      let previousStep = null;
+      step = i;
 
-    if (i - 1 >= 0) {
-      previousStep = doc.request[doc.business][i - 1];
-    }
+      if (i - 1 >= 0) {
+        previousStep = doc.request[doc.business][i - 1];
+      }
 
-    //If the document does not  require safety env and the step includes it, then skips it
-    if (!doc.requiresSafetyEnv && currentStep.forEnvironment) {
-      continue;
-    }
+      //If the document does not  require safety env and the step includes it, then skips it
+      if (!doc.requiresSafetyEnv && currentStep.forEnvironment) {
+        continue;
+      }
 
-    //If the previous step is not approved yet... then cut the loop
-    if ((previousStep && !previousStep.approved)) {
-      if (!(previousStep.forEnvironment && !doc.requiresSafetyEnv)) {
+      //If the previous step is not approved yet... then cut the loop
+      if ((previousStep && !previousStep.approved)) {
+        if (!(previousStep.forEnvironment && !doc.requiresSafetyEnv)) {
+          break;
+        }
+      }
+
+      if (currentStep.requiresDept) {
+        if (doc.department === client.department)
+          includesDoc = currentStep.approvals[doc.department].map(e => e._id).includes(client._id.toString()) && !currentStep.approved;
+      } else {
+        includesDoc = currentStep.approvals.map(e => e._id).includes(client._id.toString()) && !currentStep.approved;
+      }
+
+      if (includesDoc) {
         break;
       }
     }
-
-    if (currentStep.requiresDept) {
-      if (doc.department === client.department)
-        includesDoc = currentStep.approvals[doc.department].map(e => e._id).includes(client._id.toString()) && !currentStep.approved;
-    } else {
-      includesDoc = currentStep.approvals.map(e => e._id).includes(client._id.toString()) && !currentStep.approved;
-    }
-
-    if (includesDoc) {
-      break;
-    }
   }
+
 
   return {
     canApprove: includesDoc,

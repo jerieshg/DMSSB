@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 let schema = new mongoose.Schema({
   name: {
     type: String,
-    unique: true
+    unique: false
   },
   requestedDate: Date,
   priority: String,
@@ -41,6 +41,7 @@ let schema = new mongoose.Schema({
     comment: String,
     created: Date
   }],
+  migrated: Boolean,
   request: {},
   flow: {
     blueprintApproved: Boolean,

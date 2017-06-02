@@ -8,7 +8,8 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
       if ($scope.selectedDocument.type.blueprint) {
         $scope.selectedDocument.status = "En revision por lista de autorizaciones";
       } else {
-        let firstStep = $scope.selectedDocument.request[$scope.selectedDocument.business][0];
+        let request = $scope.selectedDocument.request[$scope.selectedDocument.business];
+        let firstStep = request ? request[0] : {};
 
         if (firstStep.bossPriority && (firstStep.approvals[$rootScope.client.department] && firstStep.approvals[$rootScope.client.department].map(e => e._id).includes($rootScope.client._id))) {
           $scope.selectedDocument.request[$scope.selectedDocument.business][0].approved = true;
@@ -35,11 +36,11 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
       };
 
       Upload.upload({
-        url: `/api/documents/${$scope.selectedDocument.name}`,
+        url: `/api/documents/`,
         data: {
-          files: $scope.files,
           document: angular.toJson($scope.selectedDocument),
-          extras: angular.toJson($scope.fileExtras)
+          extras: angular.toJson($scope.fileExtras),
+          files: $scope.files
         }
       }).then(function(response) {
         if (response.status === 200) {

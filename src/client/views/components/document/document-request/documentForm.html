@@ -84,7 +84,7 @@
     <div class="form-divider"></div>
     <div class="col-sm-4">
       <label for="dept">Departamento:</label>
-      <select name="dept" id="dept" class="form-control" ng-model="selectedDocument.department" ng-options="item.department as item.department for item in departments" required ng-disabled="!edit">
+      <select name="dept" id="dept" class="form-control" ng-model="selectedDocument.department" ng-options="item.department as item.department for item in departments | filter: {business: selectedDocument.business}" required ng-disabled="!edit">
         <option value="">Seleccione una departamento  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
@@ -117,7 +117,7 @@
       <label for="file">Adjuntar archivo: </label>
       <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple data-toggle="modal"  data-target="#filesModal">
     </div>
-  
+    
     <div class="col-sm-12 row-separator">
       <label for="comments">Comentario:</label>
       <textarea name="comments" id="comments" rows="5" class="form-control" ng-model="selectedDocument.comments" ng-disabled="!edit"></textarea>
