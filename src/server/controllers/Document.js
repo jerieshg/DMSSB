@@ -132,7 +132,8 @@ module.exports.create = function(req, res, next) {
     doc.files.push({
       fileName: e.filename,
       path: e.path,
-      electronic: extras[e.filename] ? extras[e.filename].electronic : false
+      electronic: extras[e.filename] ? extras[e.filename].electronic : false,
+      published: extras[e.filename] ? extras[e.filename].published : false
     });
   });
 
