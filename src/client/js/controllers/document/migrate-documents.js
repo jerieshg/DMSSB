@@ -1,4 +1,4 @@
-function MigrateDocumentsController($rootScope, $scope, $http, Upload, commonFactory, documents) {
+function MigrateDocumentsController($rootScope, $scope, $http, Upload, commonFactory, documents, uuid) {
 
   initializeController();
 
@@ -43,6 +43,10 @@ function MigrateDocumentsController($rootScope, $scope, $http, Upload, commonFac
         }
       });
 
+      if (!$scope.selectedDocument.fileUUID) {
+        $scope.selectedDocument.fileUUID = uuid.v1();
+      }
+
       Upload.upload({
         url: `/api/documents/`,
         data: {
@@ -73,5 +77,5 @@ function MigrateDocumentsController($rootScope, $scope, $http, Upload, commonFac
   }
 }
 
-MigrateDocumentsController.$inject = ['$rootScope', '$scope', '$http', 'Upload', 'commonFactory', 'documents'];
-angular.module('app', ['ngFileUpload']).controller('migrateDocumentsController', MigrateDocumentsController);
+MigrateDocumentsController.$inject = ['$rootScope', '$scope', '$http', 'Upload', 'commonFactory', 'documents', 'uuid'];
+angular.module('app', ['ngFileUpload', 'angular-uuid']).controller('migrateDocumentsController', MigrateDocumentsController);

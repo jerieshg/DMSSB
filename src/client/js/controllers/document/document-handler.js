@@ -1,4 +1,4 @@
-function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, commonFactory) {
+function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, commonFactory, uuid) {
 
   initializeController();
 
@@ -22,7 +22,12 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
             $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
           }
         } else {
-          $scope.selectedDocument.status = `En revision por ${firstStep.name}`;
+          if (!firstStep.name) {
+            $scope.selectedDocument.status = "Listo para publicacion";
+            $scope.selectedDocument.flow.readyToPublish = true;
+          } else {
+            $scope.selectedDocument.status = `En revision por ${firstStep.name}`;
+          }
         }
       }
 
@@ -34,6 +39,10 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         _id: $rootScope.client._id,
         username: $rootScope.client.username
       };
+
+      if (!$scope.selectedDocument.fileUUID) {
+        $scope.selectedDocument.fileUUID = uuid.v1();
+      }
 
       Upload.upload({
         url: `/api/documents/`,
@@ -183,5 +192,5 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
   }
 }
 
-DocumentHandlerController.$inject = ['$rootScope', '$scope', '$http', '$state', 'Upload', 'commonFactory'];
-angular.module('app', ['ngFileUpload']).controller('documentHandlerController', DocumentHandlerController);
+DocumentHandlerController.$inject = ['$rootScope', '$scope', '$http', '$state', 'Upload', 'commonFactory', 'uuid'];
+angular.module('app', ['ngFileUpload', 'angular-uuid']).controller('documentHandlerController', DocumentHandlerController);

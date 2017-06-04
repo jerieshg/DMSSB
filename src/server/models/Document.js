@@ -6,6 +6,7 @@ let schema = new mongoose.Schema({
     type: String,
     unique: false
   },
+  fileUUID: String,
   requestedDate: Date,
   priority: String,
   requiredDate: Date,
@@ -16,7 +17,6 @@ let schema = new mongoose.Schema({
       type: String,
       unique: false
     },
-    code: String,
     requests: {},
     blueprint: Boolean,
     created: Date

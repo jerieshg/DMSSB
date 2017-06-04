@@ -243,11 +243,12 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
     $scope.selectedDocument.approvals = [];
 
+    let request = $scope.selectedDocument.request ? $scope.selectedDocument.request[$scope.selectedDocument.business] : null;
+    let firstStep = request ? request[0] : {};
+
     if ($scope.selectedDocument.type.blueprint) {
       $scope.selectedDocument.status = "En revision por lista de autorizaciones";
     } else {
-      let firstStep = $scope.selectedDocument.request[$scope.selectedDocument.business][0];
-
       if (firstStep.bossPriority && (firstStep.approvals[$rootScope.client.department] && firstStep.approvals[$rootScope.client.department].map(e => e._id).includes($rootScope.client._id))) {
         $scope.selectedDocument.request[$scope.selectedDocument.business][0].approved = true;
 
@@ -259,13 +260,20 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
         }
       } else {
-        $scope.selectedDocument.status = `En revision por ${firstStep.name}`;
+        if (!firstStep.name) {
+          $scope.selectedDocument.status = "Listo para publicacion";
+          $scope.selectedDocument.flow.readyToPublish = true;
+        } else {
+          $scope.selectedDocument.status = `En revision por ${firstStep.name}`;
+        }
       }
     }
 
-    $scope.selectedDocument.request[$scope.selectedDocument.business].forEach((e, index) => {
-      $scope.selectedDocument.request[$scope.selectedDocument.business][index].approved = false;
-    });
+    if (request) {
+      $scope.selectedDocument.request[$scope.selectedDocument.business].forEach((e, index) => {
+        $scope.selectedDocument.request[$scope.selectedDocument.business][index].approved = false;
+      });
+    }
   }
 
   $scope.download = function(fileName, filePath) {

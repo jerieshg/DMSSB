@@ -6,7 +6,6 @@ let schema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  code: String,
   requests: {},
   blueprint: Boolean,
   created: Date

@@ -55,14 +55,15 @@ module.exports = function(router) {
   let multer = require('multer');
   let storage = multer.diskStorage({
     destination: (req, file, cb) => {
+      //GENERATE UNIQUE CODE FOR DOCUMENT UPLOAD, SINCE THE NAME CAN CHANGE!!
       let doc = new require('../models/Document')(JSON.parse(req.body.document));
-      let completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.name}/`);
+      let completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.uuid}/`);
       fse.mkdirsSync(completePath);
       cb(null, completePath);
     },
     filename: function(req, file, cb) {
       let doc = new require('../models/Document')(JSON.parse(req.body.document));
-      let completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.name}/`);
+      let completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.uuid}/`);
 
       fs.exists(completePath + file.originalname, function(exists) {
         let uploadedFileName = '';

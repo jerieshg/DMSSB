@@ -87,11 +87,19 @@ module.exports.updateFiles = function(req, res, next) {
   let extras = JSON.parse(req.body.extras);
 
   req.files.forEach((e) => {
+    let fileName = e.filename;
+    if (e.filename.includes("-")) {
+      let tempName = e.filename.substring(e.filename.indexOf("-") + 1, e.filename.length);
+      if (extras[tempName]) {
+        fileName = tempName;
+      }
+    }
 
     doc.files.push({
       fileName: e.filename,
       path: e.path,
-      electronic: extras[e.filename].electronic
+      electronic: extras[fileName] ? extras[fileName].electronic : false,
+      published: extras[fileName] ? extras[fileName].published : false //do condition if date
     });
   });
 
@@ -128,12 +136,19 @@ module.exports.create = function(req, res, next) {
   doc.created = new Date();
 
   req.files.forEach((e) => {
+    let fileName = e.filename;
+    if (e.filename.includes("-")) {
+      let tempName = e.filename.substring(e.filename.indexOf("-") + 1, e.filename.length);
+      if (extras[tempName]) {
+        fileName = tempName;
+      }
+    }
 
     doc.files.push({
       fileName: e.filename,
       path: e.path,
-      electronic: extras[e.filename] ? extras[e.filename].electronic : false,
-      published: extras[e.filename] ? extras[e.filename].published : false
+      electronic: extras[fileName] ? extras[fileName].electronic : false,
+      published: extras[fileName] ? extras[fileName].published : false //do condition if date
     });
   });
 
