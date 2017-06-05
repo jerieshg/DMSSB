@@ -3,9 +3,9 @@
  <div id="alertArea"></div>
 
  <div class="row">
-
+{{client.documentaryCenterAdmin}}
    <div class="row row-separator col-sm-5" ng-if="client.documentaryCenterAdmin" >
-     <a class="btn btn-primary" ui-sref-active="active" ui-sref="app.docs.migrateDocs" ng-if="client.documentaryCenterAdmin"><i class="fa fa-file-excel-o"></i> Migrar documentos</a>
+     <a class="btn btn-primary" ui-sref-active="active" ui-sref="app.docs.migrateDocs"><i class="fa fa-file-excel-o"></i> Migrar documentos</a>
    </div>
 
    <form class="row row-separator" ng-submit="doSearch()">
