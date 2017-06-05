@@ -30,8 +30,8 @@
     "randomstring": "^1.1.5",
     "rotating-file-stream": "^1.2.1",
     "survey-jquery": "^0.11.0",
-    "xls-to-json-lc": "^0.3.3",
-    "xlsx-to-json-lc": "^0.2.5"
+    "xls-to-json-lc": "0.3.3",
+    "xlsx-to-json-lc": "0.2.5"
   },
   "devDependencies": {
     "babelify": "^7.3.0",
