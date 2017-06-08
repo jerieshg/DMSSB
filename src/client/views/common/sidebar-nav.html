@@ -34,7 +34,7 @@
     <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.admin')}" ng-show="client.role.level === 1 || client.role.level === 2 || client.documentaryCenterAdmin">
         <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.admin')}" href="#"><i class="fa fa-cogs"></i> Administrador</a>
         <ul class="nav-dropdown-items">
-            <li class="nav-item" ng-show="client.role.level === 1">
+            <li class="nav-item" ng-show="client.role.level === 1 || client.documentaryCenterAdmin">
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.admin.clients"><i class="fa fa-users"></i> Clientes/Usuarios</a>
             </li>
             <li class="nav-item" ng-show="client.role.level === 1">
