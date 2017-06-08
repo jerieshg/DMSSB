@@ -4,26 +4,45 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
 
   $scope.selectedDocType = {};
 
-  $scope.addRequestTypeInfo = function(selectedRequestType) {
-    $scope.selectedDocType.requests[selectedRequestType.type] = $scope.selectedDocType.requests[selectedRequestType.type] || {};
-    $scope.selectedDocType.requests[selectedRequestType.type].dataUpdateOnly = selectedRequestType.dataUpdateOnly
-    $scope.selectedDocType.requests[selectedRequestType.type].hideWhenPublished = selectedRequestType.hideWhenPublished
+  $scope.addRequestTypeInfo = function() {
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type] = $scope.selectedDocType.requests[$scope.selectedRequestType.type] || {};
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type].dataUpdateOnly = $scope.selectedRequestType.dataUpdateOnly
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type].hideWhenPublished = $scope.selectedRequestType.hideWhenPublished
   }
 
-  $scope.addBusinessRequestType = function(type, business) {
-    $scope.selectedDocType.requests[type][business] = $scope.selectedDocType.requests[type][business] || [];
+  $scope.addBusinessRequestType = function() {
+    if (!$scope.selectedDocType.requests[$scope.selectedRequestType.type]) {
+      $scope.addRequestTypeInfo();
+    }
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name] = $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name] || [];
   }
 
-  $scope.addStep = function(type) {
-    $scope.selectedDocType.requests[type][$scope.selectedBusiness.name].push({});
+  $scope.addStep = function() {
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name].push({});
   }
 
-  $scope.removeStep = function(type, step) {
-    $scope.selectedDocType.requests[type][$scope.selectedBusiness.name].splice(step, 1);
+  $scope.removeStep = function(step) {
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name].splice(step, 1);
   }
 
   $scope.print = function() {
     commonFactory.printTable("adminTable");
+  }
+
+  $scope.copyStep = function(step) {
+    $scope.copiedStep = angular.copy(step);
+    $scope.copiedStep._id = null;
+    commonFactory.toastMessage('Paso copiado!', 'info');
+  }
+
+  $scope.pasteStep = function(index) {
+    $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name].push(angular.copy($scope.copiedStep));
+    commonFactory.toastMessage('Paso pegado!', 'info');
+  }
+
+  $scope.removeRequest = function() {
+    delete $scope.selectedDocType.requests[$scope.selectedRequestType.type];
+    commonFactory.toastMessage('Solicitud borrada! Por favor no olvide guardar para confirmar los cambios', 'info');
   }
 
   $scope.newDocType = function() {

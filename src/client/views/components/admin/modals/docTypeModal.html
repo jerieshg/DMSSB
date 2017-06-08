@@ -28,105 +28,123 @@
 
        <div class="form-divider"></div>
 
-       <div class="col-sm-12">
+       <div class="row col-sm-12">
         <h5>Flujo de aprobaciones</h5>
 
-        <div class="col-sm-12">
+        <div class="col-sm-11">
           <strong>Tipo de solicitud:</strong>
-          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedRequestType" ng-options="item as item.type for item in requestTypes track by item._id" ng-change="addRequestTypeInfo(selectedRequestType)">
+          <select type="text" class="form-control" placeholder="Opcion" ng-model="$parent.selectedRequestType" ng-options="item as item.type for item in requestTypes" ng-change="addRequestTypeInfo()">
             <option value="">Seleccione un tipo de solicitud {{optional ? '(optional)' : ''}}</option>
           </select>
+
+
         </div>
+        <div class="col-sm-1" style="padding-top: 1.5em;" ng-if="selectedRequestType.type">
+         <i class="fa fa-close" aria-hidden="true" style="color: red;" ng-click="removeRequest()" title="Eliminar esta solicitud" /> 
+       </div>
 
-        <div class="col-sm-12" ng-if="selectedRequestType.type">
-          <strong>Empresa:</strong>
-          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedBusiness.name"  ng-options="item.business as item.business for item in business track by item._id" ng-change="addBusinessRequestType(selectedRequestType.type, selectedBusiness.name)">
-            <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
-          </select>
-        </div>
-
-        <div class="form-divider"></div>
-
-        <div class="col-sm-12" ng-if="selectedBusiness.name">
-
-         <a  class="btn btn-sm btn-secondary" ng-click="addStep(selectedRequestType.type)" title="Agregar nuevo paso para el flujo de aprobaciones">
-           <i class="fa fa-plus" aria-hidden="true" /> 
-         </a>
-
-         <div class="form-divider"></div>
-
-         <div ng-repeat="e in selectedDocType.requests[selectedRequestType.type][selectedBusiness.name]" class="row-separator">
-
-          <strong>Paso {{$index + 1}}</strong>
-
-          <i class="fa fa-close" aria-hidden="true" style="color: red; float:right;" ng-click="removeStep(selectedRequestType.type, $index)" title="Eliminar este paso" /> 
-
-          <div class="row">
-            <div class="col-sm-4">
-              <strong class="small" style="font-weight: bold;">Nombre:</strong>
-              <select class="form-control" ng-model="e.name" ng-options="item.status as item.status for item in documentStatuses" title="Este item es para seleccionar un nombre para el paso seleccionado">
-                <option value="">Seleccione un nombre {{optional ? '(optional)' : ''}}</option>
-              </select>
-              <br/>
-              <div class="checkbox-legend">
-                <label style="font-size:10px;">
-                 <input type="checkbox" value="true" class="form-control" ng-model="e.requiresDept" title="Seleccione esta casilla si el paso seleccionado requiere que seleccione usuarios por departamento. Usualmente seleccionado para jefes de departamento. Esta opcion habilita prioridad para jefes" ng-click="resetApprovalList(e)">
-                 Requiere por departamento (Jefe de departamentos)  
-               </label>
-
-               <label style="font-size:10px;" ng-show="e.requiresDept && $index === 0">
-                 <input type="checkbox" value="true" class="form-control" ng-model="e.bossPriority" title="Seleccione esta casilla cuando no requiere auto revision. Autorevision: No requiere la autorizacion del documento cuando el jefe es el solicitante" ng-click="resetApprovalList(e)">
-                 No requiere auto-revision
-               </label>
-
-               <label style="font-size:10px;">
-                 <input type="checkbox" value="true" class="form-control" ng-model="e.forEnvironment" title="Seleccione esta casilla si este paso es para usuarios de medioambiente (Si">
-                 Usuarios para medioambiente
-               </label>
-             </div>
-           </div>
-
-           <div class="col-sm-8">
-             <span ng-if="e.requiresDept">
-               <strong class="small" style="font-weight: bold;">Seleccione departamento:</strong>
-               <select class="form-control" ng-model="filter.department" ng-options="item.department as item.department for item in departments | filter: {business: selectedBusiness.name}">
-                <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
-              </select>
-
-              <strong class="small" style="font-weight: bold;" ng-show="filter.department">Seleccione usuarios:</strong>
-              <md-select placeholder="Seleccione usuarios" ng-model="e.approvals[filter.department]"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple ng-show="filter.department">
-                <md-optgroup label="Usuarios">
-                  <md-option ng-repeat="item in clients | filter:{ department : filter.department, business: selectedBusiness.name}" ng-value="{_id: item._id, username: item.username}">{{item.username}}</md-option>
-                </md-optgroup>
-              </md-select>
-            </span>
-
-            <span ng-if="!e.requiresDept">
-              <strong class="small" style="font-weight: bold;">Seleccione usuarios:</strong>
-              <md-select placeholder="Seleccione usuarios" ng-model="e.approvals"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
-                <md-optgroup label="Usuarios">
-                  <md-option ng-repeat="item in clients | filter:{business: selectedBusiness.name }" ng-value="{_id: item._id, username: item.username}">{{item.username}}</md-option>
-                </md-optgroup>
-              </md-select>
-            </span>
-          </div>
-        </div>
-        <div class="form-divider"></div>
+       <div class="col-sm-12" ng-if="selectedRequestType.type">
+        <strong>Empresa:</strong>
+        <select type="text" class="form-control" placeholder="Opcion" ng-model="$parent.selectedBusiness.name"  ng-options="item.business as item.business for item in business track by item._id" ng-change="addBusinessRequestType()">
+          <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
+        </select>
       </div>
 
-      <p class="small"><strong>Nota:</strong> En documento tipo plano, el primer paso siempre es aprobacion de la lista de autorizaciones configuradas en el modulo de sistemas. Una vez aprobado, seguiran los pasos en este inciso.</p>
-    </div>
-  </div>
-  <div class="modal-footer">
+      <div class="form-divider"></div>
 
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-    <button type="button" class="btn btn-danger" ng-click="clear()">
-      <i class="fa fa-ban" aria-hidden="true"/>Limpiar formulario
-    </button>
-    <button  class="btn btn-success" type="submit">
-     <i class="fa fa-save" aria-hidden="true"/>  Guardar Tipo de documento
-   </button>
+      <div class="col-sm-12" ng-if="selectedBusiness.name">
+
+       <a  class="btn btn-sm btn-secondary" ng-click="addStep()" title="Agregar nuevo paso para el flujo de aprobaciones">
+         <i class="fa fa-plus" aria-hidden="true" /> 
+       </a>
+
+       <a  class="btn btn-sm btn-secondary" ng-click="pasteStep()" title="Pegar paso para el flujo de aprobaciones" ng-if="copiedStep">
+        <i class="fa fa-paste"title="Pegar paso"></i>
+      </a>
+
+
+
+      <div class="form-divider"></div>
+
+      <div ng-repeat="e in selectedDocType.requests[selectedRequestType.type][selectedBusiness.name]" class="row-separator">
+
+       <i class="fa fa-close" aria-hidden="true" style="float:right;color: red;margin-left:0.5em;" ng-click="removeStep($index)" title="Eliminar este paso" /> 
+
+       <div class="col-md-8 row-separator" style="float:left;">
+
+         <strong>Paso {{$index + 1}}</strong>
+
+         <div class="row-separator"></div>
+
+         <strong class="small" style="font-weight: bold;">Nombre:</strong>
+         <select class="form-control" ng-model="e.name" ng-options="item.status as item.status for item in documentStatuses" title="Este item es para seleccionar un nombre para el paso seleccionado">
+          <option value="">Seleccione un nombre {{optional ? '(optional)' : ''}}</option>
+        </select>
+        <br/>
+
+        <span ng-if="e.requiresDept">
+         <strong class="small" style="font-weight: bold;">Seleccione departamento:</strong>
+         <select class="form-control" ng-model="filter.department" ng-options="item.department as item.department for item in departments | filter: {business: selectedBusiness.name}">
+          <option value="">Seleccione un departamento {{optional ? '(optional)' : ''}}</option>
+        </select>
+
+        <strong class="small" style="font-weight: bold;" ng-show="filter.department">Seleccione usuarios:</strong>
+        <md-select placeholder="Seleccione usuarios" ng-model="e.approvals[filter.department]"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple ng-show="filter.department">
+          <md-optgroup label="Usuarios">
+            <md-option ng-repeat="item in clients | filter:{ department : filter.department, business: selectedBusiness.name}" ng-value="{_id: item._id, username: item.username}">{{item.username}}</md-option>
+          </md-optgroup>
+        </md-select>
+      </span>
+
+      <span ng-if="!e.requiresDept">
+        <strong class="small" style="font-weight: bold;">Seleccione usuarios:</strong>
+        <md-select placeholder="Seleccione usuarios" ng-model="e.approvals"  ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline row-separator" required multiple>
+          <md-optgroup label="Usuarios">
+            <md-option ng-repeat="item in clients | filter:{business: selectedBusiness.name }" ng-value="{_id: item._id, username: item.username}">{{item.username}}</md-option>
+          </md-optgroup>
+        </md-select>
+      </span>
+    </div>
+
+    <div class="col-md-3 modal-legend" style="text-align: center;">
+     <strong>Opciones: </strong>
+     <div class="checkbox-legend">
+      <label style="font-size:10px;">
+       <input type="checkbox" value="true" class="form-control" ng-model="e.requiresDept" title="Seleccione esta casilla si el paso seleccionado requiere que seleccione usuarios por departamento. Usualmente seleccionado para jefes de departamento. Esta opcion habilita prioridad para jefes" ng-click="resetApprovalList(e)">
+       Requiere por departamento (Jefe de departamentos)  
+     </label>
+
+     <label style="font-size:10px;" ng-show="e.requiresDept && $index === 0">
+       <input type="checkbox" value="true" class="form-control" ng-model="e.bossPriority" title="Seleccione esta casilla cuando no requiere auto revision. Autorevision: No requiere la autorizacion del documento cuando el jefe es el solicitante" ng-click="resetApprovalList(e)">
+       No requiere auto-revision
+     </label>
+
+     <label style="font-size:10px;">
+       <input type="checkbox" value="true" class="form-control" ng-model="e.forEnvironment" title="Seleccione esta casilla si este paso es para usuarios de medioambiente (Si">
+       Usuarios para medioambiente
+     </label>
+   </div>
+   <div class="checkbox-legend">  
+    <i class="fa fa-copy" ng-click="copyStep(e)" title="Copiar paso"></i>
  </div>
+</div>
+
+<div class="form-divider"></div>
+</div>
+
+<p class="small"><strong>Nota:</strong> En documento tipo plano, el primer paso siempre es aprobacion de la lista de autorizaciones configuradas en el modulo de sistemas. Una vez aprobado, seguiran los pasos en este inciso.</p>
+</div>
+</div>
+<div class="modal-footer">
+
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+  <button type="button" class="btn btn-danger" ng-click="clear()">
+    <i class="fa fa-ban" aria-hidden="true"/>Limpiar formulario
+  </button>
+  <button  class="btn btn-success" type="submit">
+   <i class="fa fa-save" aria-hidden="true"/>  Guardar Tipo de documento
+ </button>
+</div>
 </form>
 </div>
 </div>
