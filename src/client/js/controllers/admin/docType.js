@@ -118,7 +118,7 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
     $scope.selectedBusiness = {};
     $scope.filter = {
       deptBoss: ''
-    }
+    } 
   }
 
   function retrieveDocTypes() {
