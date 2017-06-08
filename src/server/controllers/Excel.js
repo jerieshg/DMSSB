@@ -87,7 +87,7 @@ module.exports.migratePreviousVersion = function(req, res, next) {
             status: 'Publicado',
             comments: item.comentario,
             flow: {
-              blueprintApproved: item.sistema ? true : false,
+              blueprintApproved: item.sistema || (item.tipo && item.tipo.toUpperCase().includes('PLANO')) ? true : false,
               published: item.fechapublicacion ? true : false,
               deleted: item.anulado
             },

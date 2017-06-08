@@ -9178,11 +9178,6 @@ hr:after {
 .big-modal {
   max-width: 680px; }
 
-/*!
- * surveyjs - Survey JavaScript library v0.11.0
- * Copyright (c) 2015-2017 Devsoft Baltic O�  - http://surveyjs.org/
- * License: MIT (http://www.opensource.org/licenses/mit-license.php)
- */
 .sv_window {
   position: fixed;
   bottom: 3px;
@@ -9235,7 +9230,7 @@ hr:after {
 .sv_main {
   width: 100%; }
 
-.sv_body {
+sv_body {
   margin-bottom: 10px; }
 
 .sv_page_empty {
@@ -9326,6 +9321,7 @@ hr:after {
   clip: rect(0px, 0px, 0px, 0px);
   pointer-events: none; }
 
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiIuL3BhY2thZ2VzL3N1cnZleS1qcXVlcnkvc3VydmV5LmNzcyIsInNvdXJjZVJvb3QiOiIifQ==*/
 /*!
  * Angular Material Design
  * https://github.com/angular/material
