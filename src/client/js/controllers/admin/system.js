@@ -4,6 +4,16 @@ function SystemController($rootScope, $scope, $http, commonFactory, business, sy
 
   $scope.selectedSystem = {};
 
+  $scope.copyImplications = function() {
+    $scope.implicationCopy = angular.copy($scope.selectedSystem.implications);
+    commonFactory.toastMessage('Implicaciones copiadas!', 'info');
+  }
+
+  $scope.pasteImplications = function() {
+    $scope.selectedSystem.implications = angular.copy($scope.implicationCopy);
+    commonFactory.toastMessage('Implicaciones pegadas!', 'success');
+  }
+
   $scope.newSystem = function() {
     $scope.selectedSystem = {};
   }

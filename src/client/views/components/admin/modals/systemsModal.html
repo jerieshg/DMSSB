@@ -17,20 +17,33 @@
        </select>
        <br/>
 
-       <h5>Lista de autorizaciones por implicacion</h5>
+       <div class="row">
 
-       <strong>Empresa:</strong>
-       <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedBusiness" ng-options="item.business as item.business for item in business track by item._id">
-        <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
-      </select>
+         <div class="col-sm-10">
+          <h5>Lista de autorizaciones por implicacion</h5>  
+        </div>
 
-      <div ng-repeat="item in selectedSystem.implications" class="row-separator" ng-if="selectedBusiness">
-       <strong>{{item.implication}}</strong>
-       <md-select placeholder="Seleccione usuarios" ng-model="selectedSystem.implications[$index].authorization[selectedBusiness]" name="option-$index" ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline" required multiple>
-       <md-option ng-repeat="item in clients | filter: {business: selectedBusiness}" ng-value="{_id: item._id, username: item.username}">{{item.username}}</md-option>
-      </md-select>
-    </div>
-    <div class="modal-footer">
+        <div class="col-sm-2" style="text-align: right;">
+          <i class="fa fa-copy" ng-click="copyImplications()" title="Copiar todas las implicaciones"></i>
+          <i class="fa fa-paste"  ng-click="pasteImplications()" title="Pegar implicaciones" ng-if="implicationCopy"></i>
+        </div>
+
+        <div class="col-sm-12">
+          <strong>Empresa:</strong>
+          <select type="text" class="form-control" placeholder="Opcion" ng-model="selectedBusiness" ng-options="item.business as item.business for item in business track by item._id">
+            <option value="">Seleccione una empresa {{optional ? '(optional)' : ''}}</option>
+          </select>
+
+          <div ng-repeat="item in selectedSystem.implications" class="row-separator" ng-if="selectedBusiness">
+           <strong>{{item.implication}}</strong>
+           <md-select placeholder="Seleccione usuarios" ng-model="selectedSystem.implications[$index].authorization[selectedBusiness]" name="option-$index" ng-model-options="{trackBy: '$value._id'}"  class="form-control md-no-underline" required multiple>
+             <md-option ng-repeat="item in clients | filter: {business: selectedBusiness}" ng-value="{_id: item._id, username: item.username}">{{item.username}}</md-option>
+           </md-select>
+         </div>
+       </div>
+     </div>
+
+     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
       <button  class="btn btn-success" type="submit">
         <i class="fa fa-save" aria-hidden="true"/>  Guardar Sistema

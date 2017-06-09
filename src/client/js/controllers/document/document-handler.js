@@ -11,7 +11,7 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
         let request = $scope.selectedDocument.request[$scope.selectedDocument.business];
         let firstStep = request ? request[0] : {};
 
-        if (firstStep.bossPriority && (firstStep.approvals[$rootScope.client.department] && firstStep.approvals[$rootScope.client.department].map(e => e._id).includes($rootScope.client._id))) {
+        if (firstStep && firstStep.bossPriority && (firstStep.approvals[$rootScope.client.department] && firstStep.approvals[$rootScope.client.department].map(e => e._id).includes($rootScope.client._id))) {
           $scope.selectedDocument.request[$scope.selectedDocument.business][0].approved = true;
 
           let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][1];
@@ -22,7 +22,7 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
             $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
           }
         } else {
-          if (!firstStep.name) {
+          if (!firstStep || !firstStep.name) {
             $scope.selectedDocument.status = "Listo para publicacion";
             $scope.selectedDocument.flow.readyToPublish = true;
           } else {

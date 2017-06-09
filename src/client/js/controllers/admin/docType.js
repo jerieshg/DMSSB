@@ -36,6 +36,10 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
   }
 
   $scope.pasteStep = function(index) {
+    if (!$scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name]) {
+      $scope.addBusinessRequestType();
+    }
+    
     $scope.selectedDocType.requests[$scope.selectedRequestType.type][$scope.selectedBusiness.name].push(angular.copy($scope.copiedStep));
     commonFactory.toastMessage('Paso pegado!', 'info');
   }
@@ -118,7 +122,7 @@ function DocTypesController($scope, $http, commonFactory, documentTypes, clients
     $scope.selectedBusiness = {};
     $scope.filter = {
       deptBoss: ''
-    } 
+    }
   }
 
   function retrieveDocTypes() {
