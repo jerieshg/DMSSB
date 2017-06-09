@@ -12,6 +12,7 @@ angular
   .directive('tab', bootstrapTabsDirective)
   .directive('button', cardCollapseDirective)
   .directive("compareTo", compareTo)
+  .directive("noSpecialChar", noSpecialChar)
   .directive('loading', ['$http', function($http) {
     return {
       restrict: 'A',
@@ -29,8 +30,28 @@ angular
         });
       }
     };
+  }]);
 
-  }])
+function noSpecialChar() {
+  return {
+    require: 'ngModel',
+    restrict: 'A',
+    link: function(scope, element, attrs, modelCtrl) {
+      modelCtrl.$parsers.push(function(inputValue) {
+        if (!inputValue) {
+          return ''
+        }
+        
+        cleanInputValue = inputValue.replace(/[^\w\s]/gi, '');
+        if (cleanInputValue != inputValue) {
+          modelCtrl.$setViewValue(cleanInputValue);
+          modelCtrl.$render();
+        }
+        return cleanInputValue;
+      });
+    }
+  }
+};
 
 function compareTo() {
   return {

@@ -10,7 +10,7 @@
       </div>
       <div class="modal-body">
        <label for="system">Sistema:</label>
-       <input type="text" id="system" class="form-control" ng-model="selectedSystem.system" required>
+       <input type="text" id="system" class="form-control" ng-model="selectedSystem.system" no-special-char required>
        <br/>
        <label for="implication">Implicacion:</label>
        <select id="implication" name="implication" class="form-control" ng-model="selectedSystem.implications" ng-options="item as item.implication for item in implications track by item._id" required multiple>

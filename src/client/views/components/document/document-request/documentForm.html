@@ -83,15 +83,15 @@
     </div>
     <div class="form-divider"></div>
     <div class="col-sm-4">
-      <label for="dept">Departamento:</label>
-      <select name="dept" id="dept" class="form-control" ng-model="selectedDocument.department" ng-options="item.department as item.department for item in departments | filter: {business: selectedDocument.business}" required ng-disabled="!edit">
-        <option value="">Seleccione una departamento  {{optional ? '(optional)' : ''}}</option>
-      </select>
-    </div>
-    <div class="col-sm-4">
       <label for="business">Planta:</label>
       <select name="business" id="business" class="form-control" ng-model="selectedDocument.business" ng-options="item.business as item.business for item in business" required ng-disabled="!edit">
         <option value="">Seleccione una planta  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+      <label for="dept">Departamento:</label>
+      <select name="dept" id="dept" class="form-control" ng-model="selectedDocument.department" ng-options="item.department as item.department for item in departments | filter: {business: selectedDocument.business}" required ng-disabled="!edit">
+        <option value="">Seleccione una departamento  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
     <div class="form-divider"></div>
