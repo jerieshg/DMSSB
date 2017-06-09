@@ -26,7 +26,7 @@
      </div>
    </md-tab>
 
-   <md-tab label="Clientes" data-ng-if="client.role.level === 1">
+   <md-tab label="Clientes" data-ng-if="client.role.level === 1 || client.role.level === 2">
     <table class="table table-hover">
      <tbody>
        <tr ng:repeat="client in clients track by $index">
