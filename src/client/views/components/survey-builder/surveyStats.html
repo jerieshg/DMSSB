@@ -4,13 +4,13 @@
   <div class="md-toolbar-tools custom-md-toolbar">
    <h5 ng-show="isComparing">Comparando encuestas</h5>
    
-     <h5 ng-hide="isComparing">{{survey.surveyName}}</h5>
-     &nbsp;
-     <h5 class="small" ng-hide="isComparing">({{totalResponses}} respuestas)</h5>
-     <span flex class="flex"></span>
-     <i class="fa fa-print" aria-hidden="true" style="margin-left:10px;" title="Imprimir todos los graficos" ng-click="print()"></i>
-     <i class="fa fa-file-excel-o" aria-hidden="true" style="margin-left:10px;" ng-click="exportAllResponses()"  title="Exportar todas las respuestas" ng-hide="isComparing"></i>
-     <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-hide="isComparing" title="Generar plan de accion"></i>
+   <h5 ng-hide="isComparing">{{survey.surveyName}}</h5>
+   &nbsp;
+   <h5 class="small" ng-hide="isComparing">({{totalResponses}} respuestas)</h5>
+   <span flex class="flex"></span>
+   <i class="fa fa-print" aria-hidden="true" style="margin-left:10px;" title="Imprimir todos los graficos" ng-click="print()"></i>
+   <i class="fa fa-file-excel-o" aria-hidden="true" style="margin-left:10px;" ng-click="exportAllResponses()"  title="Exportar todas las respuestas" ng-hide="isComparing"></i>
+   <i class="fa fa-map-o" aria-hidden="true" style="margin-left:10px;" data-toggle="modal" data-target="#actionPlanModal" ng-hide="isComparing" title="Generar plan de accion"></i>
  </div>
 
  <md-content>
@@ -30,7 +30,7 @@
     <table class="table table-hover">
      <tbody>
        <tr ng:repeat="client in clients track by $index">
-         <td>{{client}}</td>
+         <td>{{client.username}} -<strong> {{client.department}}</strong></td>
        </tr>
      </tbody>
    </table>

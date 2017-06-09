@@ -1,4 +1,4 @@
-function SurveyStatsController($scope, $state, $http, $stateParams, $window, commonFactory) {
+function SurveyStatsController($scope, $state, $http, $stateParams, $window, commonFactory, clients) {
 
   initalizeController();
 
@@ -77,7 +77,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         let ySize = 80;
 
         if (position % 2 == 0) {
-          yTextCoord = 135;
+          yTextCoord = 125;
           yImageCoord = 145;
         }
 
@@ -97,7 +97,22 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
           doc.addImage(item.dataURL, 'JPEG', 15, yImageCoord, xSize, ySize);
         } else {
           let splitAnswer = doc.splitTextToSize(item.answer, doc.internal.pageSize.width - 25);
-          doc.text(splitAnswer, 15, yTextCoord + 10);
+
+          if (splitAnswer.length + yTextCoord > doc.internal.pageSize.height - 15) {
+            let pagesNeeded = Math.round((splitAnswer.length) / (doc.internal.pageSize.height - yTextCoord));
+            let result = splitUp(splitAnswer, pagesNeeded + 4);
+
+            result.forEach((array, index) => {
+              doc.text(array, 15, yTextCoord + 10);
+              if (index + 1 != result.length) {
+                doc.addPage();
+                yTextCoord = 10;
+              }
+            });
+          } else {
+            yTextCoord = yTextCoord + 10;
+            doc.text(splitAnswer, 15, yTextCoord);
+          }
         }
 
         if (position % 2 == 0 && index + 1 !== groupedCanvas[service].length) {
@@ -192,8 +207,14 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       }, allResults);
     });
 
-    $scope.clients = $scope.clients.concat(data.map((e) => e.client));
-    $scope.clients = $scope.clients.map(e => e.username);
+    // $scope.clients = $scope.clients.concat(data.map((e) => e.client));
+
+    $scope.clients.concat(data.map((e) => e.client)).map(e => {
+      clients.find(e._id)
+        .then(data => {
+          $scope.clients.push(data);
+        })
+    });
     processServiceGlobal(allResults);
   }
 
@@ -492,7 +513,33 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         console.log(error);
       });
   }
+
+  function splitUp(arr, n) {
+    var rest = arr.length % n, // how much to divide
+      restUsed = rest, // to keep track of the division over the elements
+      partLength = Math.floor(arr.length / n),
+      result = [];
+
+    for (var i = 0; i < arr.length; i += partLength) {
+      var end = partLength + i,
+        add = false;
+
+      if (rest !== 0 && restUsed) { // should add one element for the division
+        end++;
+        restUsed--; // we've used one division element now
+        add = true;
+      }
+
+      result.push(arr.slice(i, end)); // part of the array
+
+      if (add) {
+        i++; // also increment i in the case we added an extra element for division
+      }
+    }
+
+    return result;
+  }
 }
 
-SurveyStatsController.$inject = ['$scope', '$state', '$http', '$stateParams', '$window', 'commonFactory'];
+SurveyStatsController.$inject = ['$scope', '$state', '$http', '$stateParams', '$window', 'commonFactory', 'clients'];
 angular.module('app', ['chart.js']).controller('surveyStatsController', SurveyStatsController);
