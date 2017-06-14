@@ -22,6 +22,23 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
     }
   }
 
+  $scope.exportAllSurveys = function() {
+    $http({
+        url: '/api/excel-surveys/',
+        method: "GET",
+        responseType: 'blob'
+      }).then(function(response) {
+        var blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats'
+        });
+
+        saveAs(blob, "reporte_" + new Date() + ".xlsx");
+      })
+      .catch(function(error) {
+        commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+      });
+  }
+
   $scope.compareSurveys = function() {
     if (Object.keys($scope.surveyCompareList).length > 1) {
       $state.go('app.survey-builder.compare-stats', {

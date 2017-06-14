@@ -49,6 +49,7 @@ let schema = new mongoose.Schema({
     published: Boolean,
     deleted: Boolean
   },
+  timeStored: Number,
   publication: {
     code: String,
     revision: Number,

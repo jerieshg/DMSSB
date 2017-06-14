@@ -76,34 +76,37 @@ module.exports.expiredDocumentCheck = function() {
     });
 
     aboutToExpireDocs.forEach((doc) => {
-      Client.findOne({
-        _id: doc.createdBy._id
-      }, (error, client) => {
-        if (error) {
-          console.log(error);
-          return error;
-        }
+      if (doc.createdBy && doc.createdBy._id) {
+        Client.findOne({
+          _id: doc.createdBy._id
+        }, (error, client) => {
+          if (error) {
+            console.log(error);
+            return error;
+          }
 
-        if (client.email) {
-          let newEmail = {
-            from: 'notificaciones.enersa.dsm@gmail.com',
-            subject: `Documento ${doc.name} esta por expirar!`,
-            to: client.email,
-            html: `El documento ${doc.name} vence el ${doc.expiredDate.toISOString().substring(0, 10)}. Por favor realice una revision al documento.`
-          };
+          if (client.email) {
+            let newEmail = {
+              from: 'notificaciones.enersa.dsm@gmail.com',
+              subject: `Documento ${doc.name} esta por expirar!`,
+              to: client.email,
+              html: `El documento ${doc.name} vence el ${doc.expiredDate.toISOString().substring(0, 10)}. Por favor realice una revision al documento.`
+            };
 
 
-          transporter.sendMail(newEmail, (error, info) => {
-            if (error) {
-              console.log(error);
-              return error;
-            }
-
-          });
-        } else {
-          console.log("El usuario no tiene correo electronico");
-        }
-      });
+            transporter.sendMail(newEmail, (error, info) => {
+              if (error) {
+                console.log(error);
+                return error;
+              }
+            });
+          } else {
+            console.log("El usuario no tiene correo electronico");
+          }
+        });
+      } else {
+        console.log("No tiene solicitante");
+      }
     });
   })
 }

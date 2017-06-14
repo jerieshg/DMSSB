@@ -63,6 +63,12 @@ function DocumentHistoryController($rootScope, $scope, $http, $stateParams, Uplo
     if (field === 'request') {
       return 'Tipo de solicitud';
     }
+    if (field === 'createdBy') {
+      return 'Solicitante';
+    }
+    if (field === 'timeStored') {
+      return 'Tiempo de almacenamiento';
+    }
 
     return field;
   }

@@ -90,6 +90,13 @@
  </a>
 </td>
 <td>
+ <a href="#" ng-click="sortType = 'timeStored'; sortReverse = !sortReverse">
+  <strong>Tiempo de almacenamiento</strong>
+  <span ng-show="sortType == 'timeStored' && !sortReverse" class="fa fa-caret-down"></span>
+  <span ng-show="sortType == 'timeStored' && sortReverse" class="fa fa-caret-up"></span>
+</a>
+</td>
+<td>
  <a href="#" ng-click="sortType = 'expiredDate'; sortReverse = !sortReverse">
    <strong>Fecha de revision</strong>
    <span ng-show="sortType == 'expiredDate' && !sortReverse" class="fa fa-caret-down"></span>
@@ -107,7 +114,7 @@
 </tr>
 </thead>
 <tbody>
-  <tr ng:repeat="e in documents  | orderBy:sortType:sortReverse">
+  <tr ng:repeat="e in documents  | orderBy:sortType:sortReverse" ng-class="{'danger' : e.status === 'Anulado'}">
    <td >{{$index+1}}</td>
    <td>{{e.name}}</td>
    <td>{{e.business}}</td>
@@ -121,6 +128,9 @@
     {{e.publication.revision}}
   </td>
   <td>{{e.publication.publicationDate | date: 'yyyy/MM/dd'}}</td>
+  <td>
+  {{e.timeStored ? e.timeStored + ' meses': 'Indefinido'}}
+  </td>
   <td>{{e.expiredDate ? e.expiredDate : 'Indefinido' | date: 'yyyy/MM/dd'}}</td>
   <td>{{expiredCheck[e._id].time + expiredCheck[e._id].suffix}}</td>
   <td ng-class="{'warning-doc' : expiredCheck[e._id].time > 0 && expiredCheck[e._id].time < 32, 'expired-doc' : expiredCheck[e._id].time < 1, 'good-doc' : expiredCheck[e._id].time  > 31 || expiredCheck[e._id].time === 'Indefinido'}">

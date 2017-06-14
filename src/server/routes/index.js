@@ -183,6 +183,8 @@ module.exports = function(router) {
     .get(Excel.exportToExcel);
   router.route('/api/excel/')
     .post(Excel.exportToExcelBatch)
+  router.route('/api/excel-surveys/')
+    .get(Excel.exportAllSurveys)
   router.route('/api/excel/migrate')
     .post(Excel.migratePreviousVersion)
 

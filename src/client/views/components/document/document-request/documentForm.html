@@ -101,11 +101,15 @@
         <input name="requiredDate" type="text" class="form-control" placeholder="Fecha requerida" ng-model="selectedDocument.requiredDate" required ng-disabled="!edit">
       </datepicker>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
       <label for="requiredDate">Fecha de revision:</label>
       <datepicker date-format="yyyy-MM-dd">
         <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate" ng-disabled="!edit" title="Fecha cuando se requiere volver a revisar el documento">
       </datepicker>
+    </div>
+       <div class="col-sm-2">
+      <label>Tiempo de almacenamiento (Meses):</label>
+      <input name="timeStored" type="number" class="form-control" placeholder="Tiempo de almacenamiento en meses" ng-model="selectedDocument.timeStored" ng-disabled="!edit">
     </div>
     <div class="col-sm-4">
       <label for="reqSGIA" style="font-weight: bold;">Requiere revision de medioambiente:

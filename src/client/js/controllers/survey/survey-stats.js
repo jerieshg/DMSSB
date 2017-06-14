@@ -23,7 +23,7 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     $scope.survey = {};
     $scope.services = [];
     $scope.totalResult = new Map();
-    $scope.clients = [];
+    $scope.clients = {};
     $scope.radarGraph = {
       labels: [],
       data: [],
@@ -90,7 +90,13 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
           doc.setFontSize(10)
           let text = `${item.question} - ${item.result ? item.result : ''}`;
           let splittedText = doc.splitTextToSize(text, doc.internal.pageSize.width - 25);
-          doc.text(splittedText, 15, yTextCoord);
+          if (!item.answer) {
+            doc.text(splittedText, 15, yTextCoord);
+          } else {
+            yTextCoord = 10;
+            doc.addPage();
+            doc.text(splittedText, 15, yTextCoord);
+          }
         }
 
         if (!item.answer) {
@@ -207,14 +213,14 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
       }, allResults);
     });
 
-    // $scope.clients = $scope.clients.concat(data.map((e) => e.client));
-
-    $scope.clients.concat(data.map((e) => e.client)).map(e => {
+    data.map((e) => e.client).map(e => {
       clients.find(e._id)
         .then(data => {
-          $scope.clients.push(data);
+          $scope.clients[data.department] = $scope.clients[data.department] || [];
+          $scope.clients[data.department].push(data);
         })
     });
+
     processServiceGlobal(allResults);
   }
 

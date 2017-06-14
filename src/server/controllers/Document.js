@@ -99,6 +99,7 @@ module.exports.updateFiles = function(req, res, next) {
       fileName: e.filename,
       path: e.path,
       electronic: extras[fileName] ? extras[fileName].electronic : false,
+      hd: extras[fileName] ? extras[fileName].hd : false,
       published: extras[fileName] ? extras[fileName].published : false //do condition if date
     });
   });
@@ -148,6 +149,7 @@ module.exports.create = function(req, res, next) {
       fileName: e.filename,
       path: e.path,
       electronic: extras[fileName] ? extras[fileName].electronic : false,
+      hd: extras[fileName] ? extras[fileName].hd : false,
       published: extras[fileName] ? extras[fileName].published : false //do condition if date
     });
   });

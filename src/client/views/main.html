@@ -9,7 +9,10 @@
    <button ui-sref-active="active" ui-sref="app.survey-builder.create" class="btn btn-success row-separator" style="margin-right:1em">Nueva Encuesta</button>
    
    <button class="btn btn-primary row-separator" ng-click="compareSurveys()">Comparar encuestas</button>
-   
+
+   <button type="button" class="btn btn-secondary row-separator" ng-click="exportAllSurveys()" style="margin-left: 1%;">
+     <i class="fa fa-print" aria-hidden="true"/> Imprimir
+   </button>
 
    <div class="input-group row-separator">
     <div class="input-group-addon"><i class="fa fa-search"></i></div>
@@ -38,7 +41,7 @@
      <tr ng:repeat="e in surveys | filter:search | orderBy: ['active', 'created'] : true" >
       <td>
         <div class="checkbox">
-        <label><input type="checkbox" ng-model="compSurveyChkbox"  ng-change="addToCompareSurvey(compSurveyChkbox, e)"></label>
+          <label><input type="checkbox" ng-model="compSurveyChkbox"  ng-change="addToCompareSurvey(compSurveyChkbox, e)"></label>
         </div>
       </td>
       <td>{{$index + 1}}</td>

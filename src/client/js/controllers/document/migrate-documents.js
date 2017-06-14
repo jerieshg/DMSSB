@@ -39,6 +39,7 @@ function MigrateDocumentsController($rootScope, $scope, $http, Upload, commonFac
       $scope.files.forEach((e) => {
         fileExtras[e.name] = {
           electronic: e.electronic,
+          hd: e.hd,
           published: true
         }
       });

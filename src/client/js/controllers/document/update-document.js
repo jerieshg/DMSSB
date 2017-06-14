@@ -31,7 +31,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       let fileExtras = {};
       $scope.files.forEach((e) => {
         fileExtras[e.name] = {
-          electronic: e.electronic
+          electronic: e.electronic,
+          hd: e.hd
         }
       });
 
@@ -125,6 +126,21 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       $scope.documentHistory.docId = $scope.selectedDocument._id;
       //Detect if it's a json value (FOR PUBLICATION OBJECT)
       for (let [key, value] of Object.entries(diff.value)) {
+
+        if (key === 'request' && (value.changed === 'object change' || value.changed === 'added')) {
+          $scope.selectedDocument.createdBy = {
+            _id: $rootScope.client._id,
+            username: $rootScope.client.username
+          };
+
+          $scope.documentHistory.history.push({
+            user: $rootScope.client.username,
+            field: 'createdBy',
+            added: $rootScope.client.username,
+            removed: $scope.selectedDocument.createdBy ? $scope.selectedDocument.createdBy.username : '',
+            created: new Date()
+          });
+        }
 
         if (value.changed === 'object change' && value.value.key) {
           value.added = value.value.key.added;

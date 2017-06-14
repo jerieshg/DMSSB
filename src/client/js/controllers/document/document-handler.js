@@ -76,7 +76,8 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
       $scope.fileExtras = {};
       $scope.files.forEach((e) => {
         $scope.fileExtras[e.name] = {
-          electronic: e.electronic
+          electronic: e.electronic,
+          hd: e.hd
         }
       });
 

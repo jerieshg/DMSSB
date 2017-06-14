@@ -14,12 +14,12 @@
               <p class="lead"> {{file.name}}</p>
             </div>
             <div class="col-sm-8">
-              <label>
-                <input type="radio" ng-model="file.electronic" ng-value="true" ng-required="file.electronic">
+              <label> 
+                <input type="checkbox" ng-model="file.electronic" ng-value="true" ng-required="!file.hd && !file.electronic">
                 Electronico
               </label>
               <label>
-                <input type="radio" ng-model="file.electronic" ng-value="false" ng-required="!file.electronic">
+                <input type="checkbox" ng-model="file.hd" ng-value="false" ng-required="!file.hd && !file.electronic">
                 En duro
               </label>
               <div class="form-divider"></div>

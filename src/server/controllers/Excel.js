@@ -1,4 +1,5 @@
 let SurveyResponse = require('../models/Survey-Response');
+let Survey = require('../models/Survey.js');
 
 //Required for migration
 let Document = require('../models/Document');
@@ -89,17 +90,21 @@ module.exports.migratePreviousVersion = function(req, res, next) {
             flow: {
               blueprintApproved: item.sistema || (item.tipo && item.tipo.toUpperCase().includes('PLANO')) ? true : false,
               published: item.fechapublicacion ? true : false,
-              deleted: item.anulado
+              deleted: item.activo ? !item.activo : false
             },
             publication: {
               code: item.codigo,
               revision: item.versionvigente,
               publicationDate: item.fechapublicacion ? new Date(item.fechapublicacion) : null
             },
+            timeStored: item.tiempodealmacenamiento,
             migrated: true
           });
 
-          migratedDoc.solicitante = item.solicitante ? item.solicitante : 'ypadilla';
+          if (item.activo && item.activo === false) {
+            migratedDoc.status = 'Anulado';
+          }
+
           migratedDoc.tipo = item.tipo;
           migratedDoc.sistema = item.sistema;
           migratedDoc.solicitud = item.solicitud;
@@ -107,7 +112,6 @@ module.exports.migratePreviousVersion = function(req, res, next) {
 
           convertedItems.push(migratedDoc);
           promises.push(findDoc(item.nombre, migratedDoc.business, migratedDoc.department));
-          promises.push(findClient(item.solicitante ? item.solicitante : 'ypadilla'));
           promises.push(findSystem(item.sistema));
           promises.push(findType(item.tipo));
         });
@@ -120,14 +124,6 @@ module.exports.migratePreviousVersion = function(req, res, next) {
             );
 
             if (!foundDoc) {
-              let client = values.find((e) => e && (e.username === doc.solicitante));
-              if (client) {
-                convertedItems[index].createdBy = {
-                  _id: client._id,
-                  username: client.username
-                }
-              }
-
               let type = values.find((e) => {
                 return e && (e.type === doc.tipo);
               });
@@ -168,9 +164,78 @@ module.exports.migratePreviousVersion = function(req, res, next) {
   });
 }
 
+module.exports.exportAllSurveys = function(req, res, next) {
+  Survey.find({}, function(error, surveys) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
 
+    let styles = {
+      headers: {
+        fill: retrieveFill('2196F3'),
+        font: retrieveFontStyle('FFFFFF', true),
+      },
+      cellCentered: {
+        alignment: {
+          horizontal: "center",
+          wrapText: true
+        }
+      }
+    }
 
-module.exports.exportToExcel = function(req, res) {
+    let headers = new Set();
+    headers.add("Nombre");
+    headers.add("Empresa");
+    headers.add("Departamento");
+    headers.add("Inicio");
+    headers.add("Fin");
+    headers.add("Responsable");
+    headers.add("Nota");
+
+    let dataSet = [];
+
+    surveys.forEach((survey) => {
+      let data = {};
+
+      data["Nombre"] = survey.surveyName;
+      data["Empresa"] = survey.business.join(",");
+      data["Departamento"] = survey.department;
+      data["Inicio"] = survey.period.start;
+      data["Fin"] = survey.period.end;
+      data["Responsable"] = survey.responsible;
+      data["Nota"] = `${(survey.finalGrade ? survey.finalGrade * 100 : 0).toFixed(2)}%`;
+
+      dataSet.push(data);
+    });
+
+    let specification = {};
+
+    Array.from(headers).forEach((e) => {
+      specification[e] = {
+        displayName: e,
+        headerStyle: styles.headers,
+        cellStyle: styles.cellCentered,
+        width: 120
+      }
+    });
+
+    var report = excel.buildExport(
+      [{
+        name: 'Encuestas',
+        specification: specification,
+        data: dataSet
+      }]
+    );
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+    res.setHeader("Content-Disposition", "attachment; filename=Report.xlsx");
+    return res.send(report);
+  });
+};
+
+module.exports.exportToExcel = function(req, res, next) {
 
   SurveyResponse.find({
     surveyId: req.params.id
@@ -409,6 +474,8 @@ module.exports.exportToExcelBatch = function(req, res) {
   res.setHeader("Content-Disposition", "attachment; filename=Report.xlsx");
   return res.send(report);
 };
+
+
 
 function retrieveEmptyRow() {
   let data = {};
