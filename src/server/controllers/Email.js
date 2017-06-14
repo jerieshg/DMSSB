@@ -21,37 +21,38 @@ module.exports.sendRejectedDocument = function(req, res, next) {
       next(error);
       return res.send(error);
     }
+    if (doc.createdBy && doc.createdBy._id) {
+      Client.findOne({
+        _id: doc.createdBy._id
+      }, (error, client) => {
+        if (error) {
+          res.status(500);
+          next(error);
+          return res.send(error);
+        }
 
-    Client.findOne({
-      _id: doc.createdBy._id
-    }, (error, client) => {
-      if (error) {
-        res.status(500);
-        next(error);
-        return res.send(error);
-      }
-
-      if (client.email) {
-        let newEmail = {
-          from: 'notificaciones.enersa.dsm@gmail.com',
-          subject: `Documento ${doc.name} fue rechazado`,
-          to: client.email,
-          html: `El documento ${doc.name} ha sido ${doc.type.blueprint ? 'rechazado' : doc.status.toLowerCase()} por ${req.params.clientName}. Por favor revise los comentarios escritos dentro del documento. `
-        };
+        if (client.email) {
+          let newEmail = {
+            from: 'notificaciones.enersa.dsm@gmail.com',
+            subject: `Documento ${doc.name} fue rechazado`,
+            to: client.email,
+            html: `El documento ${doc.name} ha sido ${doc.type.blueprint ? 'rechazado' : doc.status.toLowerCase()} por ${req.params.clientName}. Por favor revise los comentarios escritos dentro del documento. `
+          };
 
 
-        transporter.sendMail(newEmail, (error, info) => {
-          if (error) {
-            next(error);
-            return res.send(error);
-          }
+          transporter.sendMail(newEmail, (error, info) => {
+            if (error) {
+              next(error);
+              return res.send(error);
+            }
 
-          res.send("OK");
-        });
-      } else {
-        res.send("El usuario no tiene correo electronico");
-      }
-    });
+            res.send("OK");
+          });
+        } else {
+          res.send("El usuario no tiene correo electronico");
+        }
+      });
+    }
   });
 }
 
