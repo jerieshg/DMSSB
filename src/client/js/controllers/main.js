@@ -1,6 +1,19 @@
-function MainController($rootScope, $scope, $state, $http, commonFactory) {
+function MainController($rootScope, $scope, $state, $http, $q, commonFactory, surveyResponse) {
 
   initializeController();
+
+  $scope.findMissing = function(job) {
+    $http.get(`/api/survey-responses/${$scope.trackingSurvey._id}/job/${job}/`)
+      .then(function(response) {
+        console.log(response);
+        $scope.missingClients = response.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+        commonFactory.toastMessage('Woops! Algo paso!', 'danger');
+      });
+  }
+
 
   $scope.duplicateSurvey = function(survey) {
     if (commonFactory.dialog("Esta seguro que quiere duplicar esta encuesta?")) {
@@ -23,20 +36,30 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
   }
 
   $scope.exportAllSurveys = function() {
-    $http({
-        url: '/api/excel-surveys/',
-        method: "GET",
-        responseType: 'blob'
-      }).then(function(response) {
-        var blob = new Blob([response.data], {
-          type: 'application/vnd.openxmlformats'
-        });
+    let test = {};
+    let promises = [];
 
-        saveAs(blob, "reporte_" + new Date() + ".xlsx");
-      })
-      .catch(function(error) {
-        commonFactory.activateAlert('Woops! Algo paso!', 'danger');
-      });
+    $scope.surveys.forEach(e => {
+      promises.push($http.get(`/api/surveys/${e._id}/track/general/${e.general}`));
+    });
+
+    $q.all(promises).then(function(result) {
+      $http({
+          url: '/api/excel-surveys/',
+          method: "POST",
+          responseType: 'blob',
+          data: result.map(e => e.data)
+        }).then(function(response) {
+          var blob = new Blob([response.data], {
+            type: 'application/vnd.openxmlformats'
+          });
+
+          saveAs(blob, "reporte_" + new Date() + ".xlsx");
+        })
+        .catch(function(error) {
+          commonFactory.activateAlert('Woops! Algo paso!', 'danger');
+        });
+    });
   }
 
   $scope.compareSurveys = function() {
@@ -61,6 +84,8 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
   }
 
   $scope.trackSurvey = function(survey) {
+    $scope.trackingSurvey = survey;
+
     $http.get(`/api/surveys/${survey._id}/track/general/${survey.general}`)
       .then((response) => {
         $scope.trackUsers = response.data;
@@ -80,125 +105,6 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
     return result * 100;
   }
 
-  $scope.generateActionPlan = function() {
-    $http.get(`/api/surveys/${$scope.apId}/responses/`)
-      .then(function(response) {
-        buildStats(response.data);
-        if ($scope.actionPlan.items.length !== 0) {
-          let percentages = $scope.actionPlan.items.map(e => e.percentage / 100);
-          $scope.actionPlan.finalGrade = (((percentages.reduce((a, b) => +a + +b)) / percentages.length) * 100).toFixed(2);
-
-          downloadActionPlan();
-        } else {
-          commonFactory.toastMessage('No hay respuestas o no hay preguntas dentro del rango para generar plan de acción', 'danger');
-        }
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-
-    $("#actionPlanModal").modal('toggle');
-  }
-
-  function downloadActionPlan() {
-    $scope.actionPlan.items = commonFactory.groupBy($scope.actionPlan.items, 'service');
-
-    $http.post('/api/excel/', $scope.actionPlan, {
-        responseType: 'blob'
-      })
-      .then(function(response) {
-        var blob = new Blob([response.data], {
-          type: 'application/vnd.openxmlformats'
-        });
-
-        saveAs(blob, "planDeAccion_" + new Date() + ".xlsx");
-        $scope.actionPlan.items = [];
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-  }
-
-  function buildStats(data) {
-    let allResults = [];
-    $scope.totalResponses = data.length;
-    $scope.actionPlan.totalResponses = $scope.totalResponses;
-
-    data.forEach(response => {
-      allResults = response.results.reduce((coll, item) => {
-        coll.push(item);
-        return coll;
-      }, allResults);
-    });
-
-    processServiceGlobal(allResults);
-  }
-
-  function processServiceGlobal(allResults) {
-    let groupedService = commonFactory.groupBy(allResults, 'service');
-
-    Object.keys(groupedService).map((service) => {
-
-      let groupedQuestions = commonFactory.groupBy(groupedService[service], 'question');
-      Object.keys(groupedQuestions).map((key) => {
-        const questions = groupedQuestions[key];
-        let chart = processQuestions(questions);
-      });
-    });
-  }
-
-  function processQuestions(questions) {
-
-    let selectedQuestion = {
-      average: 0
-    }
-
-    let answers = new Map();
-    let values = [];
-
-    questions.map((e) => {
-      let answerSum = 0;
-      selectedQuestion.question = e.question;
-      selectedQuestion.service = e.service;
-
-      e.answer.split(',').map(
-        (answer) => {
-          if (!answers.has(answer)) {
-            answers.set(answer, 1);
-          } else {
-            let count = answers.get(answer);
-            answers.set(answer, count + 1);
-          }
-
-          if (e.formType === 'rating') {
-            answerSum += answer;
-          }
-        });
-
-      if (e.formType === 'rating') {
-        let maxValue = e.rates[e.rates.length - 1];
-        let average = (answerSum / $scope.totalResponses) / maxValue;
-        selectedQuestion.average += average;
-        selectedQuestion.rating = true;
-      }
-    });
-
-    if (!selectedQuestion.rating) {
-      selectedQuestion.average = (questions.map((e) => Number.parseFloat(e.value)).reduce((a, b) => a + b)) / $scope.totalResponses;
-    }
-
-    selectedQuestion.percentage = (selectedQuestion.average * 100).toFixed(2);
-
-    if (selectedQuestion.percentage <= $scope.actionPlan.percentage) {
-      selectedQuestion.responses = questions.length;
-      $scope.actionPlan.items.push(selectedQuestion);
-    }
-  }
-
-  $scope.setActionPlan = function(id) {
-    $scope.apId = id;
-  }
-
   $scope.deleteSurvey = function(id) {
     if (commonFactory.dialog("Esta seguro de borrar esta encuesta?")) {
       $http.delete("/api/surveys/" + id)
@@ -215,11 +121,18 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
 
   function initializeController() {
     retrieveSurveys();
-    $scope.actionPlan = {
-      percentage: 0,
-      items: []
-    };
     $scope.surveyCompareList = [];
+    $scope.surveyCount = {};
+    $scope.trackingSurvey = {};
+  }
+
+  function findResponseCount(ids) {
+    surveyResponse.countSurvey(ids)
+      .then(response => {
+        response.data.forEach(e => {
+          $scope.surveyCount[e._id] = e.count;
+        });
+      });
   }
 
   function retrieveSurveys() {
@@ -232,6 +145,7 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
     $http.get(url)
       .then(function(response) {
         $scope.surveys = response.data;
+        findResponseCount($scope.surveys.map(e => e._id));
       })
       .catch(function(error) {
         console.log(error);
@@ -239,5 +153,5 @@ function MainController($rootScope, $scope, $state, $http, commonFactory) {
   }
 }
 
-MainController.$inject = ['$rootScope', '$scope', '$state', '$http', 'commonFactory'];
+MainController.$inject = ['$rootScope', '$scope', '$state', '$http', '$q', 'commonFactory', 'surveyResponse'];
 angular.module('app').controller('mainController', MainController);

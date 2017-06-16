@@ -328,6 +328,7 @@
                 }
 
                 let data = {
+                  surveyId: req.params.id,
                   responses: []
                 };
                 let responsesCount = [];
@@ -337,8 +338,6 @@
                   let id = new Buffer(e._id, 'binary').toString('utf8');
                   responsesCount[id] = e.count;
                 });
-
-                //Check responseCount when claling a general survey... it doesnt bring complete...amybe it's text comparison 
 
                 clients.forEach((e, index) => {
                   totalCountHolder[e._id] = e.count;
@@ -381,9 +380,6 @@
                 res.json(data);
               });
           });
-
-
         });
-
     });
   }

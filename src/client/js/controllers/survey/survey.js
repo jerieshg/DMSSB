@@ -1,4 +1,4 @@
-function SurveyController($rootScope, $scope, $http, commonFactory) {
+function SurveyController($rootScope, $scope, $http, commonFactory, surveyResponse) {
 
   initializeController();
 
@@ -14,12 +14,9 @@ function SurveyController($rootScope, $scope, $http, commonFactory) {
   }
 
   function retrieveSurveyResponses() {
-    $http.get(`/api/surveys/responses/client/${$rootScope.client._id}`)
+    surveyResponse.findByClient($rootScope.client._id)
       .then(function(response) {
         $scope.surveyResponses = response.data.map(e => e.surveyId);
-      })
-      .catch(function(error) {
-        console.log(error);
       });
   }
 
@@ -41,5 +38,5 @@ function SurveyController($rootScope, $scope, $http, commonFactory) {
   }
 }
 
-SurveyController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory'];
+SurveyController.$inject = ['$rootScope', '$scope', '$http', 'commonFactory', 'surveyResponse'];
 angular.module('app').controller('surveyController', SurveyController);

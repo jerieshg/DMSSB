@@ -193,6 +193,7 @@ module.exports.exportAllSurveys = function(req, res, next) {
     headers.add("Fin");
     headers.add("Responsable");
     headers.add("Nota");
+    headers.add("% de Participacion");
 
     let dataSet = [];
 
@@ -206,6 +207,12 @@ module.exports.exportAllSurveys = function(req, res, next) {
       data["Fin"] = survey.period.end;
       data["Responsable"] = survey.responsible;
       data["Nota"] = `${(survey.finalGrade ? survey.finalGrade * 100 : 0).toFixed(2)}%`;
+
+      let count = req.body.find(e => survey._id.toString() === e.surveyId);
+      
+      if (count) {
+        data["% de Participacion"] = `${((count.currentTotal/count.total) * 100).toFixed(2)}%` + "";
+      }
 
       dataSet.push(data);
     });

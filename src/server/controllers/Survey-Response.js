@@ -1,5 +1,7 @@
 let SurveyResponse = require('../models/Survey-Response');
+let Client = require('../models/Client');
 let mongoose = require('mongoose');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports.readBySurveyId = function(req, res, next) {
   SurveyResponse.find({
@@ -12,6 +14,72 @@ module.exports.readBySurveyId = function(req, res, next) {
     }
 
     res.json(responses);
+  });
+}
+
+module.exports.findMissingClients = function(req, res, next) {
+  let job = req.params.job;
+
+  Client.find({
+    job: job
+  }, function(error, clients) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    SurveyResponse.find({
+      surveyId: req.params.id
+    }, function(error, responses) {
+      if (error) {
+        res.status(500);
+        next(error);
+        return res.send(error);
+      }
+
+      let jobResponses = responses.filter(e => {
+        let responseJob = new Buffer(e.job, 'binary').toString('utf8');
+        return job === responseJob;
+      }).map(e => e.client._id);
+
+      let remainingClients = clients.filter((client) => {
+        return !jobResponses.includes(client._id.toString());
+      });
+
+      res.json(remainingClients);
+    });
+  });
+}
+
+module.exports.countSurveyResponses = function(req, res, next) {
+  let ids = [];
+
+  req.body.forEach(e => {
+    ids.push(new ObjectId(e));
+  });
+
+  SurveyResponse.aggregate([{
+    $match: {
+      surveyId: {
+        $in: ids
+      }
+    }
+  }, {
+    $group: {
+      _id: '$surveyId',
+      count: {
+        $sum: 1
+      }
+    }
+  }], function(error, count) {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    res.json(count);
   });
 }
 

@@ -67,12 +67,19 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
     Object.keys(groupedCanvas).map((service, serviceIndex) => {
       doc.setFontSize(18)
       let textTitle = (service && service !== "null") ? service : 'Resultado General';
-      doc.text(textTitle, 75, 15);
+      let splittedTextTitle = doc.splitTextToSize(textTitle, doc.internal.pageSize.width - 75);
+
+      doc.text(splittedTextTitle, splittedTextTitle.length > 1 ? 15 : 75, 15);
 
       let position = 1
       groupedCanvas[service].forEach((item, index) => {
-        let yImageCoord = 35;
         let yTextCoord = 25;
+
+        if (splittedTextTitle.length > 1) {
+          yTextCoord = 35;
+        }
+
+        let yImageCoord = yTextCoord + 10;
         let xSize = 170;
         let ySize = 80;
 

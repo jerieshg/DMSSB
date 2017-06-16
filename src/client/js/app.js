@@ -27,6 +27,10 @@ angular
   }])
   .run(['$rootScope', '$state', '$stateParams', function($rootScope, $state, $stateParams) {
 
+    $(document).on('hidden.bs.modal', '.modal', function() {
+      $('.modal:visible').length && $(document.body).addClass('modal-open');
+    });
+
     $rootScope.$on('$stateChangeSuccess', function() {
       document.body.scrollTop = document.documentElement.scrollTop = 0;
     });

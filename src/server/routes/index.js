@@ -112,6 +112,10 @@ module.exports = function(router) {
     .get(SurveyResponse.readByClientId);
   router.route('/api/surveys/:id/responses/client/:clientId')
     .get(SurveyResponse.readByClientIdAndSurveyId);
+  router.route('/api/surveys/count/')
+    .post(SurveyResponse.countSurveyResponses)
+  router.route('/api/survey-responses/:id/job/:job/')
+    .get(SurveyResponse.findMissingClients)
 
 
   //BUSINESS ROUTES
@@ -184,7 +188,7 @@ module.exports = function(router) {
   router.route('/api/excel/')
     .post(Excel.exportToExcelBatch)
   router.route('/api/excel-surveys/')
-    .get(Excel.exportAllSurveys)
+    .post(Excel.exportAllSurveys)
   router.route('/api/excel/migrate')
     .post(Excel.migratePreviousVersion)
 
