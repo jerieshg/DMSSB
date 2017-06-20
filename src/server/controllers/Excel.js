@@ -97,6 +97,7 @@ module.exports.migratePreviousVersion = function(req, res, next) {
               revision: item.versionvigente,
               publicationDate: item.fechapublicacion ? new Date(item.fechapublicacion) : null
             },
+            periodExpirationTime: item.periodoexpiracion,
             timeStored: item.tiempodealmacenamiento,
             migrated: true
           });
