@@ -78,15 +78,13 @@ function SurveyStatsController($scope, $state, $http, $stateParams, $window, com
         if (splittedTextTitle.length > 1) {
           yTextCoord = 35;
         }
+        if (position % 2 == 0) {
+          yTextCoord = splittedTextTitle.length > 1 ? 145 : 135;
+        }
 
-        let yImageCoord = yTextCoord + 10;
         let xSize = 170;
         let ySize = 80;
-
-        if (position % 2 == 0) {
-          yTextCoord = 125;
-          yImageCoord = 145;
-        }
+        let yImageCoord = yTextCoord + 10;
 
         if (textTitle === 'Resultado General') {
           xSize = 180;

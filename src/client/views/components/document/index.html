@@ -16,18 +16,19 @@
       <label>Nombre:</label>
       <input type="text" placeholder="Nombre de documento o registro" class="form-control" ng-model="search.name"/>
     </div>
-    <div class="col-sm-5">
-      <label for="dept">Departamento:</label>
-      <select name="dept" id="dept" class="form-control" ng-model="search.department" ng-options="item.department as item.department for item in departments">
-        <option value="">Seleccione un departamento  {{optional ? '(optional)' : ''}}</option>
-      </select>
-    </div>
     <div class="col-sm-5 ">
       <label for="dept">Planta :</label>
       <select name="dept" id="dept" class="form-control" ng-model="search.business" ng-options="item.business as item.business for item in business">
         <option value="">Seleccione una planta  {{optional ? '(optional)' : ''}}</option>
       </select>
     </div>
+    <div class="col-sm-5">
+      <label for="dept">Departamento:</label>
+      <select name="dept" id="dept" class="form-control" ng-model="search.department" ng-options="item.department as item.department for item in departments | filter: { business: search.business}">
+        <option value="">Seleccione un departamento  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+
     <div class="col-sm-5 row-separator">
       <label for="dept">Tipo de Documento:</label>
       <select name="dept" id="dept" class="form-control" ng-model="search.docType" ng-options="item.type as item.type for item in docTypes">
@@ -129,7 +130,7 @@
   </td>
   <td>{{e.publication.publicationDate | date: 'yyyy/MM/dd'}}</td>
   <td>
-  {{e.timeStored ? e.timeStored + ' meses': 'Indefinido'}}
+    {{e.timeStored ? e.timeStored + ' meses': 'Indefinido'}}
   </td>
   <td>{{e.expiredDate ? e.expiredDate : 'Indefinido' | date: 'yyyy/MM/dd'}}</td>
   <td>{{expiredCheck[e._id].time + expiredCheck[e._id].suffix}}</td>

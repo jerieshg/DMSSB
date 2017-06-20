@@ -102,16 +102,14 @@
       </datepicker>
     </div>
     <div class="col-sm-3">
-      <label for="requiredDate">Fecha de revision:</label>
-      <datepicker date-format="yyyy-MM-dd">
-        <input name="requiredDate" type="text" class="form-control" placeholder="Fecha de vencimiento" ng-model="selectedDocument.expiredDate" ng-disabled="!edit" title="Fecha cuando se requiere volver a revisar el documento">
-      </datepicker>
+      <label>Periodo de revision (Meses):</label>
+      <input name="periodExpirationTime" type="number" class="form-control" placeholder="Periodo de revision en meses" ng-model="selectedDocument.periodExpirationTime" ng-disabled="!edit" min="0">
     </div>
-       <div class="col-sm-2">
+    <div class="col-sm-3">
       <label>Tiempo de almacenamiento (Meses):</label>
-      <input name="timeStored" type="number" class="form-control" placeholder="Tiempo de almacenamiento en meses" ng-model="selectedDocument.timeStored" ng-disabled="!edit">
+      <input name="timeStored" type="number" class="form-control" placeholder="Tiempo de almacenamiento en meses" ng-model="selectedDocument.timeStored" ng-disabled="!edit" min="0">
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
       <label for="reqSGIA" style="font-weight: bold;">Requiere revision de medioambiente:
         <input name="reqSGIA" type="checkbox" class="form-control" ng-model="selectedDocument.requiresSafetyEnv" ng-disabled="!edit">
       </label>

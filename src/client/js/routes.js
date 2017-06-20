@@ -228,7 +228,8 @@ angular
         },
         data: {
           isAdminRequired: true,
-          showConfirmDialog: true
+          showConfirmDialog: true,
+          documentaryCenterAdmin: true
         }
       })
       .state('app.admin.docStatus', {
@@ -249,7 +250,7 @@ angular
         data: {
           isAdminRequired: true,
           showConfirmDialog: true,
-          documentaryCenter: true
+          documentaryCenterAdmin: true
         }
       })
       .state('app.admin.departments', {
@@ -310,7 +311,7 @@ angular
         data: {
           isAdminRequired: true,
           showConfirmDialog: true,
-          documentaryCenter: true
+          documentaryCenterAdmin: true
         }
       })
       .state('app.admin.business', {
@@ -371,7 +372,7 @@ angular
         data: {
           isAdminRequired: true,
           showConfirmDialog: true,
-          documentaryCenter: true
+          documentaryCenterAdmin: true
         }
       })
       .state('app.admin.systems', {
@@ -392,7 +393,7 @@ angular
         data: {
           isAdminRequired: true,
           showConfirmDialog: true,
-          documentaryCenter: true
+          documentaryCenterAdmin: true
         }
       })
       .state('app.admin.implications', {
@@ -413,7 +414,7 @@ angular
         data: {
           isAdminRequired: true,
           showConfirmDialog: true,
-          documentaryCenter: true
+          documentaryCenterAdmin: true
         }
       })
       //USER RELATED
@@ -724,7 +725,7 @@ angular
 
       //if regular user redirect
       if ($rootScope.client.role.level === 3) {
-        let documentaryCenter = $rootScope.client.documentaryCenterAdmin && trans.$to().data.documentaryCenter
+        let documentaryCenter = $rootScope.client.documentaryCenterAdmin && trans.$to().data.documentaryCenterAdmin
           //If its going to documentary administrador and it has access, then skip...
         if (trans.$to().data.isAdminRequired && !documentaryCenter) {
           return trans.router.stateService.target('app.surveys.main');

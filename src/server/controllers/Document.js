@@ -358,7 +358,8 @@ module.exports.updateApprovals = function(req, res, next) {
       flow: req.body.flow,
       publication: req.body.publication,
       request: req.body.request,
-      files: req.body.files
+      files: req.body.files,
+      expiredDate : req.body.expiredDate
     }
   }, function(error, result) {
     if (error) {

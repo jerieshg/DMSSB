@@ -1,12 +1,30 @@
-function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, commonFactory, uuid) {
+function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, commonFactory, uuid, email) {
 
   initializeController();
+
+  function fillUsers(step) {
+    let users = [];
+
+    if (step.requiresDept) {
+      let approvals = step.approvals[$scope.selectedDocument.department];
+      users = approvals ? approvals.map(e => (e._id)) : [];
+    } else {
+      users = step.approvals.map(e => (e._id));
+    }
+
+    return users;
+  }
 
   $scope.saveDocument = function() {
     if (($scope.selectedDocument.files && $scope.selectedDocument.files.length > 0) || ($scope.files && $scope.files.length > 0)) {
 
+      let users = [];
+
       if ($scope.selectedDocument.type.blueprint) {
         $scope.selectedDocument.status = "En revision por lista de autorizaciones";
+        if ($scope.selectedDocument.implication && $scope.selectedDocument.implication.authorization[$scope.selectedDocument.business]) {
+          users = $scope.selectedDocument.implication.authorization[$scope.selectedDocument.business].map(e => e._id);
+        }
       } else {
         let request = $scope.selectedDocument.request[$scope.selectedDocument.business];
         let firstStep = request ? request[0] : {};
@@ -19,6 +37,7 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
             $scope.selectedDocument.status = "Listo para publicacion";
             $scope.selectedDocument.flow.readyToPublish = true;
           } else {
+            users = fillUsers(nextStep);
             $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
           }
         } else {
@@ -26,10 +45,13 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
             $scope.selectedDocument.status = "Listo para publicacion";
             $scope.selectedDocument.flow.readyToPublish = true;
           } else {
+            users = fillUsers(firstStep);
             $scope.selectedDocument.status = `En revision por ${firstStep.name}`;
           }
         }
       }
+
+      console.log(users);
 
       $scope.selectedDocument.requestedDate = new Date();
 
@@ -54,6 +76,12 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
       }).then(function(response) {
         if (response.status === 200) {
           commonFactory.toastMessage('Documento creado exitosamente!', 'success');
+
+          email.sendDocumentReminder(response.data._id, users)
+            .then((response) => {
+              console.log(response);
+            });
+
           $state.go('app.docs.request');
         }
       }, function(response) {
@@ -193,5 +221,5 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
   }
 }
 
-DocumentHandlerController.$inject = ['$rootScope', '$scope', '$http', '$state', 'Upload', 'commonFactory', 'uuid'];
+DocumentHandlerController.$inject = ['$rootScope', '$scope', '$http', '$state', 'Upload', 'commonFactory', 'uuid', 'email'];
 angular.module('app', ['ngFileUpload', 'angular-uuid']).controller('documentHandlerController', DocumentHandlerController);

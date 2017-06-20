@@ -1,6 +1,8 @@
 let nodemailer = require('nodemailer');
 let Client = require('../models/Client');
 let Document = require('../models/Document');
+var ObjectId = require('mongoose').Types.ObjectId;
+var log = require('../../../logger');
 
 var _0x5262 = ["\x65\x6E\x65\x72\x73\x61\x31\x32\x33"];
 
@@ -46,6 +48,7 @@ module.exports.sendRejectedDocument = function(req, res, next) {
               return res.send(error);
             }
 
+            log.info(`Email sent to ${client.email} for ${doc.name}`);
             res.send("OK");
           });
         } else {
@@ -64,7 +67,7 @@ module.exports.expiredDocumentCheck = function() {
     "flow.published": true
   }, (error, docs) => {
     if (error) {
-      console.log(error);
+      log.crit(error);
       return error;
     }
 
@@ -82,7 +85,7 @@ module.exports.expiredDocumentCheck = function() {
           _id: doc.createdBy._id
         }, (error, client) => {
           if (error) {
-            console.log(error);
+            log.crit(error);
             return error;
           }
 
@@ -97,17 +100,81 @@ module.exports.expiredDocumentCheck = function() {
 
             transporter.sendMail(newEmail, (error, info) => {
               if (error) {
-                console.log(error);
+                log.crit(error);
                 return error;
               }
+
+              log.info(`Email sent to ${client.email} for ${doc.name}`);
             });
           } else {
-            console.log("El usuario no tiene correo electronico");
+            log.info("El usuario no tiene correo electronico");
           }
         });
       } else {
-        console.log("No tiene solicitante");
+        log.info("No tiene solicitante");
       }
     });
-  })
+  });
+}
+
+module.exports.sendDocumentReminder = function(req, res, next) {
+  Document.findOne({
+    _id: req.params.docId
+  }, (error, doc) => {
+    if (error) {
+      res.status(500);
+      next(error);
+      return res.send(error);
+    }
+
+    let users = req.body.users;
+    let promises = [];
+
+    if (!users || users.length === 0) {
+      promises.push(
+        Client.find({
+          documentaryCenterAdmin: true
+        }).exec()
+      );
+    } else {
+      let ids = users.map(e => ObjectId(e));
+
+      promises.push(
+        Client.find({
+          _id: {
+            $in: ids
+          }
+        }).exec()
+      );
+    }
+
+    Promise.all(promises).then(values => {
+      let emails = [];
+      values.forEach(value => {
+        emails.push(value.filter(e => e.email !== undefined).map(e => e.email));
+      });
+
+      if (emails.length > 0) {
+        let newEmail = {
+          from: 'notificaciones.enersa.dsm@gmail.com',
+          subject: `Revision pendiente de ${doc.name}`,
+          to: emails.join(", "),
+          html: `Usted tiene una revision pendiente para el documento ${doc.name}. Por favor ingresar a la aplicacion web y en la seccion de pendientes se mostrara el documento.`
+        };
+
+        transporter.sendMail(newEmail, (error, info) => {
+          if (error) {
+            next(error);
+            return res.send(error);
+          }
+
+          log.info(`Email sent to ${emails.join(", ")} for ${doc.name}`);
+          res.send("OK");
+        });
+      } else {
+        log.info(`No se encontraron correos electronicos para el documento ${doc.name}`);
+        res.status(204).send("No Emails found");
+      }
+    });
+  });
 }

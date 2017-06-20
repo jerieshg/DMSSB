@@ -293,6 +293,8 @@ module.exports = function(router) {
     .get(Email.expiredDocumentCheck);
   router.route('/api/email/clients/:clientName/documents/:docId')
     .get(Email.sendRejectedDocument);
+  router.route('/api/email/documents/:docId/document-reminder/')
+    .post(Email.sendDocumentReminder);
 
   // router to handle all angular requests
   router.get('*', function(req, res) {

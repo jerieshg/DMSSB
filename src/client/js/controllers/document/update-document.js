@@ -103,15 +103,15 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       email.sendRejectedEmail($rootScope.client.username, $scope.selectedDocument._id)
         .then((response) => {
           console.log(response);
-        })
+        });
     }
 
-    documents.updateApprovals($scope.selectedDocument)
-      .then((data) => {
-        commonFactory.toastMessage(`Este documento fue ${$scope.selectedApproved.approved ? 'aprobado' : 'rechazado'}`, 'success');
-        $scope.canApprove = !$scope.selectedApproved.approved;
-        $scope.selectedApproved = {};
-      });
+    // documents.updateApprovals($scope.selectedDocument)
+    //   .then((data) => {
+    //     commonFactory.toastMessage(`Este documento fue ${$scope.selectedApproved.approved ? 'aprobado' : 'rechazado'}`, 'success');
+    //     $scope.canApprove = !$scope.selectedApproved.approved;
+    //     $scope.selectedApproved = {};
+    //   });
 
     updateDocumentHistory();
     $('#approveDocumentModal').modal('toggle');
@@ -395,12 +395,25 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 
   function moveNextStep(nextStep) {
+    let users = [];
     if (nextStep) {
       $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
+
+      if (nextStep.requiresDept) {
+        let approvals = nextStep.approvals[$scope.selectedDocument.department];
+        users = approvals ? approvals.map(e => (e._id)) : [];
+      } else {
+        users = nextStep.approvals.map(e => (e._id));
+      }
     } else {
       $scope.selectedDocument.status = "Listo para publicacion";
       $scope.selectedDocument.flow.readyToPublish = true;
     }
+
+    email.sendDocumentReminder($scope.selectedDocument._id, users)
+      .then((response) => {
+        console.log(response);
+      });
   }
 
   function publishDocument() {
@@ -410,6 +423,12 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     $scope.selectedDocument.flow.readyToPublish = false;
     if (!$scope.selectedDocument.request.dataUpdateOnly) {
       $scope.selectedDocument.publication.revision += 1;
+    }
+    if ($scope.selectedDocument.periodExpirationTime) {
+      let today = new Date();
+      $scope.selectedDocument.expiredDate = new Date(
+        today.setMonth(today.getMonth() + ($scope.selectedDocument.periodExpirationTime))
+      );
     }
 
     $scope.selectedDocument.files.forEach((e, index) => {

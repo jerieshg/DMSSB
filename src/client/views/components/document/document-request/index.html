@@ -11,7 +11,7 @@
 
   <button ui-sref-active="active" ui-sref="app.docs.create" class="btn btn-success row-separator" style="margin-right:1em">Nuevo documento</button>
 
-    <div class="col-sm-12" ng-show="documents.length < 1">
+  <div class="col-sm-12" ng-show="documents.length < 1">
     <h5>No tiene documentos creados!</h5>
   </div>
 
@@ -27,8 +27,8 @@
        <td><strong>Prioridad</strong></td>
        <td><strong>Solicitante</strong></td>
        <td><strong>Fecha Requerida</strong></td>
+       <td><strong>Periodo de revision</strong></td>
        <td><strong>Fecha de revision</strong></td>
-       <td><strong>Fecha Creada</strong></td>
        <td></td>
      </tr>
    </thead>
@@ -43,8 +43,8 @@
        <td>{{e.priority}}</td>
        <td>{{e.createdBy.username}}</td>
        <td>{{e.requiredDate | date: 'yyyy/MM/dd'}}</td>
+       <td>{{e.periodExpirationTime ? e.periodExpirationTime + ' meses': 'Indefinido' }}</td>
        <td>{{e.expiredDate | date: 'yyyy/MM/dd'}}</td>
-       <td>{{e.created | date: 'yyyy/MM/dd'}}</td>
        <td>
          <i class="fa fa-trash" aria-hidden="true"  ng-click="deleteDocument(e._id)" ng-show="client.documentaryCenterAdmin"></i>
          <i class="fa fa-pencil" aria-hidden="true" style="margin-left:10px;"  ui-sref-active="active" ui-sref="app.docs.edit({id: e._id})"></i>

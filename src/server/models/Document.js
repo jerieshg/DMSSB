@@ -21,6 +21,7 @@ let schema = new mongoose.Schema({
     blueprint: Boolean,
     created: Date
   },
+  periodExpirationTime: Number,
   expiredDate: Date,
   active: Boolean,
   requiresSafetyEnv: Boolean,

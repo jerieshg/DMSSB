@@ -21,7 +21,8 @@
 
        <div class="col-md-6 row-separator">
         <label for="email">Correo electronico:</label>
-        <input type="text" id="email" class="form-control" ng-model="selectedClient.email">
+        <input type="text" id="email" class="form-control" ng-model="selectedClient.email" ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'
+>
       </div>
 
       <div class="col-md-6 row-separator">

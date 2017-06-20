@@ -5,7 +5,7 @@
     var sendRejectedEmail = function(name, docId) {
       return $http.get(`/api/email/clients/${name}/documents/${docId}`)
         .then((response) => {
-          return response.data;
+          return response;
         })
         .catch((error) => {
           console.log(error);
@@ -13,9 +13,24 @@
         });
     };
 
+    var sendDocumentReminder = function(docId, users) {
+      return $http.post(`/api/email/documents/${docId}/document-reminder/`, {
+          users: users
+        })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
+          return error;
+        });
+    };
+
 
     return {
-      sendRejectedEmail: sendRejectedEmail
+      sendRejectedEmail: sendRejectedEmail,
+      sendDocumentReminder: sendDocumentReminder
     };
   }
 

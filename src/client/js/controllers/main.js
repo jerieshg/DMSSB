@@ -48,7 +48,10 @@ function MainController($rootScope, $scope, $state, $http, $q, commonFactory, su
           url: '/api/excel-surveys/',
           method: "POST",
           responseType: 'blob',
-          data: result.map(e => e.data)
+          data: {
+            count: result.map(e => e.data),
+            responses: $scope.surveyCount
+          }
         }).then(function(response) {
           var blob = new Blob([response.data], {
             type: 'application/vnd.openxmlformats'
