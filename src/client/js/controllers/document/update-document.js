@@ -106,12 +106,12 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         });
     }
 
-    // documents.updateApprovals($scope.selectedDocument)
-    //   .then((data) => {
-    //     commonFactory.toastMessage(`Este documento fue ${$scope.selectedApproved.approved ? 'aprobado' : 'rechazado'}`, 'success');
-    //     $scope.canApprove = !$scope.selectedApproved.approved;
-    //     $scope.selectedApproved = {};
-    //   });
+    documents.updateApprovals($scope.selectedDocument)
+      .then((data) => {
+        commonFactory.toastMessage(`Este documento fue ${$scope.selectedApproved.approved ? 'aprobado' : 'rechazado'}`, 'success');
+        $scope.canApprove = !$scope.selectedApproved.approved;
+        $scope.selectedApproved = {};
+      });
 
     updateDocumentHistory();
     $('#approveDocumentModal').modal('toggle');
