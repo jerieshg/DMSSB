@@ -69,6 +69,9 @@ function DocumentHistoryController($rootScope, $scope, $http, $stateParams, Uplo
     if (field === 'timeStored') {
       return 'Tiempo de almacenamiento';
     }
+    if (field === 'periodExpirationTime') {
+      return 'Periodo de expiracion';
+    }
 
     return field;
   }

@@ -16,7 +16,7 @@
 
       if (token) {
         payload = token.split('.')[1];
-        payload = $window.atob(payload);
+        payload = b64DecodeUnicode(payload);
         payload = JSON.parse(payload);
 
         return payload.exp > Date.now() / 1000;
@@ -29,7 +29,7 @@
       if (isLoggedIn()) {
         var token = getToken();
         var payload = token.split('.')[1];
-        payload = $window.atob(payload);
+        payload = b64DecodeUnicode(payload);
         payload = JSON.parse(payload);
 
         return {
@@ -86,6 +86,12 @@
       $window.localStorage.removeItem('mean-token');
     };
 
+    var b64DecodeUnicode = function(str) {
+      return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+    };
+
     return {
       currentClient: currentClient,
       saveToken: saveToken,
@@ -94,7 +100,8 @@
       register: register,
       login: login,
       changePassword: changePassword,
-      logout: logout
+      logout: logout,
+      b64DecodeUnicode: b64DecodeUnicode
     };
   }
 

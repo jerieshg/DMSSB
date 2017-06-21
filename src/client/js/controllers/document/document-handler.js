@@ -16,85 +16,85 @@ function DocumentHandlerController($rootScope, $scope, $http, $state, Upload, co
   }
 
   $scope.saveDocument = function() {
-    if (($scope.selectedDocument.files && $scope.selectedDocument.files.length > 0) || ($scope.files && $scope.files.length > 0)) {
+    if (commonFactory.dialog("Esta seguro de guardar esta nueva solicitud? Asegurese de ingresar un periodo de revision o tiempo de almacenamiento si se requiere.")) {
+      if (($scope.selectedDocument.files && $scope.selectedDocument.files.length > 0) || ($scope.files && $scope.files.length > 0)) {
 
-      let users = [];
+        let users = [];
 
-      if ($scope.selectedDocument.type.blueprint) {
-        $scope.selectedDocument.status = "En revision por lista de autorizaciones";
-        if ($scope.selectedDocument.implication && $scope.selectedDocument.implication.authorization[$scope.selectedDocument.business]) {
-          users = $scope.selectedDocument.implication.authorization[$scope.selectedDocument.business].map(e => e._id);
-        }
-      } else {
-        let request = $scope.selectedDocument.request[$scope.selectedDocument.business];
-        let firstStep = request ? request[0] : {};
-
-        if (firstStep && firstStep.bossPriority && (firstStep.approvals[$rootScope.client.department] && firstStep.approvals[$rootScope.client.department].map(e => e._id).includes($rootScope.client._id))) {
-          $scope.selectedDocument.request[$scope.selectedDocument.business][0].approved = true;
-
-          let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][1];
-          if (!nextStep) {
-            $scope.selectedDocument.status = "Listo para publicacion";
-            $scope.selectedDocument.flow.readyToPublish = true;
-          } else {
-            users = fillUsers(nextStep);
-            $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
+        if ($scope.selectedDocument.type.blueprint) {
+          $scope.selectedDocument.status = "En revision por lista de autorizaciones";
+          if ($scope.selectedDocument.implication && $scope.selectedDocument.implication.authorization[$scope.selectedDocument.business]) {
+            users = $scope.selectedDocument.implication.authorization[$scope.selectedDocument.business].map(e => e._id);
           }
         } else {
-          if (!firstStep || !firstStep.name) {
-            $scope.selectedDocument.status = "Listo para publicacion";
-            $scope.selectedDocument.flow.readyToPublish = true;
+          let request = $scope.selectedDocument.request[$scope.selectedDocument.business];
+          let firstStep = request ? request[0] : {};
+
+          if (firstStep && firstStep.bossPriority && (firstStep.approvals[$rootScope.client.department] && firstStep.approvals[$rootScope.client.department].map(e => e._id).includes($rootScope.client._id))) {
+            $scope.selectedDocument.request[$scope.selectedDocument.business][0].approved = true;
+
+            let nextStep = $scope.selectedDocument.request[$scope.selectedDocument.business][1];
+            if (!nextStep) {
+              $scope.selectedDocument.status = "Listo para publicacion";
+              $scope.selectedDocument.flow.readyToPublish = true;
+            } else {
+              users = fillUsers(nextStep);
+              $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
+            }
           } else {
-            users = fillUsers(firstStep);
-            $scope.selectedDocument.status = `En revision por ${firstStep.name}`;
+            if (!firstStep || !firstStep.name) {
+              $scope.selectedDocument.status = "Listo para publicacion";
+              $scope.selectedDocument.flow.readyToPublish = true;
+            } else {
+              users = fillUsers(firstStep);
+              $scope.selectedDocument.status = `En revision por ${firstStep.name}`;
+            }
           }
         }
+
+        $scope.selectedDocument.requestedDate = new Date();
+
+        delete $scope.selectedDocument.type["$$hashKey"];
+
+        $scope.selectedDocument.createdBy = {
+          _id: $rootScope.client._id,
+          username: $rootScope.client.username
+        };
+
+        if (!$scope.selectedDocument.fileUUID) {
+          $scope.selectedDocument.fileUUID = uuid.v1();
+        }
+
+        Upload.upload({
+          url: `/api/documents/`,
+          data: {
+            document: angular.toJson($scope.selectedDocument),
+            extras: angular.toJson($scope.fileExtras),
+            files: $scope.files
+          }
+        }).then(function(response) {
+          if (response.status === 200) {
+            commonFactory.toastMessage('Documento creado exitosamente!', 'success');
+
+            email.sendDocumentReminder(response.data._id, users)
+              .then((response) => {
+                console.log(response);
+              });
+
+            $state.go('app.docs.request');
+          }
+        }, function(response) {
+          if (response.status > 0) {
+            commonFactory.toastMessage('Algo paso! Por favor revise el documento o contacte al administrador', 'danger');
+            $scope.selectedDocument.status = 'Nuevo';
+          }
+        }, function(evt) {
+          $scope.progress =
+            Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+        });
+      } else {
+        commonFactory.toastMessage("No se ha adjuntado un archivo!", "danger");
       }
-
-      console.log(users);
-
-      $scope.selectedDocument.requestedDate = new Date();
-
-      delete $scope.selectedDocument.type["$$hashKey"];
-
-      $scope.selectedDocument.createdBy = {
-        _id: $rootScope.client._id,
-        username: $rootScope.client.username
-      };
-
-      if (!$scope.selectedDocument.fileUUID) {
-        $scope.selectedDocument.fileUUID = uuid.v1();
-      }
-
-      Upload.upload({
-        url: `/api/documents/`,
-        data: {
-          document: angular.toJson($scope.selectedDocument),
-          extras: angular.toJson($scope.fileExtras),
-          files: $scope.files
-        }
-      }).then(function(response) {
-        if (response.status === 200) {
-          commonFactory.toastMessage('Documento creado exitosamente!', 'success');
-
-          email.sendDocumentReminder(response.data._id, users)
-            .then((response) => {
-              console.log(response);
-            });
-
-          $state.go('app.docs.request');
-        }
-      }, function(response) {
-        if (response.status > 0) {
-          commonFactory.toastMessage('Algo paso! Por favor revise el documento o contacte al administrador', 'danger');
-          $scope.selectedDocument.status = 'Nuevo';
-        }
-      }, function(evt) {
-        $scope.progress =
-          Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-      });
-    } else {
-      commonFactory.toastMessage("No se ha adjuntado un archivo!", "danger");
     }
   };
 

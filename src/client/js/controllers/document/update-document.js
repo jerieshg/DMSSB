@@ -121,6 +121,10 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     let changed = [];
 
     var diff = ObjectDiff.diffOwnProperties($scope.originalDocument, $scope.selectedDocument);
+    let user = {
+      _id: $rootScope.client._id,
+      username: $rootScope.client.username
+    };
     //something has changed in the document
     if (diff.changed !== 'equal') {
       $scope.documentHistory.docId = $scope.selectedDocument._id;
@@ -134,10 +138,19 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           };
 
           $scope.documentHistory.history.push({
-            user: $rootScope.client.username,
+            user: user,
             field: 'createdBy',
             added: $rootScope.client.username,
             removed: $scope.selectedDocument.createdBy ? $scope.selectedDocument.createdBy.username : '',
+            created: new Date()
+          });
+
+          $scope.selectedDocument.requestedDate = new Date();
+          $scope.documentHistory.history.push({
+            user: user,
+            field: 'requestedDate',
+            added: $scope.selectedDocument.requestedDate,
+            removed: $scope.originalDocument.requestedDate,
             created: new Date()
           });
         }
@@ -150,7 +163,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         if (value.added && !isJson(value.added)) {
           changed.push(key);
           $scope.documentHistory.history.push({
-            user: $rootScope.client.username,
+            user: user,
             field: key,
             added: value.added,
             removed: value.removed,
@@ -163,7 +176,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
       if (filesResult !== 0) {
         $scope.documentHistory.history.push({
-          user: $rootScope.client.username,
+          user: user,
           field: 'files',
           list: true,
           value: filesResult,
@@ -179,7 +192,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
             let missingElement = $scope.selectedDocument.approvals[$scope.selectedDocument.approvals.length - (i + 1)];
 
             $scope.documentHistory.history.push({
-              user: $rootScope.client.username,
+              user: user,
               field: 'approvals',
               value: missingElement.approved,
               customText: missingElement.comment,
@@ -191,7 +204,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
       if ($scope.selectedDocument.type.type !== $scope.originalDocument.type.type) {
         $scope.documentHistory.history.push({
-          user: $rootScope.client.username,
+          user: user,
           field: 'type',
           added: $scope.selectedDocument.type.type,
           removed: $scope.originalDocument.type.type,
@@ -277,6 +290,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           $scope.selectedDocument.flow.readyToPublish = true;
         } else {
           $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
+          firstStep = nextStep;
         }
       } else {
         if (!firstStep || !firstStep.name) {
@@ -293,6 +307,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedDocument.request[$scope.selectedDocument.business][index].approved = false;
       });
     }
+
+    sendDocumentReminderEmail(firstStep);
   }
 
   $scope.download = function(fileName, filePath) {
@@ -395,25 +411,14 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 
   function moveNextStep(nextStep) {
-    let users = [];
     if (nextStep) {
       $scope.selectedDocument.status = `En revision por ${nextStep.name}`;
-
-      if (nextStep.requiresDept) {
-        let approvals = nextStep.approvals[$scope.selectedDocument.department];
-        users = approvals ? approvals.map(e => (e._id)) : [];
-      } else {
-        users = nextStep.approvals.map(e => (e._id));
-      }
     } else {
       $scope.selectedDocument.status = "Listo para publicacion";
       $scope.selectedDocument.flow.readyToPublish = true;
     }
 
-    email.sendDocumentReminder($scope.selectedDocument._id, users)
-      .then((response) => {
-        console.log(response);
-      });
+    sendDocumentReminderEmail(nextStep);
   }
 
   function publishDocument() {
@@ -446,7 +451,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     $scope.canApprove = false;
     retrieveDocument();
     retrieveDocumentHistory();
-    retrieveChangeControl();
     retrieveBusiness();
     retrieveClients();
     retrieveDepartments();
@@ -499,23 +503,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           $scope.documentHistory = {
             new: true,
             history: []
-          };
-        }
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-  }
-
-  function retrieveChangeControl() {
-    $http.get(`/api/documents-change-control/${$stateParams.id}`)
-      .then(function(response) {
-        $scope.documentChangeControl = response.data;
-        if (!$scope.documentChangeControl) {
-          $scope.documentChangeControl = {
-            new: true,
-            changes: [],
-            created: new Date()
           };
         }
       })
@@ -578,6 +565,28 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     }
 
     return false;
+  }
+
+  function sendDocumentReminderEmail(step) {
+    let users = [];
+
+    if (!$scope.selectedDocument.flow.blueprintApproved) {
+      if ($scope.selectedDocument.implication && $scope.selectedDocument.implication.authorization[$scope.selectedDocument.business]) {
+        users = $scope.selectedDocument.implication.authorization[$scope.selectedDocument.business].map(e => e._id);
+      }
+    } else if (step) {
+      if (step.requiresDept) {
+        let approvals = step.approvals[$scope.selectedDocument.department];
+        users = approvals ? approvals.map(e => (e._id)) : [];
+      } else {
+        users = step.approvals.map(e => (e._id));
+      }
+    }
+
+    email.sendDocumentReminder($scope.selectedDocument._id, users)
+      .then((response) => {
+        console.log(response);
+      });
   }
 }
 
