@@ -78,6 +78,9 @@ function DocumentHistoryController($rootScope, $scope, $http, $stateParams, Uplo
     if (field === 'revision') {
       return 'Version vigente';
     }
+    if (field === 'publicationDate') {
+      return 'Fecha de publicacion';
+    }
 
     return field;
   }
