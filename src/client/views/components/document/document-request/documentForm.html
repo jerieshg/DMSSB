@@ -49,7 +49,7 @@
     </div>
     <div class="col-sm-2">
       <label for="version">Version vigente:</label>
-      <input name="version" type="text" class="form-control" placeholder="Version vigente" ng-value="selectedDocument.publication.revision | numberFixedLen: 3" required ng-disabled="!client.documentaryCenterAdmin || !edit">
+      <input name="version" type="text" class="form-control" placeholder="Version vigente" ng-model="selectedDocument.publication.revision" ng-value="selectedDocument.publication.revision | numberFixedLen: 3" required ng-disabled="!client.documentaryCenterAdmin || !edit">
     </div>
     <div class="col-sm-3">
       <label for="priority">Prioridad:</label>
@@ -146,7 +146,7 @@
             data-toggle="modal"  data-target="#filesModal" ng-click="shouldResetFlow = true;"/>
 
             <div class="fa fa-upload" aria-hidden="true" ngf-select ng-model="files" ngf-multiple="true" title="Subir document o registro electronico sin reiniciar el flujo"
-            data-toggle="modal"  data-target="#filesModal" ng-click="shouldResetFlow = false;" ng-show="client.documentaryCenterAdmin"/>
+            data-toggle="modal"  data-target="#filesModal" ng-click="shouldResetFlow = false;" ng-show="client.documentaryCenterAdmin" style="margin-left: 1%;"/>
           </td>
         </tr>
       </thead>

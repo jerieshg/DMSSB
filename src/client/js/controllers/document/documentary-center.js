@@ -51,7 +51,7 @@ function DocumentaryCenterController($rootScope, $scope, $http, commonFactory, d
             calculateTimeMissing(doc.expiredDate, doc._id);
           });
 
-          commonFactory.toastMessage(`Se han encontrado ${$scope.searchDocuments.length} documento(s)`, 'info');
+          commonFactory.toastMessage(`Se han encontrado ${$scope.documents.length} documento(s)`, 'info');
         })
         .catch((error) => {
           console.log(error);
