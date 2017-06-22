@@ -195,34 +195,30 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       $scope.documentHistory.docId = $scope.selectedDocument._id;
       //Detect if it's a json value (FOR PUBLICATION OBJECT)
       for (let [key, value] of Object.entries(diff.value)) {
-
-        if (key === 'request' && (value.changed === 'object change' || value.changed === 'added')) {
-          $scope.selectedDocument.createdBy = {
-            _id: $rootScope.client._id,
-            username: $rootScope.client.username
-          };
-
-          $scope.documentHistory.history.push({
-            user: user,
-            field: 'createdBy',
-            added: $rootScope.client.username,
-            removed: $scope.selectedDocument.createdBy ? $scope.selectedDocument.createdBy.username : '',
-            created: new Date()
-          });
-
-          $scope.selectedDocument.requestedDate = new Date();
-          $scope.documentHistory.history.push({
-            user: user,
-            field: 'requestedDate',
-            added: $scope.selectedDocument.requestedDate,
-            removed: $scope.originalDocument.requestedDate,
-            created: new Date()
+        if ((key === 'publication' || key === 'request') && (value.changed === 'object change' || value.changed === 'added')) {
+          Object.keys(value.value).forEach(objectKey => {
+            if (objectKey === 'key') {
+              return;
+            }
+            if (objValue.changed && objValue.added && !isJson(objValue.added)) {
+              changed.push(key);
+              $scope.documentHistory.history.push({
+                user: user,
+                field: objectKey,
+                added: objValue.added,
+                removed: objValue.removed,
+                created: new Date()
+              });
+            }
           });
         }
 
         if (value.changed === 'object change' && value.value.key) {
           value.added = value.value.key.added;
           value.removed = value.value.key.removed;
+        } else if (value.changed === 'added') {
+          value.added = value.value;
+          value.removed = '';
         }
 
         if (value.added && !isJson(value.added)) {
@@ -279,12 +275,40 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         }
       }
 
-      if ($scope.selectedDocument.type.type !== $scope.originalDocument.type.type) {
+      let changedType = $scope.selectedDocument.type.type !== $scope.originalDocument.type.type
+
+      if (changedType) {
+        changed.push('type');
         $scope.documentHistory.history.push({
           user: user,
           field: 'type',
           added: $scope.selectedDocument.type.type,
           removed: $scope.originalDocument.type.type,
+          created: new Date()
+        });
+      }
+
+      let changedRequest = ($scope.selectedDocument.request.key !== $scope.originalDocument.request.key);
+      if (changedRequest) {
+        $scope.selectedDocument.createdBy = {
+          _id: $rootScope.client._id,
+          username: $rootScope.client.username
+        };
+
+        $scope.documentHistory.history.push({
+          user: user,
+          field: 'createdBy',
+          added: $rootScope.client.username,
+          removed: $scope.selectedDocument.createdBy ? $scope.selectedDocument.createdBy.username : '',
+          created: new Date()
+        });
+
+        $scope.selectedDocument.requestedDate = new Date();
+        $scope.documentHistory.history.push({
+          user: user,
+          field: 'requestedDate',
+          added: $scope.selectedDocument.requestedDate,
+          removed: $scope.originalDocument.requestedDate,
           created: new Date()
         });
       }

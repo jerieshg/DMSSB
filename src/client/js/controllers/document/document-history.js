@@ -75,6 +75,9 @@ function DocumentHistoryController($rootScope, $scope, $http, $stateParams, Uplo
     if (field === 'historicFiles') {
       return 'Archivo historico';
     }
+    if (field === 'revision') {
+      return 'Version vigente';
+    }
 
     return field;
   }
