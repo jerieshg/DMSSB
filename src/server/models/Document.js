@@ -28,6 +28,7 @@ let schema = new mongoose.Schema({
   system: String,
   implication: {},
   files: [],
+  historicFiles: [],
   status: String,
   comments: String,
   createdBy: {

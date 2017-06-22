@@ -75,7 +75,7 @@
 </td>
 <td>
 </td>
-
+<td></td>
 </tr>
 </thead>
 <tbody>
@@ -97,8 +97,13 @@
   <td>{{e.expiredDate ? e.expiredDate : 'Indefinido' | date: 'yyyy/MM/dd'}}</td>
   <td>
    <label >Adjuntar archivo: </label>
-   <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple data-toggle="modal"  data-target="#filesModal" ng-change="test1(e, files)">
+   <input type="file" ngf-select ng-model="files" ngf-multiple="true" multiple data-toggle="modal"  data-target="#filesModal" ng-change="assignFiles(e, files)">
  </td>
+ <td>
+  <button  class="btn btn-success" type="submit" ng-click="saveDoc(e)">
+    <i class="fa fa-save" aria-hidden="true"/>  Migrar sin archivo
+  </button>
+</td>
 </tr>
 </tbody>
 </table>

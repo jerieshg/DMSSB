@@ -3,9 +3,20 @@ function MigrateDocumentsController($rootScope, $scope, $http, Upload, commonFac
   initializeController();
 
 
-  $scope.test1 = function(doc, files) {
+  $scope.assignFiles = function(doc, files) {
     $scope.files = files;
     $scope.selectedDocument = doc;
+  }
+
+  $scope.saveDoc = function(doc) {
+    $scope.selectedDocument = doc;
+    documents.save({
+        document: angular.toJson(doc)
+      })
+      .then((response) => {
+        console.log(response);
+        $scope.results[$scope.selectedDocument.name] = true;
+      });
   }
 
   $scope.retrieveToMigrateDoucments = function() {

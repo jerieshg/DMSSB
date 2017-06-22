@@ -1,0 +1,35 @@
+<div class="modal fade" id="deleteFileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Seleccione una opcion para el archivo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row row-separator">
+          <div class="col-sm-12 row-separator" style="text-align:center">
+            <button  class="btn btn-secondary" type="button" title="Borrar el archivo permanentemente" ng-click="deleteFile()" data-dismiss="modal">
+             <i class="fa fa-trash" aria-hidden="true"/>  Borrar
+           </button>
+           <button  class="btn btn-info" type="button" title="Pasar el archivo a historicos" ng-click="movingToHistory=true;">
+             <i class="fa fa-history" aria-hidden="true"/>  Archivar
+           </button>
+         </div>
+
+         <div class="col-sm-12" ng-if="movingToHistory">
+          <label>Escriba el nombre historico del archivo</label>
+          <input type="text" class="form-control" ng-model="selectedFile.file.newFileName"/>
+          <br/>
+          <button  class="btn btn-success" type="button" title="Pasar el archivo a historicos" ng-click="moveToHistory()" data-dismiss="modal">
+           <i class="fa fa-history" aria-hidden="true"/>  Archivar
+         </button>
+       </div>
+     </div>
+     <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    </div>
+  </div>
+</div>
+</div>

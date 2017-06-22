@@ -2,6 +2,69 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
 
   initializeController();
 
+  $scope.selectFile = function(file, index) {
+    $scope.selectedFile = {
+      file: file,
+      index: index
+    };
+  }
+
+  $scope.uploadHistoricFiles = function() {
+    Upload.upload({
+      method: 'PUT',
+      url: `/api/documents/historic-files/`,
+      data: {
+        document: angular.toJson($scope.selectedDocument),
+        files: $scope.historicFiles
+      }
+    }).then(function(response) {
+      $scope.selectedDocument.historicFiles = response.data.historicFiles;
+      commonFactory.toastMessage('Guardado exitosamente!', 'success');
+      updateDocumentHistory();
+    }, function(response) {
+      if (response.status > 0) {
+        $scope.errorMsg = response.status + ': ' + response.data;
+      }
+    }, function(evt) {
+      $scope.progress =
+        Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+    });
+  }
+
+  $scope.moveToHistory = function() {
+    if (commonFactory.dialog("Esta seguro que quiere pasar el archivo a historicos? No hay forma de regresarlo a su estado original.")) {
+      let removed = $scope.selectedDocument.files.splice($scope.selectedFile.index, 1)[0];
+      removed.history = true;
+      $scope.selectedDocument.historicFiles.push(removed);
+
+      documents.updateHistoricFiles($scope.selectedDocument)
+        .then((response) => {
+          console.log(response);
+        });
+    }
+  }
+
+  $scope.deleteHistoricFile = function(file) {
+    if (commonFactory.dialog("Esta seguro de borrar este archivo?")) {
+      documents.deleteHistoricFile($stateParams.id, file.fileName)
+        .then((data) => {
+          $scope.selectedDocument.historicFiles = data.historicFiles;
+          updateDocumentHistory();
+        });
+    }
+  }
+
+  $scope.deleteFile = function() {
+    if (commonFactory.dialog("Esta seguro de borrar este archivo?")) {
+      documents.deleteFile($stateParams.id, $scope.selectedFile.file.fileName)
+        .then((data) => {
+          $scope.selectedDocument.files = data.files;
+          updateDocumentHistory();
+          $scope.selectedFile.fileName = null;
+        });
+    }
+  }
+
   $scope.retrieveApproval = function(item, blueprint) {
     if (!blueprint) {
       return $scope.selectedDocument.approvals
@@ -25,8 +88,10 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
   }
 
   $scope.saveFiles = function() {
-    if (commonFactory.dialog("Esta seguro? El documento volvera a un estado inicial en donde se reinicara el flujo de documentos.") && $scope.files && $scope.files.length) {
-      resetFlow();
+    if (commonFactory.dialog(`Esta seguro de subir el archivo? ${$scope.shouldResetFlow ? 'El documento volvera a un estado inicial en donde se reinicara el flujo de documentos' : ''}.`) && $scope.files && $scope.files.length) {
+      if ($scope.shouldResetFlow) {
+        resetFlow();
+      }
 
       let fileExtras = {};
       $scope.files.forEach((e) => {
@@ -184,6 +249,18 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         });
       }
 
+      let historicFilesResult = $scope.selectedDocument.historicFiles.length - $scope.originalDocument.historicFiles.length;
+
+      if (historicFilesResult !== 0) {
+        $scope.documentHistory.history.push({
+          user: user,
+          field: 'historicFiles',
+          list: true,
+          value: historicFilesResult,
+          created: new Date()
+        });
+      }
+
       let approvalsResult = $scope.selectedDocument.approvals.length - $scope.originalDocument.approvals.length;
 
       if (approvalsResult !== 0) {
@@ -278,9 +355,6 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     if ($scope.selectedDocument.type.blueprint) {
       $scope.selectedDocument.status = "En revision por lista de autorizaciones";
     } else {
-      let request = $scope.selectedDocument.request[$scope.selectedDocument.business];
-      let firstStep = request ? request[0] : {};
-
       if (firstStep && firstStep.bossPriority && (firstStep.approvals[$rootScope.client.department] && firstStep.approvals[$rootScope.client.department].map(e => e._id).includes($rootScope.client._id))) {
         $scope.selectedDocument.request[$scope.selectedDocument.business][0].approved = true;
 
@@ -331,6 +405,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       })
       .catch(function(error) {
         console.log(error);
+
+        commonFactory.toastMessage(`Ha ocurrido un error. Por favor verifique que el archivo exista dentro del servidor. Puede que se haya subido dos veces con el mismo nombre y se borro uno de ellos`, 'success');
       });
   }
 
@@ -366,16 +442,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     return null;
   }
 
-  $scope.deleteFile = function(name) {
-    if (commonFactory.dialog("Esta seguro de borrar este archivo?")) {
-      documents.deleteFile($stateParams.id, name)
-        .then((data) => {
-          $scope.selectedDocument.files = data.files;
-          updateDocumentHistory();
-          commonFactory.toastMessage(`Archivo ${name} fue borrado!`, 'info');
-        });
-    }
-  }
+
 
   function checkBlueprintCompletedApprovals() {
     let approved = false;
@@ -426,7 +493,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     $scope.selectedDocument.status = "Publicado";
     $scope.selectedDocument.flow.published = true;
     $scope.selectedDocument.flow.readyToPublish = false;
-    if (!$scope.selectedDocument.request.dataUpdateOnly) {
+    if ($scope.selectedDocument.request && !$scope.selectedDocument.request.dataUpdateOnly) {
       $scope.selectedDocument.publication.revision += 1;
     }
     if ($scope.selectedDocument.periodExpirationTime) {
@@ -449,6 +516,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     $scope.isQA = false;
     $scope.isSGIA = false;
     $scope.canApprove = false;
+    $scope.selectedFile = {};
     retrieveDocument();
     retrieveDocumentHistory();
     retrieveBusiness();

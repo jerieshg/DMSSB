@@ -55,15 +55,26 @@ module.exports = function(router) {
   let multer = require('multer');
   let storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      //GENERATE UNIQUE CODE FOR DOCUMENT UPLOAD, SINCE THE NAME CAN CHANGE!!
       let doc = new require('../models/Document')(JSON.parse(req.body.document));
-      let completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.fileUUID}/`);
+      let completePath;
+      if (req.originalUrl.includes("historic-files")) {
+        completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.fileUUID}/history/`);
+      } else {
+        completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.fileUUID}/`);
+      }
+
       fse.mkdirsSync(completePath);
       cb(null, completePath);
     },
     filename: function(req, file, cb) {
       let doc = new require('../models/Document')(JSON.parse(req.body.document));
-      let completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.fileUUID}/`);
+
+      let completePath;
+      if (req.originalUrl.includes("historic-files")) {
+        completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.fileUUID}/history/`);
+      } else {
+        completePath = path.join(__dirname, `/../../../uploads/${doc.business}/${doc.department}/${doc.fileUUID}/`);
+      }
 
       fs.exists(completePath + file.originalname, function(exists) {
         let uploadedFileName = '';
@@ -267,7 +278,12 @@ module.exports = function(router) {
   router.route('/api/documents/pending/:id/')
     .get(Document.findPendingDocuments);
   router.route('/api/documents/:id/approvals/')
-    .put(Document.updateApprovals)
+    .put(Document.updateApprovals);
+  router.route('/api/documents/historic-files/')
+    .post(Document.updateHistoricFiles)
+    .put(upload.any(), Document.updateHistoricFiles);
+  router.route('/api/documents/:id/historic-files/:name')
+    .delete(Document.deleteHistoricFile);
 
   //Document History ROUTES
   router.route('/api/documents-history/')

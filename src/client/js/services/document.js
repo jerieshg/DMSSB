@@ -2,6 +2,19 @@
 
   function documentService($http, commonFactory) {
 
+    var updateHistoricFiles = function(doc) {
+      return $http.post('/api/documents/historic-files/', angular.toJson(doc))
+        .then((response) => {
+          commonFactory.toastMessage(`Documento ${doc.name} fue actualizado!`, 'success');
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
+          return error;
+        });
+    }
+
     var _delete = function(id) {
       return $http.delete(`/api/documents/${id}`)
         .then((response) => {
@@ -78,12 +91,27 @@
         });
     };
 
+    var deleteHistoricFile = function(id, name) {
+      return $http.delete(`/api/documents/${id}/historic-files/${name}`)
+        .then((response) => {
+          commonFactory.toastMessage(`Archivo borrado exitosamente!`, 'info');
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          commonFactory.toastMessage(`Oops! Algo erroneo paso: ${error.data.errmsg}`, 'danger');
+          return error;
+        });
+    };
+
     return {
       delete: _delete,
       save: save,
       update: update,
       updateApprovals: updateApprovals,
-      deleteFile: deleteFile
+      deleteFile: deleteFile,
+      updateHistoricFiles: updateHistoricFiles,
+      deleteHistoricFile: deleteHistoricFile
     };
   }
 

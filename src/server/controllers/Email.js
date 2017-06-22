@@ -159,7 +159,7 @@ module.exports.sendDocumentReminder = function(req, res, next) {
           from: 'notificaciones.enersa.dsm@gmail.com',
           subject: `Revision pendiente de ${doc.name}`,
           to: emails.join(", "),
-          html: `Usted tiene una revision pendiente para el documento ${doc.name}. Por favor ingresar a la aplicacion web y en la seccion de pendientes se mostrara el documento.`
+          html: `Usted tiene una revision pendiente para el documento ${doc.name}. Por favor ingresar a la aplicacion web y en la seccion de pendientes se mostrara el documento disponible.`
         };
 
         transporter.sendMail(newEmail, (error, info) => {

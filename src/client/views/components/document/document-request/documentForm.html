@@ -4,6 +4,7 @@
   <div ng-include="'views/components/document/document-request/approveDocumentModal.html'"></div>
   <div ng-include="'views/components/document/document-request/physicalFileModal.html'"></div>
   <div ng-include="'views/components/document/document-request/filesModal.html'"></div>
+  <div ng-include="'views/components/document/document-request/deleteFileModal.html'"></div>
 
   <div class="row">
     <div class="col-sm-12">
@@ -47,8 +48,8 @@
       <input name="docName" type="text" class="form-control" placeholder="Nombre del documento o registro" ng-model="selectedDocument.name" required ng-disabled="!edit">
     </div>
     <div class="col-sm-2">
-      <label for="verison">Version vigente:</label>
-      <input name="verison" type="text" class="form-control" placeholder="Version vigente" ng-value="selectedDocument.publication.revision | numberFixedLen: 3" required ng-disabled="true">
+      <label for="version">Version vigente:</label>
+      <input name="version" type="text" class="form-control" placeholder="Version vigente" ng-value="selectedDocument.publication.revision | numberFixedLen: 3" required ng-disabled="!client.documentaryCenterAdmin || !edit">
     </div>
     <div class="col-sm-3">
       <label for="priority">Prioridad:</label>
@@ -132,9 +133,8 @@
   </form>
   <!-- END FORM -->
   <div class="form-divider"></div>
-  <div class="col-sm-12" ng-show="selectedDocument._id"></div>
   <div class="col-sm-12" ng-show="selectedDocument._id">
-    <h4>Archivos</h4>
+    <h4>Archivos Actuales</h4>
     <table class="table table-hover">
       <thead>
         <tr>
@@ -143,7 +143,10 @@
           <td>Publicado</td>
           <td>
             <div class="fa fa-cloud-upload" aria-hidden="true" ngf-select ng-model="files" ngf-multiple="true" title="Subir document o registro electronico"
-            data-toggle="modal"  data-target="#filesModal"/>
+            data-toggle="modal"  data-target="#filesModal" ng-click="shouldResetFlow = true;"/>
+
+            <div class="fa fa-upload" aria-hidden="true" ngf-select ng-model="files" ngf-multiple="true" title="Subir document o registro electronico sin reiniciar el flujo"
+            data-toggle="modal"  data-target="#filesModal" ng-click="shouldResetFlow = false;" ng-show="client.documentaryCenterAdmin"/>
           </td>
         </tr>
       </thead>
@@ -157,10 +160,40 @@
              <a href="#" ng-click="download(file.fileName,file.path)">Descarga</a>
              <label>|</label>
            </span>
-           <i class="fa fa-trash" aria-hidden="true" ng-click="deleteFile(file.fileName)" ng-if="client.documentaryCenterAdmin"></i>
+           
+           <i class="fa fa-trash" aria-hidden="true" ng-if="client.documentaryCenterAdmin" data-toggle="modal"  data-target="#deleteFileModal" ng-click="selectFile(file, $index)"></i>
          </td>
        </tr>
      </tbody>
    </table>
  </div>
+ <div class="form-divider"></div>
+ <div class="col-sm-12" ng-show="selectedDocument._id">
+  <h4>Archivos Historicos</h4>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <td>#</td>
+        <td>Nombre</td>
+        <td>
+          <div class="fa fa-cloud-upload" aria-hidden="true" ngf-select="uploadHistoricFiles()" ng-model="historicFiles" ngf-multiple="true" title="Subir document o registro electronico"/>
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="file in selectedDocument.historicFiles">
+        <td >{{$index + 1}}</td>
+        <td>{{file.fileName}}</td>
+        <td>
+          <span ng-if="file.path">
+           <a href="#" ng-click="download(file.fileName,file.path)">Descarga</a>
+           <label>|</label>
+         </span>
+
+         <i class="fa fa-trash" aria-hidden="true" ng-if="client.documentaryCenterAdmin" ng-click="deleteHistoricFile(file)"></i>
+       </td>
+     </tr>
+   </tbody>
+ </table>
+</div>
 </div>

@@ -33,7 +33,7 @@
      </tr>
    </thead>
    <tbody>
-     <tr ng:repeat="e in documents | filter:search | orderBy: 'status' : true" ng-class="{'danger' : e.status === 'Anulado'}">
+     <tr ng:repeat="e in documents | filter:search | orderBy: 'created' : true" ng-class="{'danger' : e.status === 'Anulado'}">
        <td >{{$index + 1}}</td>
        <td>{{e.name}}</td>
        <td>{{e.status}}</td>

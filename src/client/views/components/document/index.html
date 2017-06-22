@@ -56,33 +56,41 @@
         </a>
       </td>
       <td>
-       <a href="#" ng-click="sortType = 'business'; sortReverse = !sortReverse">
-         <strong>Planta</strong>
-         <span ng-show="sortType == 'business' && !sortReverse" class="fa fa-caret-down"></span>
-         <span ng-show="sortType == 'business' && sortReverse" class="fa fa-caret-up"></span>
-       </a>
-     </td>
-     <td>
-      <a href="#" ng-click="sortType = 'type.type'; sortReverse = !sortReverse">
-       <strong>Tipo</strong>
-       <span ng-show="sortType == 'type.type' && !sortReverse" class="fa fa-caret-down"></span>
-       <span ng-show="sortType == 'type.type' && sortReverse" class="fa fa-caret-up"></span>
-     </a>
-   </td>
-   <td>
-     <a href="#" ng-click="sortType = 'publication.code'; sortReverse = !sortReverse">
-      <strong>Codigo</strong>
-      <span ng-show="sortType == 'publication.code' && !sortReverse" class="fa fa-caret-down"></span>
-      <span ng-show="sortType == 'publication.code' && sortReverse" class="fa fa-caret-up"></span>
+       <a href="#" ng-click="sortType = 'publication.code'; sortReverse = !sortReverse">
+        <strong>Codigo</strong>
+        <span ng-show="sortType == 'publication.code' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'publication.code' && sortReverse" class="fa fa-caret-up"></span>
+      </a>
+    </td>
+    <td>
+     <a href="#" ng-click="sortType = 'publication.revision'; sortReverse = !sortReverse">
+      <strong>Revision</strong>
+      <span ng-show="sortType == 'publication.revision' && !sortReverse" class="fa fa-caret-down"></span>
+      <span ng-show="sortType == 'publication.revision' && sortReverse" class="fa fa-caret-up"></span>
     </a>
   </td>
   <td>
-   <a href="#" ng-click="sortType = 'publication.revision'; sortReverse = !sortReverse">
-    <strong>Revision</strong>
-    <span ng-show="sortType == 'publication.revision' && !sortReverse" class="fa fa-caret-down"></span>
-    <span ng-show="sortType == 'publication.revision' && sortReverse" class="fa fa-caret-up"></span>
+    <a href="#" ng-click="sortType = 'type.type'; sortReverse = !sortReverse">
+     <strong>Tipo</strong>
+     <span ng-show="sortType == 'type.type' && !sortReverse" class="fa fa-caret-down"></span>
+     <span ng-show="sortType == 'type.type' && sortReverse" class="fa fa-caret-up"></span>
+   </a>
+ </td>
+ <td>
+   <a href="#" ng-click="sortType = 'business'; sortReverse = !sortReverse">
+     <strong>Planta</strong>
+     <span ng-show="sortType == 'business' && !sortReverse" class="fa fa-caret-down"></span>
+     <span ng-show="sortType == 'business' && sortReverse" class="fa fa-caret-up"></span>
+   </a>
+ </td>
+ <td>
+   <a href="#" ng-click="sortType = 'department'; sortReverse = !sortReverse">
+    <strong>Departamento</strong>
+    <span ng-show="sortType == 'department' && !sortReverse" class="fa fa-caret-down"></span>
+    <span ng-show="sortType == 'department' && sortReverse" class="fa fa-caret-up"></span>
   </a>
 </td>
+
 <td>
  <a href="#" ng-click="sortType = 'publication.publicationDate'; sortReverse = !sortReverse">
    <strong>Fecha de publicacion</strong>
@@ -105,6 +113,13 @@
  </a>
 </td>
 <td>
+ <a href="#" ng-click="sortType = 'periodExpirationTime'; sortReverse = !sortReverse">
+   <strong>Periodo de revision</strong>
+   <span ng-show="sortType == 'periodExpirationTime' && !sortReverse" class="fa fa-caret-down"></span>
+   <span ng-show="sortType == 'periodExpirationTime' && sortReverse" class="fa fa-caret-up"></span>
+ </a>
+</td>
+<td>
  <strong>Tiempo restante</strong>
 </td>
 <td><strong>Estado</strong></td>
@@ -118,8 +133,6 @@
   <tr ng:repeat="e in documents  | orderBy:sortType:sortReverse" ng-class="{'danger' : e.status === 'Anulado'}">
    <td >{{$index+1}}</td>
    <td>{{e.name}}</td>
-   <td>{{e.business}}</td>
-   <td>{{e.type.type}}</td>
    <td>
      <a href="#" ng-click="downloadFiles(e)" title="Descargar los archivos">
        {{e.publication.code}}
@@ -128,13 +141,17 @@
    <td>
     {{e.publication.revision}}
   </td>
+  <td>{{e.type.type}}</td>
+  <td>{{e.business}}</td>
+  <td>{{e.department}}</td>
   <td>{{e.publication.publicationDate | date: 'yyyy/MM/dd'}}</td>
   <td>
     {{e.timeStored ? e.timeStored + ' meses': 'Indefinido'}}
   </td>
   <td>{{e.expiredDate ? e.expiredDate : 'Indefinido' | date: 'yyyy/MM/dd'}}</td>
+  <td>{{e.periodExpirationTime ? e.periodExpirationTime + ' meses' : 'Indefinido'}}</td>
   <td>{{expiredCheck[e._id].time + expiredCheck[e._id].suffix}}</td>
-  <td ng-class="{'warning-doc' : expiredCheck[e._id].time > 0 && expiredCheck[e._id].time < 32, 'expired-doc' : expiredCheck[e._id].time < 1, 'good-doc' : expiredCheck[e._id].time  > 31 || expiredCheck[e._id].time === 'Indefinido'}">
+  <td ng-class="{'warning-doc' : expiredCheck[e._id].time > 0 && expiredCheck[e._id].time < 63, 'expired-doc' : expiredCheck[e._id].time < 1, 'good-doc' : expiredCheck[e._id].time  > 62 || expiredCheck[e._id].time === 'Indefinido'}">
   </td>
   <td>
    {{filesLocation(e)}}
