@@ -200,6 +200,8 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
             if (objectKey === 'key') {
               return;
             }
+            
+            let objValue = value.value[objectKey];
             if (objValue.changed && objValue.added && !isJson(objValue.added)) {
               changed.push(key);
               $scope.documentHistory.history.push({
