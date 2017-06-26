@@ -46,15 +46,22 @@ module.exports.downloadAllFiles = function(req, res, next) {
     doc.files
       .filter((e) => e.published)
       .forEach((file) => {
-        archive.file(file.path, {
-          name: file.fileName
-        });
+        if (fs.existsSync(file.path)) {
+          archive.file(file.path, {
+            name: file.fileName
+          });
+        }
       });
 
     var output = fs.createWriteStream(`${basePath}/${fileName}`);
 
     output.on('close', function() {
       fs.unlink(`${basePath}${fileName}`);
+    });
+
+    output.on('error', function(error) {
+      next(error);
+      return res.send(error);
     });
 
     //set the archive name

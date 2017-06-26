@@ -20,7 +20,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
     }).then(function(response) {
       $scope.selectedDocument.historicFiles = response.data.historicFiles;
       commonFactory.toastMessage('Guardado exitosamente!', 'success');
-      updateDocumentHistory();
+      updateDocumentHistory(false);
     }, function(response) {
       if (response.status > 0) {
         $scope.errorMsg = response.status + ': ' + response.data;
@@ -49,7 +49,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       documents.deleteHistoricFile($stateParams.id, file.fileName)
         .then((data) => {
           $scope.selectedDocument.historicFiles = data.historicFiles;
-          updateDocumentHistory();
+          updateDocumentHistory(false);
         });
     }
   }
@@ -59,7 +59,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       documents.deleteFile($stateParams.id, $scope.selectedFile.file.fileName)
         .then((data) => {
           $scope.selectedDocument.files = data.files;
-          updateDocumentHistory();
+          updateDocumentHistory(false);
           $scope.selectedFile.fileName = null;
         });
     }
@@ -112,7 +112,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
       }).then(function(response) {
         $scope.selectedDocument.files = response.data.files;
         commonFactory.toastMessage('Guardado exitosamente!', 'success');
-        updateDocumentHistory();
+        updateDocumentHistory(false);
       }, function(response) {
         if (response.status > 0) {
           $scope.errorMsg = response.status + ': ' + response.data;
@@ -178,11 +178,11 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         $scope.selectedApproved = {};
       });
 
-    updateDocumentHistory();
+    updateDocumentHistory(false);
     $('#approveDocumentModal').modal('toggle');
   }
 
-  function updateDocumentHistory() {
+  function updateDocumentHistory(shouldResetFlow) {
     let changed = [];
 
     var diff = ObjectDiff.diffOwnProperties($scope.originalDocument, $scope.selectedDocument);
@@ -200,7 +200,7 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
             if (objectKey === 'key') {
               return;
             }
-            
+
             let objValue = value.value[objectKey];
             if (objValue.changed && objValue.added && !isJson(objValue.added)) {
               changed.push(key);
@@ -315,6 +315,18 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         });
       }
 
+      if (shouldResetFlow && changed.length > 0) {
+        resetFlow();
+        updateDocumentHistory(false);
+        return;
+      }
+
+      saveDocumentHistory();
+
+      return changed;
+    }
+
+    function saveDocumentHistory() {
       let url = `/api/documents-history/${(!$scope.documentHistory.new) ? $scope.documentHistory.docId : ''}`;
       let method = $scope.documentHistory.new ? 'POST' : 'PUT';
 
@@ -331,19 +343,12 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
           commonFactory.toastMessage('Woops! Algo paso!', 'danger');
         });
     }
-
-    return changed;
   }
 
   $scope.saveDocument = function() {
     if (commonFactory.dialog("Esta seguro de guardar el documento? El documento volvera a un estado inicial en donde se reinicara el flujo de documentos.")) {
-
       //updates document history
-      let changed = updateDocumentHistory();
-
-      if (changed.length > 0) {
-        resetFlow();
-      }
+      let changed = updateDocumentHistory(true);
 
       documents.update($scope.selectedDocument)
         .then((response) => {

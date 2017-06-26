@@ -50,6 +50,8 @@ module.exports = function(router) {
   let Email = require('../controllers/Email');
   //Request Type
   let RequestType = require('../controllers/Request-Type');
+  //Report
+  let Report = require('../controllers/Report');
 
   //IMAGE UPLOAD CONFIG
   let multer = require('multer');
@@ -311,6 +313,9 @@ module.exports = function(router) {
     .get(Email.sendRejectedDocument);
   router.route('/api/email/documents/:docId/document-reminder/')
     .post(Email.sendDocumentReminder);
+
+  router.route('/api/reports/documentaryCenter/')
+    .post(Report.documentaryCenterReport);
 
   // router to handle all angular requests
   router.get('*', function(req, res) {
