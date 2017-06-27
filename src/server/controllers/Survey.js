@@ -194,7 +194,7 @@
         next(error);
         return res.send(error);
       }
-
+      
       if (!survey.general) {
         survey.questions = survey.questions.filter(question => question.clients.includes(client));
       }
@@ -235,7 +235,7 @@
     let dept = new Buffer(req.params.dept, 'binary').toString('utf8');
 
     Survey.find({
-      department: dept
+      department: req.params.dept
     }, function(error, surveys) {
       if (error) {
         res.status(500);

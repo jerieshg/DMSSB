@@ -314,8 +314,10 @@ module.exports = function(router) {
   router.route('/api/email/documents/:docId/document-reminder/')
     .post(Email.sendDocumentReminder);
 
-  router.route('/api/reports/documentaryCenter/')
-    .post(Report.documentaryCenterReport);
+  router.route('/api/reports/documentary-center/')
+    .post(Report.documentaryCenterReport)
+  router.route('/api/reports/evalute-request-step/')
+    .post(Report.evaluateRequestStepReport)
 
   // router to handle all angular requests
   router.get('*', function(req, res) {

@@ -1,0 +1,109 @@
+<div class="animated fadeIn">
+
+ <div id="alertArea"></div>
+
+ <form class="row row-separator" ng-submit="executeReport()">
+  <div class="col-sm-4">
+    <label for="requiredDate">Fecha inicio:</label>
+    <datepicker date-format="yyyy-MM-dd">
+      <input name="startDate" type="text" class="form-control" placeholder="Fecha inicio" ng-model="selectedCriteria.startDate" required>
+    </datepicker>
+  </div>
+  <div class="col-sm-4">
+    <label for="requiredDate">Fecha fin:</label>
+    <datepicker date-format="yyyy-MM-dd">
+      <input name="endDate" type="text" class="form-control" placeholder="Fecha fin" ng-model="selectedCriteria.endDate" required>
+    </datepicker>
+  </div>
+
+  <div class="col-sm-4">
+    <label>Dias de gracia</label>
+    <input type="number" class="form-control" ng-model="selectedCriteria.graceDays" placeholder="Dias de gracia" title="Este campo sera de comparativo para ver si un documento esta dentro de las fechas" />
+  </div>
+
+  <div class="form-divider"></div>
+
+  <div class="col-sm-6">
+    <label>Reporte:</label>
+    <select name="report" id="report" class="form-control" ng-model="selectedReport" ng-options="item as item.name for item in reports" required>
+      <option value="">Seleccione un reporte  {{optional ? '(optional)' : ''}}</option>
+    </select>
+  </div>
+
+  <div class="form-divider"></div>
+  <div class="row col-sm-12 row-separator" ng-show="selectedReport.method==='evaluateRequestStepReport'">
+    <div class="col-sm-4">
+      <label for="tipo">Estado de aprobacion:</label>
+      <select class="form-control" ng-model="selectedCriteria.step" ng-options="item.status as item.status for item in documentStatuses" title="Este item es para seleccionar un nombre para el paso seleccionado">
+        <option value="">Seleccione un nombre {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+      <label for="tipo">Tipo:</label>
+      <select name="tipo" id="tipo" class="form-control" ng-model="selectedCriteria.type" ng-options="item as item.type for item in docTypes track by item.type">
+        <option value="">Seleccione un tipo  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+    <div class="col-sm-4" ng-show="selectedCriteria.type">
+      <label>Solicitud</label>
+      <select name="request" class="form-control" ng-model="selectedCriteria.request" ng-options="item.key as item.key for item in retrieveRequests() track by item.key">
+        <option value="">Seleccione una solicitud  {{optional ? '(optional)' : ''}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-sm-4">
+   <button type="submit" class="btn btn-success" type="submit">
+    <i class="fa fa-save" aria-hidden="true"/>  Realizar
+  </button>
+</div>
+</form>
+
+
+<div class="row">
+<div class="col-sm-2 row-separator">
+    <div class="report-grade">
+      <strong>Nota:</strong>
+    </div>
+    <div style="background-color: white;text-align:center">
+      <strong>  {{grade}}%</strong>
+    </div>
+  </div>
+  <div class="col-sm-12">
+    <table class="table table-hover table-responsive" >
+      <thead>
+        <tr>
+         <td><strong>#</strong></td>
+         <td><strong>Nombre</strong></td>
+         <td><strong>Estado</strong></td>
+         <td><strong>Tipo</strong></td>
+         <td><strong>Planta</strong></td>
+         <td><strong>Departamento</strong></td>
+         <td><strong>Solicitante</strong></td>
+         <td><strong>Fecha Requerida</strong></td>
+         <td><strong>Periodo de revision</strong></td>
+         <td><strong>Fecha de revision</strong></td>
+         <td><strong>Dias de diferencia</strong></td>
+       </tr>
+     </thead>
+     <tbody>
+       <tr ng:repeat="e in report" ng-class="{'danger' : e.status === 'Anulado'}">
+         <td >{{$index + 1}}</td>
+         <td>{{e.document.name}}</td>
+         <td>{{e.document.status}}</td>
+         <td>{{e.document.type.type}}</td>
+         <td>{{e.document.business}}</td>
+         <td>{{e.document.department}}</td>
+         <td>{{e.document.createdBy.username}}</td>
+         <td>{{e.document.requiredDate | date: 'yyyy/MM/dd'}}</td>
+         <td>{{e.document.periodExpirationTime ? e.document.periodExpirationTime + ' meses': 'Indefinido' }}</td>
+         <td>{{e.document.expiredDate | date: 'yyyy/MM/dd'}}</td>
+         <td>{{e.daysDifference}}</td>
+       </tr>
+     </tbody>
+   </table>
+ </div>
+</div>
+
+
+<!-- End .row -->
+</div>

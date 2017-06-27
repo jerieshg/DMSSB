@@ -2,21 +2,24 @@
     <nav class="sidebar-nav">
         <ul class="nav">
 
-           <li class="nav-item">
+         <li class="nav-item">
             <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.main"><i class="fa fa-hdd-o"></i>Centro Documental</a>
         </li>
 
         <li class="nav-item nav-dropdown" ng-class="{open: $state.includes('app.docs')}" >
             <a class="nav-link nav-dropdown-toggle" ng-class="{active: $state.includes('app.docs')}" href="#"><i class="fa fa-laptop"></i>Solicitud de documentos o registros nuevos</a>
             <ul class="nav-dropdown-items">
-               <li class="nav-item" >
-                   <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.request"><i class="fa fa-table"></i> Mis solicitudes</a>
-               </li>
-               <li class="nav-item" >
+             <li class="nav-item" >
+                 <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.request"><i class="fa fa-table"></i> Mis solicitudes</a>
+             </li>
+             <li class="nav-item" >
                 <a class="nav-link" ui-sref-active="active" ui-sref="app.docs.pending"><i class="fa fa-table"></i> Pendientes</a>
             </li>
-            
         </ul>
+
+            <!--  <li class="nav-item">
+                <a class="nav-link" ui-sref-active="active" ui-sref="app.reports.main"><i class="fa fa-hdd-o"></i>Reportes</a>
+            </li> -->
     </li>
     
     <li class="form-divider" style="height:1px;"></li>
@@ -67,7 +70,7 @@
         </ul>
     </li>
 
-     <li class="form-divider" style="height:1px;"></li>
+    <li class="form-divider" style="height:1px;"></li>
 
     <li class="nav-item nav-dropdown" >
         <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user"></i> Perfil</a>
@@ -75,18 +78,18 @@
             <li class="nav-item" >
               <div  ng-controller="changePasswordController">
                 <a class="dropdown-item" href="#" ng-click="resetPasswordForm()" data-toggle="modal" data-target="#changePasswordModal" style="color:white;">
-                <i class="fa fa-user-secret"></i> Cambiar contraseña
+                    <i class="fa fa-user-secret"></i> Cambiar contraseña
                 </a>
             </div>
         </li>
         <li class="nav-item" >
             <div  ng-controller="logoutController">
-               <a class="dropdown-item" href="#" ng-click="logout()" style="color:white;">
-               <i class="fa fa-lock"></i> Logout
-               </a>
-           </div>
-       </li>
-   </ul>
+             <a class="dropdown-item" href="#" ng-click="logout()" style="color:white;">
+                 <i class="fa fa-lock"></i> Logout
+             </a>
+         </div>
+     </li>
+ </ul>
 </li>
 
 

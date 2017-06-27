@@ -650,25 +650,59 @@ angular
           isAdminRequired: false
         }
       })
-      //SIMPLE PAGES
-      .state('appSimple', {
+      .state('app.reports', {
+        url: "/reports",
         abstract: true,
-        templateUrl: 'views/common/layouts/simple.html',
-        resolve: {
-          loadPlugin: ['$ocLazyLoad', function($ocLazyLoad) {
-            // you can lazy load files for an existing module
-            return $ocLazyLoad.load([{
-              serie: true,
-              name: 'Font Awesome',
-              files: ['css/font-awesome.min.css']
-            }, {
-              serie: true,
-              name: 'Simple Line Icons',
-              files: ['css/simple-line-icons.css']
-            }]);
-          }],
+        template: '<ui-view></ui-view>',
+        ncyBreadcrumb: {
+          label: 'Reportes'
+        },
+        data: {
+          isAdminRequired: false
         }
       })
+      .state('app.reports.main', {
+        url: '/home',
+        templateUrl: 'views/components/report/index.html',
+        //page title goes here
+        ncyBreadcrumb: {
+          label: 'Inicio',
+        },
+        controller: 'reportsController',
+        resolve: {
+          loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+            // you can lazy load controllers
+            return $ocLazyLoad.load({
+              files: ['js/controllers/report/report.js']
+            });
+          }]
+        },
+        data: {
+          isAdminRequired: false,
+          showConfirmDialog: true
+        }
+      })
+
+
+    //SIMPLE PAGES
+    .state('appSimple', {
+      abstract: true,
+      templateUrl: 'views/common/layouts/simple.html',
+      resolve: {
+        loadPlugin: ['$ocLazyLoad', function($ocLazyLoad) {
+          // you can lazy load files for an existing module
+          return $ocLazyLoad.load([{
+            serie: true,
+            name: 'Font Awesome',
+            files: ['css/font-awesome.min.css']
+          }, {
+            serie: true,
+            name: 'Simple Line Icons',
+            files: ['css/simple-line-icons.css']
+          }]);
+        }],
+      }
+    })
 
     // Additional Pages
     .state('appSimple.login', {

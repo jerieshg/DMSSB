@@ -144,7 +144,8 @@ gulp.task('scripts', () => {
         paths.src.scripts + 'services/email.js',
         paths.src.scripts + 'services/request-type.js',
         paths.src.scripts + 'services/document-status.js',
-        paths.src.scripts + 'services/survey-response.js'
+        paths.src.scripts + 'services/survey-response.js',
+        paths.src.scripts + 'services/report.js'
       ]
     })
     .transform("babelify", {
