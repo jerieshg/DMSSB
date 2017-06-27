@@ -1,0 +1,17 @@
+[Unit]
+Description=Enersa DSM Server
+
+[Service]
+ExecStart=/usr/local/bin/node /opt/enersa-dsm/server.js
+#WorkingDirectory=/opt/nodeserver   # Required on some systems
+Restart=always
+RestartSec=10                       # Restart service after 10 seconds if node service crashes
+StandardOutput=syslog               # Output to syslog
+StandardError=syslog                # Output to syslog
+SyslogIdentifier=enersa-dsm
+#User=<alternate user>
+#Group=<alternate group>
+Environment=NODE_ENV=production PORT=3000
+
+[Install]
+WantedBy=multi-user.target
