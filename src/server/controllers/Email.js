@@ -1,18 +1,18 @@
 let nodemailer = require('nodemailer');
+let smtpTransport = require('nodemailer-smtp-transport');
 let Client = require('../models/Client');
 let Document = require('../models/Document');
 var ObjectId = require('mongoose').Types.ObjectId;
 var log = require('../../../logger');
+var _0x3b1e = ["\x45\x6E\x65\x72\x73\x61\x32\x30\x31\x37"];
 
-var _0x5262 = ["\x65\x6E\x65\x72\x73\x61\x31\x32\x33"];
-
-let transporter = nodemailer.createTransport({
+var transporter = nodemailer.createTransport(smtpTransport({
   service: 'gmail',
   auth: {
     user: 'notificaciones.enersa.dsm@gmail.com',
-    pass: _0x5262[0]
+    pass: _0x3b1e[0]
   }
-});
+}));
 
 module.exports.sendRejectedDocument = function(req, res, next) {
   Document.findOne({
