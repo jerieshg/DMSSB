@@ -290,7 +290,12 @@ function UpdateDocumentController($rootScope, $scope, $http, $stateParams, Uploa
         });
       }
 
-      let changedRequest = ($scope.selectedDocument.request.key !== $scope.originalDocument.request.key);
+      let originalRequestKey;
+      if ($scope.originalDocument.request) {
+        originalRequestKey = $scope.originalDocument.request.key;
+      }
+      
+      let changedRequest = ($scope.selectedDocument.request.key !== originalRequestKey);
       if (changedRequest) {
         $scope.selectedDocument.createdBy = {
           _id: $rootScope.client._id,
