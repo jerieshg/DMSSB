@@ -14,24 +14,28 @@ function ReportsController($rootScope, $scope, $http, commonFactory, reports, do
     }, {
       name: 'Evaluacion de documentos listos para publicar',
       method: 'documentaryCenterReport'
+    }, {
+      name: 'Evaluacion de documentos rechazados',
+      method: 'evaluateRejectedDocuments',
+      department: true
+    }, {
+      name: 'Evaluacion de documentos en revision',
+      method: 'evaluateDocumentsUnderReview',
+      department: true
+    }, {
+      name: 'Evaluacion de documentos por expirar',
+      method: 'evaluateExpiredDocuments',
+      department: true
     }];
+    
     $scope.reports.sort((a, b) => a.name > b.name);
   }
-
-
 
   $scope.executeReport = function() {
     reports[$scope.selectedReport.method]($scope.selectedCriteria)
       .then((response) => {
         console.log(response);
         $scope.report = response.data;
-        let correct = 0;
-        $scope.report.forEach((e) => {
-          if ($scope.selectedCriteria.graceDays - e.daysDifference >= 0) {
-            correct++;
-          }
-        });
-        $scope.grade = (correct / $scope.report.length) * 100;
       });
   }
 
@@ -64,9 +68,9 @@ function ReportsController($rootScope, $scope, $http, commonFactory, reports, do
     documentStatus.readAll()
       .then((data) => {
         $scope.documentStatuses = data;
-        $scope.documentStatuses.push({
-          status: "Lista de autorizaciones"
-        });
+        // $scope.documentStatuses.push({
+        //   status: "Lista de autorizaciones"
+        // });
       })
   }
 }

@@ -1,4 +1,4 @@
-<div class="animated fadeIn">
+<div class="animated fadeIn" style="min-height: 400px;">
 
  <div id="alertArea"></div>
 
@@ -59,16 +59,68 @@
 </form>
 
 
-<div class="row">
-<div class="col-sm-2 row-separator">
-    <div class="report-grade">
-      <strong>Nota:</strong>
+<div class="row" ng-if="report">
+  <div class="col-sm-2 row-separator">
+    <div class="report-grade" title="Nota general es basado en todos los documentos que estan correctos entre el total de documentos">
+      <strong>Nota general:</strong>
     </div>
-    <div style="background-color: white;text-align:center">
-      <strong>  {{grade}}%</strong>
+    <div style="background-color: yellow;text-align:center">
+      <strong>  {{report.grade}}%</strong>
     </div>
   </div>
-  <div class="col-sm-12">
+
+  <div class="row col-sm-12 row-separator" ng-if="report.departmentFiltered">
+    <div ng-repeat="(key, value) in report.departmentFiltered" class="col-sm-2">
+     <div class="report-grade">
+      <strong>{{key}}:</strong>
+    </div>
+    <div style="background-color: white;text-align:center">
+      <strong>  {{value.grade}}%</strong>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="col-sm-12" ng-if="!selectedReport.department && report">
+  <table class="table table-hover table-responsive" >
+    <thead>
+      <tr>
+       <td><strong>#</strong></td>
+       <td><strong>Nombre</strong></td>
+       <td><strong>Estado</strong></td>
+       <td><strong>Tipo</strong></td>
+       <td><strong>Planta</strong></td>
+       <td><strong>Departamento</strong></td>
+       <td><strong>Solicitante</strong></td>
+       <td><strong>Fecha Requerida</strong></td>
+       <td><strong>Periodo de revision</strong></td>
+       <td><strong>Fecha de revision</strong></td>
+       <td><strong>Dias de diferencia</strong></td>
+     </tr>
+   </thead>
+   <tbody>
+     <tr ng:repeat="e in report.response" ng-class="{'danger' : e.status === 'Anulado'}">
+       <td >{{$index + 1}}</td>
+       <td>{{e.document.name}}</td>
+       <td>{{e.document.status}}</td>
+       <td>{{e.document.type.type}}</td>
+       <td>{{e.document.business}}</td>
+       <td>{{e.document.department}}</td>
+       <td>{{e.document.createdBy.username}}</td>
+       <td>{{e.document.requiredDate | date: 'yyyy/MM/dd'}}</td>
+       <td>{{e.document.periodExpirationTime ? e.document.periodExpirationTime + ' meses': 'Indefinido' }}</td>
+       <td>{{e.document.expiredDate | date: 'yyyy/MM/dd'}}</td>
+       <td>{{e.daysDifference}}</td>
+     </tr>
+   </tbody>
+ </table>
+</div>
+
+<div class="col-sm-12" ng-if="selectedReport.department">
+  <div ng-repeat="(key, value) in report.departmentFiltered">
+    <h4>{{key}}</h4>
+
     <table class="table table-hover table-responsive" >
       <thead>
         <tr>
@@ -86,7 +138,7 @@
        </tr>
      </thead>
      <tbody>
-       <tr ng:repeat="e in report" ng-class="{'danger' : e.status === 'Anulado'}">
+       <tr ng:repeat="e in value.response" ng-class="{'danger' : e.status === 'Anulado'}">
          <td >{{$index + 1}}</td>
          <td>{{e.document.name}}</td>
          <td>{{e.document.status}}</td>
@@ -102,6 +154,7 @@
      </tbody>
    </table>
  </div>
+</div>
 </div>
 
 

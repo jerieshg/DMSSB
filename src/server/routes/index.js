@@ -316,8 +316,14 @@ module.exports = function(router) {
 
   router.route('/api/reports/documentary-center/')
     .post(Report.documentaryCenterReport)
-  router.route('/api/reports/evalute-request-step/')
+  router.route('/api/reports/evaluate-request-step/')
     .post(Report.evaluateRequestStepReport)
+  router.route('/api/reports/evaluate-rejected-documents/')
+    .post(Report.evaluateRejectedDocuments)
+  router.route('/api/reports/evaluate-documents-review/')
+    .post(Report.evaluateDocumentsUnderReview)
+  router.route('/api/reports/evaluate-expired-documents/')
+    .post(Report.evaluateExpiredDocuments)
 
   // router to handle all angular requests
   router.get('*', function(req, res) {

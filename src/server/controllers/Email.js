@@ -7,14 +7,10 @@ var log = require('../../../logger');
 var _0xf75f = ["\x45\x6E\x65\x72\x73\x61\x32\x30\x31\x37"];
 
 var transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: 'notificaciones.enersa.dsm@gmail.com',
-    pass: _0xf75f[0]
-  }
+  host: 'mail.terra-energia.com',
+  port: 587,
 });
+var sender = 'admin.cd@terra-energia.com';
 
 module.exports.sendRejectedDocument = function(req, res, next) {
   Document.findOne({
@@ -37,7 +33,7 @@ module.exports.sendRejectedDocument = function(req, res, next) {
 
         if (client.email) {
           let newEmail = {
-            from: 'notificaciones.enersa.dsm@gmail.com',
+            from: sender,
             subject: `Documento ${doc.name} fue rechazado`,
             to: client.email,
             html: `El documento ${doc.name} ha sido ${doc.type.blueprint ? 'rechazado' : doc.status.toLowerCase()} por ${req.params.clientName}. Por favor revise los comentarios escritos dentro del documento. `
@@ -74,11 +70,15 @@ module.exports.expiredDocumentCheck = function() {
     }
 
     let aboutToExpireDocs = docs.filter((doc) => {
-      var expiredDate = new Date(doc.expiredDate);
-      var timeDiff = Math.abs(new Date().getTime() - expiredDate.getTime());
-      var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      let expiredDate = new Date(doc.expiredDate);
+      let today = new Date();
 
-      return diffDays <= 30;
+      var utc1 = Date.UTC(expiredDate.getFullYear(), expiredDate.getMonth(), expiredDate.getDate());
+      var utc2 = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+
+      let difference = Math.floor((utc1 - utc2) / (1000 * 60 * 60 * 24));
+
+      return differencesssss <= 60;
     });
 
     aboutToExpireDocs.forEach((doc) => {
@@ -93,7 +93,7 @@ module.exports.expiredDocumentCheck = function() {
 
           if (client.email) {
             let newEmail = {
-              from: 'notificaciones.enersa.dsm@gmail.com',
+              from: sender,
               subject: `Documento ${doc.name} esta por expirar!`,
               to: client.email,
               html: `El documento ${doc.name} vence el ${doc.expiredDate.toISOString().substring(0, 10)}. Por favor realice una revision al documento.`
@@ -158,7 +158,7 @@ module.exports.sendDocumentReminder = function(req, res, next) {
 
       if (emails.length > 0) {
         let newEmail = {
-          from: 'notificaciones.enersa.dsm@gmail.com',
+          from: sender,
           subject: `Revision pendiente de ${doc.name}`,
           to: emails.join(", "),
           html: `Usted tiene una revision pendiente para el documento ${doc.name}. Por favor ingresar a la aplicacion web y en la seccion de pendientes se mostrara el documento disponible.`
