@@ -4,13 +4,18 @@ let Document = require('../models/Document');
 var ObjectId = require('mongoose').Types.ObjectId;
 var log = require('../../../logger');
 
-var _0xf75f = ["\x45\x6E\x65\x72\x73\x61\x32\x30\x31\x37"];
+var _0x9478 = ["\x6D\x61\x69\x6C\x2E\x74\x65\x72\x72\x61\x2D\x65\x6E\x65\x72\x67\x69\x61\x2E\x63\x6F\x6D", "\x61\x64\x6D\x69\x6E\x2E\x63\x64\x40\x74\x65\x72\x72\x61\x2D\x65\x6E\x65\x72\x67\x69\x61\x2E\x63\x6F\x6D", "\x43\x44\x2E\x61\x64\x6D\x24\x32\x30\x31\x37"];
 
 var transporter = nodemailer.createTransport({
-  host: 'mail.terra-energia.com',
   port: 587,
+  host: _0x9478[0],
+  auth: {
+    user: _0x9478[1],
+    pass: _0x9478[2]
+  }
 });
-var sender = 'admin.cd@terra-energia.com';
+var _0xfe93 = ["\x61\x64\x6D\x69\x6E\x2E\x63\x64\x40\x74\x65\x72\x72\x61\x2D\x65\x6E\x65\x72\x67\x69\x61\x2E\x63\x6F\x6D"];
+var sender = _0xfe93[0]
 
 module.exports.sendRejectedDocument = function(req, res, next) {
   Document.findOne({

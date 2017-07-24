@@ -6,6 +6,7 @@ function ReportsController($rootScope, $scope, $http, commonFactory, reports, do
     retrieveDocTypes();
     retrieveDocumentStatus();
 
+    $scope.expiredCheck = {};
     $scope.selectedCriteria = {};
     $scope.selectedReport = {};
     $scope.reports = [{
@@ -25,10 +26,15 @@ function ReportsController($rootScope, $scope, $http, commonFactory, reports, do
     }, {
       name: 'Evaluacion de documentos por expirar',
       method: 'evaluateExpiredDocuments',
-      department: true
+      department: true,
+      showExpired: true
     }];
-    
+
     $scope.reports.sort((a, b) => a.name > b.name);
+  }
+
+  $scope.resetReport = function() {
+    $scope.report = {};
   }
 
   $scope.executeReport = function() {
@@ -36,6 +42,14 @@ function ReportsController($rootScope, $scope, $http, commonFactory, reports, do
       .then((response) => {
         console.log(response);
         $scope.report = response.data;
+
+        if ($scope.report.departmentFiltered) {
+          Object.keys($scope.report.departmentFiltered).forEach((key, index) => {
+            $scope.report.departmentFiltered[key].response.forEach((value) => {
+              calculateTimeMissing(value.document.expiredDate, value.document._id);
+            });
+          });
+        }
       });
   }
 
@@ -52,6 +66,26 @@ function ReportsController($rootScope, $scope, $http, commonFactory, reports, do
     }
 
     return null;
+  }
+
+  function calculateTimeMissing(date, index) {
+    $scope.expiredCheck[index] = {};
+
+    if (!date) {
+      $scope.expiredCheck[index].suffix = '';
+      $scope.expiredCheck[index].time = 'Indefinido';
+      return;
+    }
+
+    let expiredDate = new Date(date);
+    let today = new Date();
+
+    var utc1 = Date.UTC(expiredDate.getFullYear(), expiredDate.getMonth(), expiredDate.getDate());
+    var utc2 = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+
+    let difference = Math.floor((utc1 - utc2) / (1000 * 60 * 60 * 24));
+    $scope.expiredCheck[index].suffix = ' days';
+    $scope.expiredCheck[index].time = difference;
   }
 
   function retrieveDocTypes() {

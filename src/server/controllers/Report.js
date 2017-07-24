@@ -548,7 +548,9 @@ module.exports.evaluateExpiredDocuments = function(req, res, next) {
   }, (error, docs) => {
     let result = [];
 
-    let aboutToExpireDocs = docs.filter((doc, index) => {
+    let aboutToExpireDocs = docs.filter((e) => {
+      return e.expiredDate <= new Date(req.body.endDate)
+    }).filter((doc, index) => {
       let expiredDate = new Date(doc.expiredDate);
       let today = new Date();
 

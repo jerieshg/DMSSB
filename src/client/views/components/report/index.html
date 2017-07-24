@@ -3,10 +3,19 @@
  <div id="alertArea"></div>
 
  <form class="row row-separator" ng-submit="executeReport()">
+
+   <div class="col-sm-6">
+    <label>Reporte:</label>
+    <select name="report" id="report" class="form-control" ng-model="selectedReport" ng-options="item as item.name for item in reports" required ng-change="resetReport()">
+      <option value="">Seleccione un reporte  {{optional ? '(optional)' : ''}}</option>
+    </select>
+  </div>
+
+  <div class="form-divider"></div>
   <div class="col-sm-4">
     <label for="requiredDate">Fecha inicio:</label>
     <datepicker date-format="yyyy-MM-dd">
-      <input name="startDate" type="text" class="form-control" placeholder="Fecha inicio" ng-model="selectedCriteria.startDate" required>
+      <input name="startDate" type="text" class="form-control" placeholder="Fecha inicio" ng-model="selectedCriteria.startDate"  ng-disabled='selectedReport.showExpired'>
     </datepicker>
   </div>
   <div class="col-sm-4">
@@ -21,14 +30,9 @@
     <input type="number" class="form-control" ng-model="selectedCriteria.graceDays" placeholder="Dias de gracia" title="Este campo sera de comparativo para ver si un documento esta dentro de las fechas" />
   </div>
 
-  <div class="form-divider"></div>
+  
 
-  <div class="col-sm-6">
-    <label>Reporte:</label>
-    <select name="report" id="report" class="form-control" ng-model="selectedReport" ng-options="item as item.name for item in reports" required>
-      <option value="">Seleccione un reporte  {{optional ? '(optional)' : ''}}</option>
-    </select>
-  </div>
+
 
   <div class="form-divider"></div>
   <div class="row col-sm-12 row-separator" ng-show="selectedReport.method==='evaluateRequestStepReport'">
@@ -92,7 +96,7 @@
        <td><strong>Tipo</strong></td>
        <td><strong>Planta</strong></td>
        <td><strong>Departamento</strong></td>
-       <td><strong>Solicitante</strong></td>
+       <td><strong>Fecha de publicacion</strong></td>
        <td><strong>Fecha Requerida</strong></td>
        <td><strong>Periodo de revision</strong></td>
        <td><strong>Fecha de revision</strong></td>
@@ -107,7 +111,7 @@
        <td>{{e.document.type.type}}</td>
        <td>{{e.document.business}}</td>
        <td>{{e.document.department}}</td>
-       <td>{{e.document.createdBy.username}}</td>
+       <td>{{e.document.publication.publicationDate | date: 'yyyy/MM/dd'}}</td>
        <td>{{e.document.requiredDate | date: 'yyyy/MM/dd'}}</td>
        <td>{{e.document.periodExpirationTime ? e.document.periodExpirationTime + ' meses': 'Indefinido' }}</td>
        <td>{{e.document.expiredDate | date: 'yyyy/MM/dd'}}</td>
@@ -130,10 +134,14 @@
          <td><strong>Tipo</strong></td>
          <td><strong>Planta</strong></td>
          <td><strong>Departamento</strong></td>
-         <td><strong>Solicitante</strong></td>
+         <td><strong>Fecha de publicacion</strong></td>
          <td><strong>Fecha Requerida</strong></td>
          <td><strong>Periodo de revision</strong></td>
          <td><strong>Fecha de revision</strong></td>
+         <td>
+           <strong>Tiempo restante</strong>
+         </td>
+         <td><strong>Estado</strong></td>
          <td><strong>Dias de diferencia</strong></td>
        </tr>
      </thead>
@@ -145,10 +153,13 @@
          <td>{{e.document.type.type}}</td>
          <td>{{e.document.business}}</td>
          <td>{{e.document.department}}</td>
-         <td>{{e.document.createdBy.username}}</td>
+         <td>{{e.document.publication.publicationDate | date: 'yyyy/MM/dd'}}</td>
          <td>{{e.document.requiredDate | date: 'yyyy/MM/dd'}}</td>
          <td>{{e.document.periodExpirationTime ? e.document.periodExpirationTime + ' meses': 'Indefinido' }}</td>
          <td>{{e.document.expiredDate | date: 'yyyy/MM/dd'}}</td>
+         <td>{{expiredCheck[e.document._id].time + expiredCheck[e.document._id].suffix}}</td>
+         <td ng-class="{'warning-doc' : expiredCheck[e.document._id].time > 0 && expiredCheck[e.document._id].time < 63, 'expired-doc' : expiredCheck[e.document._id].time < 1, 'good-doc' : expiredCheck[e.document._id].time  > 62 || expiredCheck[e.document._id].time === 'Indefinido'}">
+         </td>
          <td>{{e.daysDifference}}</td>
        </tr>
      </tbody>
